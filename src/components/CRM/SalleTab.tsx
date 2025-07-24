@@ -10,6 +10,7 @@ interface Table {
 
 interface SalleTabProps {
   currentService: 'midi' | 'soir';
+  setCurrentService: (service: 'midi' | 'soir') => void;
   selectedReservation: any;
   setSelectedReservation: React.Dispatch<React.SetStateAction<any>>;
   handleAssignTable: (reservationId: string, tableNumbers: number[], fromSalleTab: boolean) => void;
@@ -29,6 +30,7 @@ interface SalleTabProps {
 
 const SalleTab: React.FC<SalleTabProps> = ({
   currentService,
+  setCurrentService,
   selectedReservation,
   setSelectedReservation,
   handleAssignTable,
@@ -126,16 +128,43 @@ const SalleTab: React.FC<SalleTabProps> = ({
         {/* Sélecteur de date */}
         <div className="bg-white rounded-lg shadow-md p-4">
           <div className="flex justify-between items-center">
-            <h3 className="text-lg font-semibold text-gray-900">Sélectionner une date</h3>
-            <input
-              type="date"
-              value={selectedDateLocal}
-              onChange={(e) => {
-                setSelectedDateLocal(e.target.value);
-                handleDateChange(e.target.value);
-              }}
-              className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+            <h3 className="text-lg font-semibold text-gray-900">Sélectionner la date et le service</h3>
+            <div className="flex items-center space-x-4">
+              {/* Sélecteur de service */}
+              <div className="flex bg-gray-100 rounded-lg p-1">
+                <button
+                  onClick={() => setCurrentService('midi')}
+                  className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                    currentService === 'midi'
+                      ? 'bg-primary text-white shadow-md'
+                      : 'text-gray-600 hover:bg-gray-200'
+                  }`}
+                >
+                  Midi
+                </button>
+                <button
+                  onClick={() => setCurrentService('soir')}
+                  className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                    currentService === 'soir'
+                      ? 'bg-primary text-white shadow-md'
+                      : 'text-gray-600 hover:bg-gray-200'
+                  }`}
+                >
+                  Soir
+                </button>
+              </div>
+              
+              {/* Sélecteur de date */}
+              <input
+                type="date"
+                value={selectedDateLocal}
+                onChange={(e) => {
+                  setSelectedDateLocal(e.target.value);
+                  handleDateChange(e.target.value);
+                }}
+                className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
           </div>
         </div>
 

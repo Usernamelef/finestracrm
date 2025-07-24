@@ -785,6 +785,7 @@ const CRM = () => {
         {activeTab === 'salle' && (
           <SalleTab
             currentService={currentService}
+            setCurrentService={setCurrentService}
             handleDateChange={handleDateChange}
             selectedReservation={reservationToAssign || selectedReservation}
             setSelectedReservation={setSelectedReservation}
