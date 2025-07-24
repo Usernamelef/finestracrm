@@ -81,7 +81,13 @@ const SalleTab: React.FC<SalleTabProps> = ({
       const reservationTime = reservation.heure_reservation;
       const reservationService = getServiceFromTime(reservationTime);
       
-      const isAssignedToThisTable = reservation.table_assignee === tableNumber;
+      // Vérifier si cette table est assignée (table principale ou dans le commentaire)
+      const isMainTable = reservation.table_assignee === tableNumber;
+      const isInMultipleTables = reservation.commentaire && 
+        reservation.commentaire.includes(`[Tables:`) && 
+        reservation.commentaire.includes(`${tableNumber}`);
+      
+      const isAssignedToThisTable = isMainTable || isInMultipleTables;
       const isCorrectDateAndService = 
         reservationDate === selectedDateLocal && 
         reservationService === currentService;

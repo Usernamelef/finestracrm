@@ -401,7 +401,16 @@ const ReservationsTab: React.FC<ReservationsTabProps> = ({
                   )}
                   {reservation.table_assignee && (
                     <p className="text-sm font-medium text-red-700 mb-3">
-                      Table: {reservation.table_assignee}
+                      {(() => {
+                        // Extraire les tables multiples du commentaire si présent
+                        if (reservation.commentaire && reservation.commentaire.includes('[Tables:')) {
+                          const match = reservation.commentaire.match(/\[Tables: ([^\]]+)\]/);
+                          if (match) {
+                            return `Tables: ${match[1]}`;
+                          }
+                        }
+                        return `Table: ${reservation.table_assignee}`;
+                      })()}
                     </p>
                   )}
                   <button
@@ -465,7 +474,16 @@ const ReservationsTab: React.FC<ReservationsTabProps> = ({
                   )}
                   {reservation.table_assignee && (
                     <p className="text-sm font-medium text-purple-700 mb-3">
-                      Table: {reservation.table_assignee}
+                      {(() => {
+                        // Extraire les tables multiples du commentaire si présent
+                        if (reservation.commentaire && reservation.commentaire.includes('[Tables:')) {
+                          const match = reservation.commentaire.match(/\[Tables: ([^\]]+)\]/);
+                          if (match) {
+                            return `Tables: ${match[1]}`;
+                          }
+                        }
+                        return `Table: ${reservation.table_assignee}`;
+                      })()}
                     </p>
                   )}
                   <button

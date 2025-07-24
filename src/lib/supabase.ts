@@ -107,11 +107,26 @@ export const getAllReservations = async () => {
 }
 
 // Fonction pour mettre à jour le statut d'une réservation
-export const updateReservationStatus = async (id: string, statut: string, tableAssignee?: number) => {
+export const updateReservationStatus = async (id: string, statut: string, tableAssignee?: number, tablesMultiples?: number[]) => {
   const updateData: any = { statut }
   
   if (tableAssignee) {
     updateData.table_assignee = tableAssignee
+  }
+  
+  // Stocker les tables multiples dans le commentaire si nécessaire
+  if (tablesMultiples && tablesMultiples.length > 1) {
+    const currentReservation = await supabase
+      .from('reservations')
+      .select('commentaire')
+      .eq('id', id)
+      .single();
+    
+    const existingComment = currentReservation.data?.commentaire || '';
+    const tablesInfo = `[Tables: ${tablesMultiples.join(', ')}]`;
+    
+    // Ajouter l'info des tables au commentaire
+    updateData.commentaire = existingComment ? `${existingComment} ${tablesInfo}` : tablesInfo;
   }
   
   if (statut === 'annulee') {
