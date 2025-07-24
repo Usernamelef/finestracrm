@@ -49,6 +49,65 @@ const SalleTab: React.FC<SalleTabProps> = ({
 }) => {
   const [selectedDateLocal, setSelectedDateLocal] = useState(new Date().toISOString().split('T')[0]);
 
+  const [supabaseReservations, setSupabaseReservations] = useState<any[]>([]);
+
+  // Charger les réservations depuis Supabase
+  useEffect(() => {
+    const fetchReservations = async () => {
+      try {
+        const { getAllReservations } = await import('../../lib/supabase');
+        const allReservations = await getAllReservations();
+        setSupabaseReservations(allReservations);
+      } catch (error) {
+        console.error('Erreur lors du chargement des réservations:', error);
+      }
+    };
+
+    fetchReservations();
+  }, []);
+
+  // Fonction pour déterminer le service basé sur l'heure
+  const getServiceFromTime = (heure: string) => {
+    const [hour, minute] = heure.split(':').map(Number);
+    const totalMinutes = hour * 60 + minute;
+    return totalMinutes <= 16 * 60 ? 'midi' : 'soir';
+  };
+
+  // Calculer l'état des tables basé sur les réservations Supabase
+  const getTableStatus = (tableNumber: number) => {
+    const tableReservations = supabaseReservations.filter(reservation => {
+      const reservationDate = reservation.date_reservation;
+      const reservationTime = reservation.heure_reservation;
+      const reservationService = getServiceFromTime(reservationTime);
+      
+      const isAssignedToThisTable = reservation.table_assignee === tableNumber;
+      const isCorrectDateAndService = 
+        reservationDate === selectedDateLocal && 
+        reservationService === currentService;
+      const isActiveStatus = 
+        reservation.statut === 'assignee' || 
+        reservation.statut === 'arrivee';
+      
+      return isAssignedToThisTable && isCorrectDateAndService && isActiveStatus;
+    });
+
+    if (tableReservations.length > 0) {
+      const reservation = tableReservations[0];
+      return {
+        status: reservation.statut === 'arrivee' ? 'occupied' : 'reserved',
+        reservation: {
+          id: reservation.id,
+          name: reservation.nom_client,
+          time: reservation.heure_reservation,
+          guests: reservation.nombre_personnes,
+          status: reservation.statut
+        }
+      };
+    }
+
+    return { status: 'available', reservation: null };
+  };
+
   // Fonction pour vérifier si une table est occupée à une heure donnée
   const isTableOccupiedAtTime = (tableNumber: number, date: string, time: string) => {
     if (!selectedReservation) return false;

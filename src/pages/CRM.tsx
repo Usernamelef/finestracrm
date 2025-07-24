@@ -181,53 +181,12 @@ const CRM = () => {
         reservations: []
       };
 
-      // Trouver les réservations assignées à cette table pour la date et le service sélectionnés
-      const tableReservations = reservationsData.filter(reservation => {
-        const reservationDate = reservation.date_reservation || reservation.date;
-        const reservationTime = reservation.heure_reservation || reservation.time;
-        const reservationService = getServiceFromTime(reservationTime);
-        
-        const isAssignedToThisTable = 
-          (reservation.table_assignee === table.number) ||
-          (reservation.tableNumber === table.number) ||
-          (reservation.tableNumbers && reservation.tableNumbers.includes(table.number));
-        
-        const isCorrectDateAndService = 
-          reservationDate === selectedDate && 
-          reservationService === currentService;
-        
-        const isActiveStatus = 
-          reservation.statut === 'assignee' || 
-          reservation.statut === 'arrivee' ||
-          reservation.statut === 'terminee' ||
-          reservation.status === 'assigned' || 
-          reservation.status === 'arrived' ||
-          reservation.status === 'completed';
-        
-        return isAssignedToThisTable && isCorrectDateAndService && isActiveStatus;
-      });
-
-      if (tableReservations.length > 0) {
-        return {
-          ...resetTable,
-          status: (tableReservations.some(res => 
-            res.statut === 'arrivee' || res.status === 'arrived'
-          ) ? 'occupied' : 'reserved') as const,
-          reservations: tableReservations.map(res => ({
-            id: res.id,
-            name: res.nom_client || res.name,
-            time: res.heure_reservation || res.time,
-            guests: res.nombre_personnes || res.guests,
-            status: res.statut || res.status
-          }))
-        };
-      }
 
       return resetTable;
     });
 
     setTables(updatedTables);
-  }, [reservationsData, selectedDate, currentService]);
+  }, [selectedDate, currentService]);
 
   // États pour le tableau de bord
   const [activities, setActivities] = useState<Activity[]>([
