@@ -82,7 +82,7 @@ const SalleTab: React.FC<SalleTabProps> = ({
   
       if (tablesNeeded === 1) {
         // Only one table needed
-        handleAssignTable(selectedReservation.id, [table.number]);
+        handleAssignTable(selectedReservation.id, [table.number], true);
         setSelectedReservation(null);
       } else {
         // Multiple tables needed - try to find consecutive tables
@@ -105,7 +105,7 @@ const SalleTab: React.FC<SalleTabProps> = ({
         }
         
         if (tableNumbers.length === tablesNeeded) {
-          handleAssignTable(selectedReservation.id, tableNumbers);
+          handleAssignTable(selectedReservation.id, tableNumbers, true);
           setSelectedReservation(null);
         } 
       }
@@ -318,13 +318,13 @@ const SalleTab: React.FC<SalleTabProps> = ({
                     const guestCount = selectedReservation.nombre_personnes || selectedReservation.guests;
                     const tablesNeeded = Math.ceil(guestCount / 2); // 2 personnes par table
                     if (tablesNeeded === 1) {
-                      handleAssignTable(selectedReservation.id, [selectedTable.number]);
+                      handleAssignTable(selectedReservation.id, [selectedTable.number], true);
                     } else {
                       // Pour les groupes plus grands, proposer des tables adjacentes
                       const availableCombos = getAvailableAdjacentTables(guestCount);
                       const combo = availableCombos.find(combo => combo.includes(selectedTable.number));
                       if (combo) {
-                        handleAssignTable(selectedReservation.id, combo);
+                        handleAssignTable(selectedReservation.id, combo, true);
                       }
                     }
                     setSelectedReservation(null);

@@ -430,7 +430,16 @@ const CRM = () => {
       reservation = reservationsData.find(r => r.id === reservationId);
     }
     
-    if (!fromSalleTab && reservation) {
+    if (!fromSalleTab) {
+      // Stocker la réservation pour l'assignation
+      setReservationToAssign(reservation);
+      setSelectedReservation(reservation);
+      // Changer vers l'onglet salle
+      setActiveTab('salle');
+      return;
+    }
+    
+    if (fromSalleTab && reservation) {
       const reservationDate = reservation.date_reservation || reservation.date;
       const reservationTime = reservation.heure_reservation || reservation.time;
       const reservationService = getServiceFromTime(reservationTime);
@@ -441,15 +450,7 @@ const CRM = () => {
         setSelectedDate(reservationDate);
         setCurrentService(reservationService);
       }
-  
-      setReservationToAssign(reservation);
-      setSelectedReservation(reservation); // Set selectedReservation for SalleTab
-      setActiveTab('salle');
-      return;
-    }
-  
-    // Logique d'assignation depuis l'onglet salle - utiliser Supabase
-    if (reservation) {
+      
       // Mettre à jour le statut dans Supabase
       import('../lib/supabase').then(({ updateReservationStatus }) => {
         updateReservationStatus(reservationId, 'assignee', tableNumbers[0])
@@ -474,14 +475,14 @@ const CRM = () => {
         }
         return table;
       }));
-    }
-    
-    if (reservation) {
+      
       const tableText = tableNumbers.length > 1 ? `tables ${tableNumbers.join(', ')}` : `table ${tableNumbers[0]}`;
       addActivity(`${reservation.nom_client || reservation.name} assigné(e) à la ${tableText}`);
+      
+      // Nettoyer les variables d'assignation
+      setReservationToAssign(null);
+      setSelectedReservation(null);
     }
-    
-    setReservationToAssign(null);
   };
 
   const handleMarkArrived = (reservationId: string) => {
