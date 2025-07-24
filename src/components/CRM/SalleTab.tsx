@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface Table {
   number: number;
@@ -217,7 +217,10 @@ const SalleTab: React.FC<SalleTabProps> = ({
         <div className="bg-white rounded-lg shadow-md p-6">
           <h2 className="text-xl font-semibold text-gray-900 mb-6">Salle principale</h2>
           <div className="grid grid-cols-4 gap-8">
-            {tables.filter(table => table.section === 'main').map((table) => (
+            {tables.filter(table => table.section === 'main').map((table) => {
+              const tableStatus = getTableStatus(table.number);
+              
+              return (
               <div key={table.number} className="flex items-center space-x-4">
                 {/* Table */}
                 {(() => {
@@ -232,9 +235,9 @@ const SalleTab: React.FC<SalleTabProps> = ({
                   onClick={() => handleTableClick(table)}
                   className={`w-20 h-20 rounded-lg border-2 flex items-center justify-center cursor-pointer transition-all hover:scale-105 ${
                     isOccupied ? 'bg-red-200 border-red-500' :
-                    table.status === 'available' ? 'bg-green-100 border-green-300 hover:bg-green-200' :
-                    table.status === 'reserved' ? 'bg-orange-100 border-orange-300 hover:bg-orange-200' :
-                    table.status === 'occupied' ? 'bg-red-100 border-red-300 hover:bg-red-200' :
+                    tableStatus.status === 'available' ? 'bg-green-100 border-green-300 hover:bg-green-200' :
+                    tableStatus.status === 'reserved' ? 'bg-orange-100 border-orange-300 hover:bg-orange-200' :
+                    tableStatus.status === 'occupied' ? 'bg-red-100 border-red-300 hover:bg-red-200' :
                     'bg-gray-100 border-gray-300'
                   }`}
                 >
@@ -248,15 +251,20 @@ const SalleTab: React.FC<SalleTabProps> = ({
 
                 {/* Réservations à droite de la table */}
                 <div className="flex-1 space-y-2">
-                  {table.reservations.map((reservation) => (
-                    <div key={reservation.id} className="bg-gray-50 p-2 rounded text-xs border">
-                      <div className="font-medium">{reservation.name}</div>
-                      <div className="text-gray-600">{reservation.time} • {reservation.guests}p</div>
+                  {tableStatus.reservation && (
+                    <div className="bg-gray-50 p-2 rounded text-xs border">
+                      <div className="font-medium">{tableStatus.reservation.name}</div>
+                      <div className="text-gray-600">
+                        {tableStatus.reservation.time} • {tableStatus.reservation.guests}p
+                      </div>
+                      <div className="text-xs text-gray-500 mt-1">
+                        {tableStatus.reservation.status === 'assignee' ? 'Réservé' : 'Arrivé'}
+                      </div>
                     </div>
-                  ))}
+                  )}
                 </div>
               </div>
-            ))}
+            )})}
           </div>
         </div>
 
