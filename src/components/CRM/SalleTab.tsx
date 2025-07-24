@@ -50,6 +50,7 @@ const SalleTab: React.FC<SalleTabProps> = ({
   const [selectedDateLocal, setSelectedDateLocal] = useState(new Date().toISOString().split('T')[0]);
 
   const [supabaseReservations, setSupabaseReservations] = useState<any[]>([]);
+  const [selectedTables, setSelectedTables] = useState<number[]>([]);
 
   // Charger les réservations depuis Supabase
   useEffect(() => {
@@ -130,6 +131,7 @@ const SalleTab: React.FC<SalleTabProps> = ({
     // Si une réservation est en attente d'assignation
     if (selectedReservation) {
       const guestCount = selectedReservation.nombre_personnes || selectedReservation.guests;
+      const tablesNeeded = Math.ceil(guestCount / 2); // 2 personnes par table
       
       // Vérifier si la table est disponible
       const tableStatus = getTableStatus(table.number);
@@ -138,22 +140,34 @@ const SalleTab: React.FC<SalleTabProps> = ({
         return;
       }
       
-      // Pour simplifier, on assigne toujours une seule table
-      // (on peut étendre plus tard pour les groupes plus grands)
-      console.log('Assignation de la table', table.number, 'à la réservation', selectedReservation);
-      handleAssignTable(selectedReservation, [table.number], true);
-      setSelectedReservation(null);
+      // Gestion des tables multiples
+      const newSelectedTables = [...selectedTables, table.number];
+      setSelectedTables(newSelectedTables);
+      
+      if (newSelectedTables.length === tablesNeeded) {
+        // Toutes les tables nécessaires sont sélectionnées
+        console.log('Assignation des tables', newSelectedTables, 'à la réservation', selectedReservation);
+        handleAssignTable(selectedReservation, newSelectedTables, true);
+        setSelectedReservation(null);
+        setSelectedTables([]);
+      } else {
+        // Encore des tables à sélectionner
+        const remaining = tablesNeeded - newSelectedTables.length;
+        alert(`Table ${table.number} sélectionnée. Sélectionnez encore ${remaining} table(s).`);
+      }
       
       // Recharger les réservations après assignation
-      setTimeout(async () => {
-        try {
-          const { getAllReservations } = await import('../../lib/supabase');
-          const allReservations = await getAllReservations();
-          setSupabaseReservations(allReservations);
-        } catch (error) {
-          console.error('Erreur lors du rechargement:', error);
-        }
-      }, 1000);
+      if (newSelectedTables.length === tablesNeeded) {
+        setTimeout(async () => {
+          try {
+            const { getAllReservations } = await import('../../lib/supabase');
+            const allReservations = await getAllReservations();
+            setSupabaseReservations(allReservations);
+          } catch (error) {
+            console.error('Erreur lors du rechargement:', error);
+          }
+        }, 1000);
+      }
     } else {
       // Aucune réservation en attente - afficher les détails de la table
       setSelectedTable(table);
@@ -217,11 +231,16 @@ const SalleTab: React.FC<SalleTabProps> = ({
               Assignation en cours pour: {selectedReservation.nom_client || selectedReservation.name}
             </h3>
             <p className="text-blue-700">
-              {selectedReservation.nombre_personnes || selectedReservation.guests} personne{(selectedReservation.nombre_personnes || selectedReservation.guests) > 1 ? 's' : ''} • {selectedReservation.heure_reservation || selectedReservation.time}
+              {selectedReservation.nombre_personnes || selectedReservation.guests} personne{(selectedReservation.nombre_personnes || selectedReservation.guests) > 1 ? 's' : ''} • {selectedReservation.heure_reservation || selectedReservation.time} • {Math.ceil((selectedReservation.nombre_personnes || selectedReservation.guests) / 2)} table(s) nécessaire(s)
             </p>
             <p className="text-blue-600 text-sm">
               Date: {selectedReservation.date_reservation || selectedReservation.date}
             </p>
+            {selectedTables.length > 0 && (
+              <p className="text-blue-600 text-sm mt-2">
+                Tables sélectionnées: {selectedTables.join(', ')} ({selectedTables.length}/{Math.ceil((selectedReservation.nombre_personnes || selectedReservation.guests) / 2)})
+              </p>
+            )}
           </div>
         )}
 
