@@ -398,7 +398,8 @@ const CRM = () => {
       return;
     }
     
-    if (fromSalleTab && reservation) {
+    // Assignation effective de la table
+    if (reservation) {
       const reservationDate = reservation.date_reservation || reservation.date;
       const reservationTime = reservation.heure_reservation || reservation.time;
       const reservationService = getServiceFromTime(reservationTime);
