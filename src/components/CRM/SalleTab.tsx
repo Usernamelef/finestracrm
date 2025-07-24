@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 interface Table {
   number: number;
@@ -132,7 +132,8 @@ const SalleTab: React.FC<SalleTabProps> = ({
       const guestCount = selectedReservation.nombre_personnes || selectedReservation.guests;
       
       // Vérifier si la table est disponible
-      if (table.status !== 'available') {
+      const tableStatus = getTableStatus(table.number);
+      if (tableStatus.status !== 'available') {
         alert('Cette table n\'est pas disponible pour cette réservation.');
         return;
       }
@@ -142,6 +143,17 @@ const SalleTab: React.FC<SalleTabProps> = ({
       console.log('Assignation de la table', table.number, 'à la réservation', selectedReservation);
       handleAssignTable(selectedReservation, [table.number], true);
       setSelectedReservation(null);
+      
+      // Recharger les réservations après assignation
+      setTimeout(async () => {
+        try {
+          const { getAllReservations } = await import('../../lib/supabase');
+          const allReservations = await getAllReservations();
+          setSupabaseReservations(allReservations);
+        } catch (error) {
+          console.error('Erreur lors du rechargement:', error);
+        }
+      }, 1000);
     } else {
       // Aucune réservation en attente - afficher les détails de la table
       setSelectedTable(table);
@@ -217,10 +229,7 @@ const SalleTab: React.FC<SalleTabProps> = ({
         <div className="bg-white rounded-lg shadow-md p-6">
           <h2 className="text-xl font-semibold text-gray-900 mb-6">Salle principale</h2>
           <div className="grid grid-cols-4 gap-8">
-            {tables.filter(table => table.section === 'main').map((table) => {
-              const tableStatus = getTableStatus(table.number);
-              
-              return (
+            {tables.filter(table => table.section === 'main').map((table) => (
               <div key={table.number} className="flex items-center space-x-4">
                 {/* Table */}
                 {(() => {
@@ -235,9 +244,9 @@ const SalleTab: React.FC<SalleTabProps> = ({
                   onClick={() => handleTableClick(table)}
                   className={`w-20 h-20 rounded-lg border-2 flex items-center justify-center cursor-pointer transition-all hover:scale-105 ${
                     isOccupied ? 'bg-red-200 border-red-500' :
-                    tableStatus.status === 'available' ? 'bg-green-100 border-green-300 hover:bg-green-200' :
-                    tableStatus.status === 'reserved' ? 'bg-orange-100 border-orange-300 hover:bg-orange-200' :
-                    tableStatus.status === 'occupied' ? 'bg-red-100 border-red-300 hover:bg-red-200' :
+                    table.status === 'available' ? 'bg-green-100 border-green-300 hover:bg-green-200' :
+                    table.status === 'reserved' ? 'bg-orange-100 border-orange-300 hover:bg-orange-200' :
+                    table.status === 'occupied' ? 'bg-red-100 border-red-300 hover:bg-red-200' :
                     'bg-gray-100 border-gray-300'
                   }`}
                 >
@@ -251,20 +260,15 @@ const SalleTab: React.FC<SalleTabProps> = ({
 
                 {/* Réservations à droite de la table */}
                 <div className="flex-1 space-y-2">
-                  {tableStatus.reservation && (
-                    <div className="bg-gray-50 p-2 rounded text-xs border">
-                      <div className="font-medium">{tableStatus.reservation.name}</div>
-                      <div className="text-gray-600">
-                        {tableStatus.reservation.time} • {tableStatus.reservation.guests}p
-                      </div>
-                      <div className="text-xs text-gray-500 mt-1">
-                        {tableStatus.reservation.status === 'assignee' ? 'Réservé' : 'Arrivé'}
-                      </div>
+                  {table.reservations.map((reservation) => (
+                    <div key={reservation.id} className="bg-gray-50 p-2 rounded text-xs border">
+                      <div className="font-medium">{reservation.name}</div>
+                      <div className="text-gray-600">{reservation.time} • {reservation.guests}p</div>
                     </div>
-                  )}
+                  ))}
                 </div>
               </div>
-            )})}
+            ))}
           </div>
         </div>
 
