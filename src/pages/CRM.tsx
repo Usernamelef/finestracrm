@@ -411,9 +411,12 @@ const CRM = () => {
         setCurrentService(reservationService);
       }
       
-      // Mettre à jour le statut dans Supabase
+      // Mettre à jour le statut dans Supabase avec les tables assignées
       import('../lib/supabase').then(({ updateReservationStatus }) => {
-        updateReservationStatus(reservationId, 'assignee', tableNumbers[0])
+        // Pour les tables multiples, on stocke la première table comme référence
+        // et on peut ajouter les autres dans un champ séparé si nécessaire
+        const primaryTable = tableNumbers[0];
+        updateReservationStatus(reservationId, 'assignee', primaryTable)
           .then(() => {
             // Rafraîchir les réservations
             if (refreshReservationsRef.current) {

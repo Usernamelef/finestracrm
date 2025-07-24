@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface Table {
   number: number;
@@ -257,15 +257,18 @@ const SalleTab: React.FC<SalleTabProps> = ({
                     selectedDateLocal, 
                     selectedReservation.heure_reservation || selectedReservation.time
                   );
+                  const isSelected = selectedTables.includes(table.number);
+                  const tableStatus = getTableStatus(table.number);
                   
                   return (
                 <div
                   onClick={() => handleTableClick(table)}
                   className={`w-20 h-20 rounded-lg border-2 flex items-center justify-center cursor-pointer transition-all hover:scale-105 ${
+                    isSelected ? 'bg-blue-200 border-blue-500' :
                     isOccupied ? 'bg-red-200 border-red-500' :
-                    table.status === 'available' ? 'bg-green-100 border-green-300 hover:bg-green-200' :
-                    table.status === 'reserved' ? 'bg-orange-100 border-orange-300 hover:bg-orange-200' :
-                    table.status === 'occupied' ? 'bg-red-100 border-red-300 hover:bg-red-200' :
+                    tableStatus.status === 'available' ? 'bg-green-100 border-green-300 hover:bg-green-200' :
+                    tableStatus.status === 'reserved' ? 'bg-orange-100 border-orange-300 hover:bg-orange-200' :
+                    tableStatus.status === 'occupied' ? 'bg-red-100 border-red-300 hover:bg-red-200' :
                     'bg-gray-100 border-gray-300'
                   }`}
                 >
@@ -279,12 +282,19 @@ const SalleTab: React.FC<SalleTabProps> = ({
 
                 {/* Réservations à droite de la table */}
                 <div className="flex-1 space-y-2">
-                  {table.reservations.map((reservation) => (
-                    <div key={reservation.id} className="bg-gray-50 p-2 rounded text-xs border">
-                      <div className="font-medium">{reservation.name}</div>
-                      <div className="text-gray-600">{reservation.time} • {reservation.guests}p</div>
-                    </div>
-                  ))}
+                  {(() => {
+                    const tableStatus = getTableStatus(table.number);
+                    if (tableStatus.reservation) {
+                      return (
+                        <div key={tableStatus.reservation.id} className="bg-gray-50 p-2 rounded text-xs border">
+                          <div className="font-medium">{tableStatus.reservation.name}</div>
+                          <div className="text-gray-600">{tableStatus.reservation.time} • {tableStatus.reservation.guests}p</div>
+                          <div className="text-gray-500">{tableStatus.reservation.status === 'assignee' ? 'Réservé' : 'Arrivé'}</div>
+                        </div>
+                      );
+                    }
+                    return null;
+                  })()}
                 </div>
               </div>
             ))}
@@ -304,15 +314,18 @@ const SalleTab: React.FC<SalleTabProps> = ({
                     selectedDateLocal, 
                     selectedReservation.heure_reservation || selectedReservation.time
                   );
+                  const isSelected = selectedTables.includes(table.number);
+                  const tableStatus = getTableStatus(table.number);
                   
                   return (
                 <div
                   onClick={() => handleTableClick(table)}
                   className={`w-20 h-20 rounded-lg border-2 flex items-center justify-center cursor-pointer transition-all hover:scale-105 ${
+                    isSelected ? 'bg-blue-200 border-blue-500' :
                     isOccupied ? 'bg-red-200 border-red-500' :
-                    table.status === 'available' ? 'bg-green-100 border-green-300 hover:bg-green-200' :
-                    table.status === 'reserved' ? 'bg-orange-100 border-orange-300 hover:bg-orange-200' :
-                    table.status === 'occupied' ? 'bg-red-100 border-red-300 hover:bg-red-200' :
+                    tableStatus.status === 'available' ? 'bg-green-100 border-green-300 hover:bg-green-200' :
+                    tableStatus.status === 'reserved' ? 'bg-orange-100 border-orange-300 hover:bg-orange-200' :
+                    tableStatus.status === 'occupied' ? 'bg-red-100 border-red-300 hover:bg-red-200' :
                     'bg-gray-100 border-gray-300'
                   }`}
                 >
@@ -326,12 +339,19 @@ const SalleTab: React.FC<SalleTabProps> = ({
 
                 {/* Réservations à droite de la table */}
                 <div className="flex-1 space-y-2">
-                  {table.reservations.map((reservation) => (
-                    <div key={reservation.id} className="bg-gray-50 p-2 rounded text-xs border">
-                      <div className="font-medium">{reservation.name}</div>
-                      <div className="text-gray-600">{reservation.time} • {reservation.guests}p</div>
-                    </div>
-                  ))}
+                  {(() => {
+                    const tableStatus = getTableStatus(table.number);
+                    if (tableStatus.reservation) {
+                      return (
+                        <div key={tableStatus.reservation.id} className="bg-gray-50 p-2 rounded text-xs border">
+                          <div className="font-medium">{tableStatus.reservation.name}</div>
+                          <div className="text-gray-600">{tableStatus.reservation.time} • {tableStatus.reservation.guests}p</div>
+                          <div className="text-gray-500">{tableStatus.reservation.status === 'assignee' ? 'Réservé' : 'Arrivé'}</div>
+                        </div>
+                      );
+                    }
+                    return null;
+                  })()}
                 </div>
               </div>
             ))}
@@ -345,6 +365,10 @@ const SalleTab: React.FC<SalleTabProps> = ({
             <div className="flex items-center space-x-2">
               <div className="w-4 h-4 bg-green-100 border border-green-300 rounded"></div>
               <span className="text-sm text-gray-700">Disponible</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <div className="w-4 h-4 bg-blue-200 border border-blue-500 rounded"></div>
+              <span className="text-sm text-gray-700">Sélectionnée</span>
             </div>
             <div className="flex items-center space-x-2">
               <div className="w-4 h-4 bg-orange-100 border border-orange-300 rounded"></div>
@@ -392,11 +416,9 @@ const SalleTab: React.FC<SalleTabProps> = ({
                 <div>
                   <h4 className="font-medium text-gray-900 mb-2">Réservations:</h4>
                   {selectedTable.reservations.map((reservation) => (
-                    <div key={reservation.id} className="bg-gray-50 p-3 rounded border">
-                      <p className="font-medium">{reservation.name}</p>
-                      <p className="text-sm text-gray-600">
-                        {reservation.time} • {reservation.guests} personne{reservation.guests > 1 ? 's' : ''}
-                      </p>
+                    <div key={reservation.id} className="bg-gray-50 p-2 rounded text-xs border">
+                      <div className="font-medium">{reservation.name}</div>
+                      <div className="text-gray-600">{reservation.time} • {reservation.guests}p</div>
                       <p className="text-sm text-gray-600">Statut: {reservation.status}</p>
                     </div>
                   ))}
