@@ -68,49 +68,21 @@ const SalleTab: React.FC<SalleTabProps> = ({
 
   // Fonction pour gérer le clic sur une table
   const handleTableClick = (table: Table) => {
-    // If a reservation is pending assignment
+    // Si une réservation est en attente d'assignation
     if (selectedReservation) {
       const guestCount = selectedReservation.nombre_personnes || selectedReservation.guests;
-      const tablesNeeded = Math.ceil(guestCount / 2); // 2 personnes par table
-  
-      // Check if the table is available
-      const reservationDate = selectedReservation.date_reservation || selectedReservation.date;
-      const reservationTime = selectedReservation.heure_reservation || selectedReservation.time;
-  
-      if (table.status !== 'available' || isTableOccupiedAtTime(table.number, reservationDate, reservationTime)) {
+      
+      // Vérifier si la table est disponible
+      if (table.status !== 'available') {
         alert('Cette table n\'est pas disponible pour cette réservation.');
         return;
       }
-  
-      if (tablesNeeded === 1) {
-        // Only one table needed
-        handleAssignTable(selectedReservation.id, [table.number], true);
-        setSelectedReservation(null);
-      } else {
-        // Multiple tables needed - try to find consecutive tables
-        const startTable = table.number;
-        const tableNumbers = [];
-  
-        for (let i = 0; i < tablesNeeded; i++) {
-          const tableNum = startTable + i;
-          const targetTable = tables.find(t => t.number === tableNum);
-  
-          if (targetTable && targetTable.status === 'available' && 
-              !isTableOccupiedAtTime(tableNum, reservationDate, reservationTime)) {
-            tableNumbers.push(tableNum);
-          } else {
-            // If a table is not available, we cannot assign
-            alert(`Impossible d'assigner ${tablesNeeded} tables consécutives à partir de la table ${startTable}. 
-                   Veuillez sélectionner une autre table de départ ou un autre groupe.`);
-            return;
-          }
-        }
-        
-        if (tableNumbers.length === tablesNeeded) {
-          handleAssignTable(selectedReservation.id, tableNumbers, true);
-          setSelectedReservation(null);
-        } 
-      }
+      
+      // Pour simplifier, on assigne toujours une seule table
+      // (on peut étendre plus tard pour les groupes plus grands)
+      console.log('Assignation de la table', table.number, 'à la réservation', selectedReservation);
+      handleAssignTable(selectedReservation, [table.number], true);
+      setSelectedReservation(null);
     } else {
       // Aucune réservation en attente - afficher les détails de la table
       setSelectedTable(table);
