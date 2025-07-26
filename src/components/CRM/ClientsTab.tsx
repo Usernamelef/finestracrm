@@ -121,16 +121,16 @@ const ClientsTab: React.FC<ClientsTabProps> = () => {
   const filteredClients = getFilteredClients();
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-900">Base de données clients</h1>
-        <div className="text-sm text-gray-600">
+    <div className="space-y-4 sm:space-y-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-2 sm:space-y-0">
+        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">Base de données clients</h1>
+        <div className="text-xs sm:text-sm text-gray-600">
           {filteredClients.length} client{filteredClients.length > 1 ? 's' : ''} • {reservations.length} réservation{reservations.length > 1 ? 's' : ''} au total
         </div>
       </div>
 
       {/* Barre de recherche */}
-      <div className="bg-white rounded-lg shadow-md p-4">
+      <div className="bg-white rounded-lg shadow-md p-3 sm:p-4">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
           <input
@@ -138,53 +138,53 @@ const ClientsTab: React.FC<ClientsTabProps> = () => {
             placeholder="Rechercher un client par nom, email ou téléphone..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+            className="w-full pl-10 pr-4 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
           />
         </div>
       </div>
 
       {/* Statistiques rapides */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white rounded-lg shadow-md p-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div className="bg-white rounded-lg shadow-md p-3 sm:p-4">
           <div className="flex items-center">
-            <User className="text-primary mr-3" size={24} />
+            <User className="text-primary mr-2 sm:mr-3" size={20} />
             <div>
-              <p className="text-sm text-gray-600">Total clients</p>
-              <p className="text-2xl font-bold text-gray-900">{getUniqueClients().length}</p>
+              <p className="text-xs sm:text-sm text-gray-600">Total clients</p>
+              <p className="text-lg sm:text-2xl font-bold text-gray-900">{getUniqueClients().length}</p>
             </div>
           </div>
         </div>
         
-        <div className="bg-white rounded-lg shadow-md p-4">
+        <div className="bg-white rounded-lg shadow-md p-3 sm:p-4">
           <div className="flex items-center">
-            <Calendar className="text-primary mr-3" size={24} />
+            <Calendar className="text-primary mr-2 sm:mr-3" size={20} />
             <div>
-              <p className="text-sm text-gray-600">Réservations actives</p>
-              <p className="text-2xl font-bold text-gray-900">
+              <p className="text-xs sm:text-sm text-gray-600">Réservations actives</p>
+              <p className="text-lg sm:text-2xl font-bold text-gray-900">
                 {reservations.filter(r => ['assignee', 'arrivee'].includes(r.statut)).length}
               </p>
             </div>
           </div>
         </div>
         
-        <div className="bg-white rounded-lg shadow-md p-4">
+        <div className="bg-white rounded-lg shadow-md p-3 sm:p-4">
           <div className="flex items-center">
-            <Clock className="text-primary mr-3" size={24} />
+            <Clock className="text-primary mr-2 sm:mr-3" size={20} />
             <div>
-              <p className="text-sm text-gray-600">En attente</p>
-              <p className="text-2xl font-bold text-gray-900">
+              <p className="text-xs sm:text-sm text-gray-600">En attente</p>
+              <p className="text-lg sm:text-2xl font-bold text-gray-900">
                 {reservations.filter(r => r.statut === 'en_attente').length}
               </p>
             </div>
           </div>
         </div>
         
-        <div className="bg-white rounded-lg shadow-md p-4">
+        <div className="bg-white rounded-lg shadow-md p-3 sm:p-4">
           <div className="flex items-center">
-            <MapPin className="text-primary mr-3" size={24} />
+            <MapPin className="text-primary mr-2 sm:mr-3" size={20} />
             <div>
-              <p className="text-sm text-gray-600">Terminées</p>
-              <p className="text-2xl font-bold text-gray-900">
+              <p className="text-xs sm:text-sm text-gray-600">Terminées</p>
+              <p className="text-lg sm:text-2xl font-bold text-gray-900">
                 {reservations.filter(r => r.statut === 'terminee').length}
               </p>
             </div>
@@ -193,35 +193,35 @@ const ClientsTab: React.FC<ClientsTabProps> = () => {
       </div>
 
       {/* Liste des clients */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
         {filteredClients.map((client) => {
           const latestReservation = client.reservations.sort((a, b) => 
             new Date(b.date_creation).getTime() - new Date(a.date_creation).getTime()
           )[0];
           
           return (
-            <div key={client.email} className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
-              <div className="flex items-start justify-between mb-4">
+            <div key={client.email} className="bg-white rounded-lg shadow-md p-4 sm:p-6 hover:shadow-lg transition-shadow">
+              <div className="flex flex-col sm:flex-row items-start justify-between mb-4 space-y-2 sm:space-y-0">
                 <div className="flex items-center space-x-3">
-                  <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center">
-                    <User className="text-white" size={20} />
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
+                    <User className="text-white" size={16} />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900">{client.nom}</h3>
-                    <p className="text-sm text-gray-600">
+                    <h3 className="text-sm sm:text-base font-semibold text-gray-900">{client.nom}</h3>
+                    <p className="text-xs sm:text-sm text-gray-600">
                       {client.reservations.length} réservation{client.reservations.length > 1 ? 's' : ''}
                     </p>
                   </div>
                 </div>
-                <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(latestReservation.statut)}`}>
+                <span className={`px-2 py-1 rounded-full text-xs font-medium flex-shrink-0 ${getStatusColor(latestReservation.statut)}`}>
                   {getStatusLabel(latestReservation.statut)}
                 </span>
               </div>
               
-              <div className="space-y-2 text-sm">
+              <div className="space-y-2 text-xs sm:text-sm">
                 <div className="flex items-center space-x-2">
                   <Mail className="text-gray-400" size={16} />
-                  <span className="text-gray-700">{client.email}</span>
+                  <span className="text-gray-700 break-all">{client.email}</span>
                 </div>
                 {client.telephone && client.telephone !== 'N/A' && (
                   <div className="flex items-center space-x-2">
@@ -239,25 +239,25 @@ const ClientsTab: React.FC<ClientsTabProps> = () => {
               
               {/* Historique des réservations */}
               <div className="mt-4 pt-4 border-t border-gray-200">
-                <h4 className="text-sm font-medium text-gray-900 mb-2">Historique récent</h4>
+                <h4 className="text-xs sm:text-sm font-medium text-gray-900 mb-2">Historique récent</h4>
                 <div className="space-y-1 max-h-32 overflow-y-auto">
                   {client.reservations
                     .sort((a, b) => new Date(b.date_reservation).getTime() - new Date(a.date_reservation).getTime())
                     .slice(0, 5)
                     .map((reservation) => (
-                    <div key={reservation.id} className="text-xs text-gray-600 flex justify-between items-center">
-                      <div className="flex items-center space-x-2">
+                    <div key={reservation.id} className="text-xs text-gray-600 flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-1 sm:space-y-0">
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-1 sm:space-y-0 sm:space-x-2">
                         <span>{formatDate(reservation.date_reservation)}</span>
-                        <span className="text-gray-400">•</span>
+                        <span className="text-gray-400 hidden sm:inline">•</span>
                         <span>{reservation.heure_reservation}</span>
                         {reservation.table_assignee && (
                           <>
-                            <span className="text-gray-400">•</span>
+                            <span className="text-gray-400 hidden sm:inline">•</span>
                             <span>Table {reservation.table_assignee}</span>
                           </>
                         )}
                       </div>
-                      <div className="flex items-center space-x-1">
+                      <div className="flex items-center space-x-1 flex-shrink-0">
                         <span>{reservation.nombre_personnes}p</span>
                         <span className={`px-1 py-0.5 rounded text-xs ${getStatusColor(reservation.statut)}`}>
                           {getStatusLabel(reservation.statut)}
@@ -276,8 +276,8 @@ const ClientsTab: React.FC<ClientsTabProps> = () => {
               {/* Notes client */}
               {latestReservation.commentaire && (
                 <div className="mt-4 pt-4 border-t border-gray-200">
-                  <h4 className="text-sm font-medium text-gray-900 mb-1">Dernière note</h4>
-                  <p className="text-xs text-gray-600 italic">"{latestReservation.commentaire}"</p>
+                  <h4 className="text-xs sm:text-sm font-medium text-gray-900 mb-1">Dernière note</h4>
+                  <p className="text-xs text-gray-600 italic break-words">"{latestReservation.commentaire}"</p>
                 </div>
               )}
             </div>

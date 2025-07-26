@@ -192,15 +192,15 @@ const HistoriqueTab: React.FC = () => {
   const filteredReservations = getFilteredAndSortedReservations();
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-900 flex items-center">
+    <div className="space-y-4 sm:space-y-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-3 sm:space-y-0">
+        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 flex items-center">
           <History className="mr-3" size={32} />
           Historique des réservations
         </h1>
         <button
           onClick={exportToCSV}
-          className="flex items-center space-x-2 bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg transition-colors"
+          className="flex items-center space-x-2 bg-primary hover:bg-primary/90 text-white px-3 sm:px-4 py-2 rounded-lg transition-colors text-sm"
         >
           <Download size={20} />
           <span>Exporter CSV</span>
@@ -208,59 +208,59 @@ const HistoriqueTab: React.FC = () => {
       </div>
 
       {/* Statistiques globales */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-        <div className="bg-white rounded-lg shadow-md p-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
+        <div className="bg-white rounded-lg shadow-md p-3 sm:p-4">
           <div className="flex items-center">
-            <Calendar className="text-primary mr-3" size={24} />
+            <Calendar className="text-primary mr-2 sm:mr-3" size={20} />
             <div>
-              <p className="text-sm text-gray-600">Total</p>
-              <p className="text-2xl font-bold text-gray-900">{reservations.length}</p>
+              <p className="text-xs sm:text-sm text-gray-600">Total</p>
+              <p className="text-lg sm:text-2xl font-bold text-gray-900">{reservations.length}</p>
             </div>
           </div>
         </div>
         
-        <div className="bg-white rounded-lg shadow-md p-4">
+        <div className="bg-white rounded-lg shadow-md p-3 sm:p-4">
           <div className="flex items-center">
             <div className="w-3 h-3 bg-green-500 rounded-full mr-3"></div>
             <div>
-              <p className="text-sm text-gray-600">Terminées</p>
-              <p className="text-2xl font-bold text-green-600">
+              <p className="text-xs sm:text-sm text-gray-600">Terminées</p>
+              <p className="text-lg sm:text-2xl font-bold text-green-600">
                 {reservations.filter(r => r.statut === 'terminee').length}
               </p>
             </div>
           </div>
         </div>
         
-        <div className="bg-white rounded-lg shadow-md p-4">
+        <div className="bg-white rounded-lg shadow-md p-3 sm:p-4">
           <div className="flex items-center">
             <div className="w-3 h-3 bg-red-500 rounded-full mr-3"></div>
             <div>
-              <p className="text-sm text-gray-600">Annulées</p>
-              <p className="text-2xl font-bold text-red-600">
+              <p className="text-xs sm:text-sm text-gray-600">Annulées</p>
+              <p className="text-lg sm:text-2xl font-bold text-red-600">
                 {reservations.filter(r => r.statut === 'annulee').length}
               </p>
             </div>
           </div>
         </div>
         
-        <div className="bg-white rounded-lg shadow-md p-4">
+        <div className="bg-white rounded-lg shadow-md p-3 sm:p-4">
           <div className="flex items-center">
             <div className="w-3 h-3 bg-orange-500 rounded-full mr-3"></div>
             <div>
-              <p className="text-sm text-gray-600">Actives</p>
-              <p className="text-2xl font-bold text-orange-600">
+              <p className="text-xs sm:text-sm text-gray-600">Actives</p>
+              <p className="text-lg sm:text-2xl font-bold text-orange-600">
                 {reservations.filter(r => ['assignee', 'arrivee'].includes(r.statut)).length}
               </p>
             </div>
           </div>
         </div>
         
-        <div className="bg-white rounded-lg shadow-md p-4">
+        <div className="bg-white rounded-lg shadow-md p-3 sm:p-4">
           <div className="flex items-center">
-            <Users className="text-primary mr-3" size={24} />
+            <Users className="text-primary mr-2 sm:mr-3" size={20} />
             <div>
-              <p className="text-sm text-gray-600">Clients uniques</p>
-              <p className="text-2xl font-bold text-gray-900">
+              <p className="text-xs sm:text-sm text-gray-600">Clients uniques</p>
+              <p className="text-lg sm:text-2xl font-bold text-gray-900">
                 {new Set(reservations.map(r => r.email_client)).size}
               </p>
             </div>
@@ -269,10 +269,10 @@ const HistoriqueTab: React.FC = () => {
       </div>
 
       {/* Filtres et recherche */}
-      <div className="bg-white rounded-lg shadow-lg p-6">
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+      <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
               <Search className="inline mr-1" size={16} />
               Recherche
             </label>
@@ -281,19 +281,19 @@ const HistoriqueTab: React.FC = () => {
               placeholder="Nom, email ou téléphone..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
             />
           </div>
           
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
               <Filter className="inline mr-1" size={16} />
               Statut
             </label>
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
             >
               <option value="all">Tous les statuts</option>
               <option value="nouvelle">Nouvelle</option>
@@ -306,14 +306,14 @@ const HistoriqueTab: React.FC = () => {
           </div>
           
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
               <Calendar className="inline mr-1" size={16} />
               Période
             </label>
             <select
               value={dateFilter}
               onChange={(e) => setDateFilter(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
             >
               <option value="all">Toutes les dates</option>
               <option value="today">Aujourd'hui</option>
@@ -323,11 +323,11 @@ const HistoriqueTab: React.FC = () => {
           </div>
           
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Trier par</label>
+            <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Trier par</label>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
             >
               <option value="date_desc">Date (récent → ancien)</option>
               <option value="date_asc">Date (ancien → récent)</option>
@@ -338,7 +338,7 @@ const HistoriqueTab: React.FC = () => {
             </select>
           </div>
           
-          <div className="flex items-end">
+          <div className="flex items-end sm:col-span-2 lg:col-span-1">
             <button
               onClick={() => {
                 setSearchTerm('');
@@ -346,21 +346,81 @@ const HistoriqueTab: React.FC = () => {
                 setDateFilter('all');
                 setSortBy('date_desc');
               }}
-              className="w-full bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors"
+              className="w-full bg-gray-500 hover:bg-gray-600 text-white px-3 sm:px-4 py-2 rounded-lg transition-colors text-sm"
             >
               Réinitialiser
             </button>
           </div>
         </div>
         
-        <div className="mt-4 text-sm text-gray-600">
+        <div className="mt-4 text-xs sm:text-sm text-gray-600">
           {filteredReservations.length} réservation{filteredReservations.length > 1 ? 's' : ''} trouvée{filteredReservations.length > 1 ? 's' : ''} sur {reservations.length} au total
         </div>
       </div>
 
       {/* Liste des réservations */}
       <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-        <div className="overflow-x-auto">
+        {/* Version mobile - cartes */}
+        <div className="block lg:hidden">
+          <div className="p-4 space-y-4">
+            {filteredReservations.map((reservation) => (
+              <div key={reservation.id} className="border border-gray-200 rounded-lg p-4 space-y-3">
+                <div className="flex justify-between items-start">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
+                      <span className="text-white text-sm font-medium">
+                        {reservation.nom_client.charAt(0).toUpperCase()}
+                      </span>
+                    </div>
+                    <div>
+                      <div className="text-sm font-medium text-gray-900">
+                        {reservation.nom_client}
+                      </div>
+                      <div className="text-xs text-gray-500">
+                        {formatDate(reservation.date_reservation)} • {reservation.heure_reservation}
+                      </div>
+                    </div>
+                  </div>
+                  <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(reservation.statut)}`}>
+                    {getStatusLabel(reservation.statut)}
+                  </span>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-2 text-xs text-gray-600">
+                  <div className="flex items-center">
+                    <Mail className="mr-1" size={12} />
+                    <span className="truncate">{reservation.email_client}</span>
+                  </div>
+                  <div className="flex items-center">
+                    <Users className="mr-1" size={12} />
+                    <span>{reservation.nombre_personnes}p</span>
+                  </div>
+                  {reservation.telephone_client && reservation.telephone_client !== 'N/A' && (
+                    <div className="flex items-center">
+                      <Phone className="mr-1" size={12} />
+                      <span className="truncate">{reservation.telephone_client}</span>
+                    </div>
+                  )}
+                  {reservation.table_assignee && (
+                    <div className="flex items-center">
+                      <MapPin className="mr-1" size={12} />
+                      <span>Table {reservation.table_assignee}</span>
+                    </div>
+                  )}
+                </div>
+                
+                {reservation.commentaire && (
+                  <div className="text-xs text-gray-600 bg-gray-50 p-2 rounded">
+                    <span className="font-medium">Note:</span> {reservation.commentaire}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+        
+        {/* Version desktop - tableau */}
+        <div className="hidden lg:block overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
@@ -458,10 +518,10 @@ const HistoriqueTab: React.FC = () => {
         </div>
         
         {filteredReservations.length === 0 && (
-          <div className="text-center py-12">
+          <div className="text-center py-8 sm:py-12">
             <History className="mx-auto h-12 w-12 text-gray-400" />
-            <h3 className="mt-2 text-sm font-medium text-gray-900">Aucune réservation trouvée</h3>
-            <p className="mt-1 text-sm text-gray-500">
+            <h3 className="mt-2 text-sm sm:text-base font-medium text-gray-900">Aucune réservation trouvée</h3>
+            <p className="mt-1 text-xs sm:text-sm text-gray-500">
               Aucune réservation ne correspond aux critères de recherche.
             </p>
           </div>

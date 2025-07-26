@@ -191,21 +191,21 @@ const SalleTab: React.FC<SalleTabProps> = ({
 
   return (
     <>
-      <div className="space-y-8">
-        <h1 className="text-3xl font-bold text-gray-900">
+      <div className="space-y-4 sm:space-y-8">
+        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">
           Plan de salle – Service du {currentService === 'midi' ? 'Midi' : 'Soir'} – {formatSelectedDate(selectedDateLocal)}
         </h1>
 
         {/* Sélecteur de date */}
-        <div className="bg-white rounded-lg shadow-md p-4">
-          <div className="flex justify-between items-center">
-            <h3 className="text-lg font-semibold text-gray-900">Sélectionner la date et le service</h3>
-            <div className="flex items-center space-x-4">
+        <div className="bg-white rounded-lg shadow-md p-3 sm:p-4">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-3 sm:space-y-0">
+            <h3 className="text-base sm:text-lg font-semibold text-gray-900">Sélectionner la date et le service</h3>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
               {/* Sélecteur de service */}
               <div className="flex bg-gray-100 rounded-lg p-1">
                 <button
                   onClick={() => setCurrentService('midi')}
-                  className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                  className={`px-3 sm:px-4 py-2 rounded-md text-xs sm:text-sm font-medium transition-all ${
                     currentService === 'midi'
                       ? 'bg-primary text-white shadow-md'
                       : 'text-gray-600 hover:bg-gray-200'
@@ -215,7 +215,7 @@ const SalleTab: React.FC<SalleTabProps> = ({
                 </button>
                 <button
                   onClick={() => setCurrentService('soir')}
-                  className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                  className={`px-3 sm:px-4 py-2 rounded-md text-xs sm:text-sm font-medium transition-all ${
                     currentService === 'soir'
                       ? 'bg-primary text-white shadow-md'
                       : 'text-gray-600 hover:bg-gray-200'
@@ -233,25 +233,25 @@ const SalleTab: React.FC<SalleTabProps> = ({
                   setSelectedDateLocal(e.target.value);
                   handleDateChange(e.target.value);
                 }}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="px-2 sm:px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-auto"
               />
             </div>
           </div>
         </div>
 
         {selectedReservation && (
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <h3 className="font-semibold text-blue-800 mb-2">
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-4">
+            <h3 className="text-sm sm:text-base font-semibold text-blue-800 mb-2">
               {selectedReservation.statut === 'assignee' || selectedReservation.statut === 'arrivee' ? 'Modification d\'assignation' : 'Assignation en cours'} pour: {selectedReservation.nom_client || selectedReservation.name}
             </h3>
-            <p className="text-blue-700">
+            <p className="text-xs sm:text-sm text-blue-700">
               {selectedReservation.nombre_personnes || selectedReservation.guests} personne{(selectedReservation.nombre_personnes || selectedReservation.guests) > 1 ? 's' : ''} • {selectedReservation.heure_reservation || selectedReservation.time} • {Math.ceil((selectedReservation.nombre_personnes || selectedReservation.guests) / 2)} table(s) nécessaire(s)
             </p>
-            <p className="text-blue-600 text-sm">
+            <p className="text-xs sm:text-sm text-blue-600">
               Date: {selectedReservation.date_reservation || selectedReservation.date}
             </p>
             {(selectedReservation.statut === 'assignee' || selectedReservation.statut === 'arrivee') && selectedReservation.table_assignee && (
-              <p className="text-blue-600 text-sm">
+              <p className="text-xs sm:text-sm text-blue-600">
                 Table actuelle: {selectedReservation.table_assignee}
                 {selectedReservation.commentaire && selectedReservation.commentaire.includes('[Tables:') && (
                   (() => {
@@ -262,7 +262,7 @@ const SalleTab: React.FC<SalleTabProps> = ({
               </p>
             )}
             {selectedTables.length > 0 && (
-              <p className="text-blue-600 text-sm mt-2">
+              <p className="text-xs sm:text-sm text-blue-600 mt-2">
                 Tables sélectionnées: {selectedTables.join(', ')} ({selectedTables.length}/{Math.ceil((selectedReservation.nombre_personnes || selectedReservation.guests) / 2)})
               </p>
             )}
@@ -271,7 +271,7 @@ const SalleTab: React.FC<SalleTabProps> = ({
                 setSelectedReservation(null);
                 setSelectedTables([]);
               }}
-              className="mt-2 bg-gray-500 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm"
+              className="mt-2 bg-gray-500 hover:bg-gray-600 text-white px-3 py-2 rounded text-xs sm:text-sm"
             >
               Annuler
             </button>
@@ -279,11 +279,11 @@ const SalleTab: React.FC<SalleTabProps> = ({
         )}
 
         {/* Salle principale */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-6">Salle principale</h2>
-          <div className="grid grid-cols-4 gap-8">
+        <div className="bg-white rounded-lg shadow-md p-3 sm:p-6">
+          <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4 sm:mb-6">Salle principale</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6 lg:gap-8">
             {tables.filter(table => table.section === 'main').map((table) => (
-              <div key={table.number} className="flex items-center space-x-4">
+              <div key={table.number} className="flex flex-col lg:flex-row items-center lg:space-x-4 space-y-2 lg:space-y-0">
                 {/* Table */}
                 {(() => {
                   const isOccupied = selectedReservation && isTableOccupiedAtTime(
@@ -297,7 +297,7 @@ const SalleTab: React.FC<SalleTabProps> = ({
                   return (
                 <div
                   onClick={() => handleTableClick(table)}
-                  className={`w-20 h-20 rounded-lg border-2 flex items-center justify-center cursor-pointer transition-all hover:scale-105 ${
+                  className={`w-16 h-16 sm:w-20 sm:h-20 rounded-lg border-2 flex items-center justify-center cursor-pointer transition-all hover:scale-105 ${
                     isSelected ? 'bg-blue-200 border-blue-500' :
                     isOccupied ? 'bg-red-200 border-red-500' :
                     tableStatus.status === 'available' ? 'bg-green-100 border-green-300 hover:bg-green-200' :
@@ -307,7 +307,7 @@ const SalleTab: React.FC<SalleTabProps> = ({
                   }`}
                 >
                   <div className="text-center">
-                    <div className="font-bold text-gray-800">{table.number}</div>
+                    <div className="text-sm sm:text-base font-bold text-gray-800">{table.number}</div>
                     <div className="text-xs text-gray-600">{table.capacity}p</div>
                   </div>
                 </div>
@@ -315,15 +315,15 @@ const SalleTab: React.FC<SalleTabProps> = ({
                 })()}
 
                 {/* Réservations à droite de la table */}
-                <div className="flex-1 space-y-2">
+                <div className="flex-1 space-y-1 sm:space-y-2 w-full lg:w-auto">
                   {(() => {
                     const tableStatus = getTableStatus(table.number);
                     if (tableStatus.reservation) {
                       return (
-                        <div key={tableStatus.reservation.id} className="bg-gray-50 p-2 rounded text-xs border">
-                          <div className="font-medium">{tableStatus.reservation.name}</div>
+                        <div key={tableStatus.reservation.id} className="bg-gray-50 p-2 rounded text-xs border text-center lg:text-left">
+                          <div className="font-medium truncate">{tableStatus.reservation.name}</div>
                           <div className="text-gray-600">{tableStatus.reservation.time} • {tableStatus.reservation.guests}p</div>
-                          <div className="text-gray-500">{tableStatus.reservation.status === 'assignee' ? 'Réservé' : 'Arrivé'}</div>
+                          <div className="text-gray-500 text-xs">{tableStatus.reservation.status === 'assignee' ? 'Réservé' : 'Arrivé'}</div>
                         </div>
                       );
                     }
@@ -336,11 +336,11 @@ const SalleTab: React.FC<SalleTabProps> = ({
         </div>
 
         {/* Terrasse */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-6">Terrasse</h2>
-          <div className="grid grid-cols-4 gap-8">
+        <div className="bg-white rounded-lg shadow-md p-3 sm:p-6">
+          <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4 sm:mb-6">Terrasse</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6 lg:gap-8">
             {tables.filter(table => table.section === 'terrace').map((table) => (
-              <div key={table.number} className="flex items-center space-x-4">
+              <div key={table.number} className="flex flex-col lg:flex-row items-center lg:space-x-4 space-y-2 lg:space-y-0">
                 {/* Table */}
                 {(() => {
                   const isOccupied = selectedReservation && isTableOccupiedAtTime(
@@ -354,7 +354,7 @@ const SalleTab: React.FC<SalleTabProps> = ({
                   return (
                 <div
                   onClick={() => handleTableClick(table)}
-                  className={`w-20 h-20 rounded-lg border-2 flex items-center justify-center cursor-pointer transition-all hover:scale-105 ${
+                  className={`w-16 h-16 sm:w-20 sm:h-20 rounded-lg border-2 flex items-center justify-center cursor-pointer transition-all hover:scale-105 ${
                     isSelected ? 'bg-blue-200 border-blue-500' :
                     isOccupied ? 'bg-red-200 border-red-500' :
                     tableStatus.status === 'available' ? 'bg-green-100 border-green-300 hover:bg-green-200' :
@@ -364,7 +364,7 @@ const SalleTab: React.FC<SalleTabProps> = ({
                   }`}
                 >
                   <div className="text-center">
-                    <div className="font-bold text-gray-800">{table.number}</div>
+                    <div className="text-sm sm:text-base font-bold text-gray-800">{table.number}</div>
                     <div className="text-xs text-gray-600">{table.capacity}p</div>
                   </div>
                 </div>
@@ -372,15 +372,15 @@ const SalleTab: React.FC<SalleTabProps> = ({
                 })()}
 
                 {/* Réservations à droite de la table */}
-                <div className="flex-1 space-y-2">
+                <div className="flex-1 space-y-1 sm:space-y-2 w-full lg:w-auto">
                   {(() => {
                     const tableStatus = getTableStatus(table.number);
                     if (tableStatus.reservation) {
                       return (
-                        <div key={tableStatus.reservation.id} className="bg-gray-50 p-2 rounded text-xs border">
-                          <div className="font-medium">{tableStatus.reservation.name}</div>
+                        <div key={tableStatus.reservation.id} className="bg-gray-50 p-2 rounded text-xs border text-center lg:text-left">
+                          <div className="font-medium truncate">{tableStatus.reservation.name}</div>
                           <div className="text-gray-600">{tableStatus.reservation.time} • {tableStatus.reservation.guests}p</div>
-                          <div className="text-gray-500">{tableStatus.reservation.status === 'assignee' ? 'Réservé' : 'Arrivé'}</div>
+                          <div className="text-gray-500 text-xs">{tableStatus.reservation.status === 'assignee' ? 'Réservé' : 'Arrivé'}</div>
                         </div>
                       );
                     }
@@ -393,28 +393,28 @@ const SalleTab: React.FC<SalleTabProps> = ({
         </div>
 
         {/* Légende */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Légende</h3>
-          <div className="flex flex-wrap gap-6">
+        <div className="bg-white rounded-lg shadow-md p-3 sm:p-6">
+          <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">Légende</h3>
+          <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-3 sm:gap-6">
             <div className="flex items-center space-x-2">
               <div className="w-4 h-4 bg-green-100 border border-green-300 rounded"></div>
-              <span className="text-sm text-gray-700">Disponible</span>
+              <span className="text-xs sm:text-sm text-gray-700">Disponible</span>
             </div>
             <div className="flex items-center space-x-2">
               <div className="w-4 h-4 bg-blue-200 border border-blue-500 rounded"></div>
-              <span className="text-sm text-gray-700">Sélectionnée</span>
+              <span className="text-xs sm:text-sm text-gray-700">Sélectionnée</span>
             </div>
             <div className="flex items-center space-x-2">
               <div className="w-4 h-4 bg-orange-100 border border-orange-300 rounded"></div>
-              <span className="text-sm text-gray-700">Réservée</span>
+              <span className="text-xs sm:text-sm text-gray-700">Réservée</span>
             </div>
             <div className="flex items-center space-x-2">
               <div className="w-4 h-4 bg-red-100 border border-red-300 rounded"></div>
-              <span className="text-sm text-gray-700">Occupée / Indisponible</span>
+              <span className="text-xs sm:text-sm text-gray-700">Occupée</span>
             </div>
             <div className="flex items-center space-x-2">
               <div className="w-4 h-4 bg-gray-100 border border-gray-300 rounded"></div>
-              <span className="text-sm text-gray-700">Hors service</span>
+              <span className="text-xs sm:text-sm text-gray-700">Hors service</span>
             </div>
           </div>
         </div>
@@ -422,22 +422,22 @@ const SalleTab: React.FC<SalleTabProps> = ({
 
       {/* Modal détail table */}
       {showTableModal && selectedTable && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg p-4 sm:p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
             {selectedTable.currentReservation ? (
               // Modal pour table avec réservation
               <>
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">
                   Gestion de la réservation - Table {selectedTable.number}
                 </h3>
                 
                 <div className="space-y-4">
                   <div className="bg-gray-50 p-4 rounded-lg">
-                    <h4 className="font-semibold text-gray-900 mb-2">{selectedTable.currentReservation.name}</h4>
-                    <p className="text-sm text-gray-600">
+                    <h4 className="text-sm sm:text-base font-semibold text-gray-900 mb-2">{selectedTable.currentReservation.name}</h4>
+                    <p className="text-xs sm:text-sm text-gray-600">
                       {selectedTable.currentReservation.time} • {selectedTable.currentReservation.guests} personne{selectedTable.currentReservation.guests > 1 ? 's' : ''}
                     </p>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-xs sm:text-sm text-gray-600">
                       Statut: <span className={`font-medium ${
                         selectedTable.currentReservation.status === 'assignee' ? 'text-orange-600' : 'text-purple-600'
                       }`}>
@@ -446,7 +446,7 @@ const SalleTab: React.FC<SalleTabProps> = ({
                     </p>
                   </div>
                   
-                  <div className="space-y-3">
+                  <div className="space-y-2 sm:space-y-3">
                     <button
                       onClick={async () => {
                         // Trouver la réservation complète dans supabaseReservations
@@ -456,7 +456,7 @@ const SalleTab: React.FC<SalleTabProps> = ({
                           setShowTableModal(false);
                         }
                       }}
-                      className="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors"
+                      className="w-full bg-blue-600 hover:bg-blue-700 text-white px-3 sm:px-4 py-2 rounded-md transition-colors text-sm"
                     >
                       Déplacer vers une autre table
                     </button>
@@ -480,7 +480,7 @@ const SalleTab: React.FC<SalleTabProps> = ({
                             alert('Erreur lors du marquage comme arrivé');
                           }
                         }}
-                        className="w-full bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md transition-colors"
+                        className="w-full bg-green-600 hover:bg-green-700 text-white px-3 sm:px-4 py-2 rounded-md transition-colors text-sm"
                       >
                         Marquer comme arrivé
                       </button>
@@ -505,7 +505,7 @@ const SalleTab: React.FC<SalleTabProps> = ({
                             alert('Erreur lors de la finalisation');
                           }
                         }}
-                        className="w-full bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md transition-colors"
+                        className="w-full bg-purple-600 hover:bg-purple-700 text-white px-3 sm:px-4 py-2 rounded-md transition-colors text-sm"
                       >
                         Terminer et libérer la table
                       </button>
@@ -544,7 +544,7 @@ const SalleTab: React.FC<SalleTabProps> = ({
                           }
                         }
                       }}
-                      className="w-full bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md transition-colors"
+                      className="w-full bg-red-600 hover:bg-red-700 text-white px-3 sm:px-4 py-2 rounded-md transition-colors text-sm"
                     >
                       Annuler la réservation
                     </button>
@@ -554,13 +554,13 @@ const SalleTab: React.FC<SalleTabProps> = ({
             ) : (
               // Modal pour table vide
               <>
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">
                   Table {selectedTable.number} - {selectedTable.section === 'main' ? 'Salle principale' : 'Terrasse'}
                 </h3>
                 
                 <div>
-                  <p className="text-sm text-gray-600">Capacité: {selectedTable.capacity} personnes</p>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-xs sm:text-sm text-gray-600">Capacité: {selectedTable.capacity} personnes</p>
+                  <p className="text-xs sm:text-sm text-gray-600">
                     Statut: <span className="font-medium text-green-600">Disponible</span>
                   </p>
                 </div>
@@ -583,7 +583,7 @@ const SalleTab: React.FC<SalleTabProps> = ({
                       setSelectedReservation(null);
                       setShowTableModal(false);
                     }}
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors"
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white px-3 sm:px-4 py-2 rounded-md transition-colors text-sm mt-4"
                   >
                     Assigner {selectedReservation.nom_client || selectedReservation.name} à cette table
                   </button>
@@ -594,7 +594,7 @@ const SalleTab: React.FC<SalleTabProps> = ({
             <div className="flex justify-end mt-6">
               <button
                 onClick={() => setShowTableModal(false)}
-                className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+                className="px-3 sm:px-4 py-2 text-sm text-gray-600 hover:text-gray-800 transition-colors"
               >
                 Fermer
               </button>
