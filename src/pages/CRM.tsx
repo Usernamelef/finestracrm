@@ -32,6 +32,7 @@ interface Activity {
 const CRM = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('reservations');
   const [currentService, setCurrentService] = useState<'midi' | 'soir'>('midi');
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
