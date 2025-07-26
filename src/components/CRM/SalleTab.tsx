@@ -234,7 +234,7 @@ const SalleTab: React.FC<SalleTabProps> = ({
         {selectedReservation && (
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
             <h3 className="font-semibold text-blue-800 mb-2">
-              Assignation en cours pour: {selectedReservation.nom_client || selectedReservation.name}
+              {selectedReservation.statut === 'assignee' || selectedReservation.statut === 'arrivee' ? 'Modification d\'assignation' : 'Assignation en cours'} pour: {selectedReservation.nom_client || selectedReservation.name}
             </h3>
             <p className="text-blue-700">
               {selectedReservation.nombre_personnes || selectedReservation.guests} personne{(selectedReservation.nombre_personnes || selectedReservation.guests) > 1 ? 's' : ''} • {selectedReservation.heure_reservation || selectedReservation.time} • {Math.ceil((selectedReservation.nombre_personnes || selectedReservation.guests) / 2)} table(s) nécessaire(s)
@@ -242,11 +242,31 @@ const SalleTab: React.FC<SalleTabProps> = ({
             <p className="text-blue-600 text-sm">
               Date: {selectedReservation.date_reservation || selectedReservation.date}
             </p>
+            {(selectedReservation.statut === 'assignee' || selectedReservation.statut === 'arrivee') && selectedReservation.table_assignee && (
+              <p className="text-blue-600 text-sm">
+                Table actuelle: {selectedReservation.table_assignee}
+                {selectedReservation.commentaire && selectedReservation.commentaire.includes('[Tables:') && (
+                  (() => {
+                    const match = selectedReservation.commentaire.match(/\[Tables: ([^\]]+)\]/);
+                    return match ? ` (Tables multiples: ${match[1]})` : '';
+                  })()
+                )}
+              </p>
+            )}
             {selectedTables.length > 0 && (
               <p className="text-blue-600 text-sm mt-2">
                 Tables sélectionnées: {selectedTables.join(', ')} ({selectedTables.length}/{Math.ceil((selectedReservation.nombre_personnes || selectedReservation.guests) / 2)})
               </p>
             )}
+            <button
+              onClick={() => {
+                setSelectedReservation(null);
+                setSelectedTables([]);
+              }}
+              className="mt-2 bg-gray-500 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm"
+            >
+              Annuler
+            </button>
           </div>
         )}
 

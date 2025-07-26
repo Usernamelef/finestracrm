@@ -428,6 +428,12 @@ const ReservationsTab: React.FC<ReservationsTabProps> = ({
                   >
                     Marquer comme arrivé
                   </button>
+                  <button
+                    onClick={() => handleAssignTable(reservation, [], false)}
+                    className="w-full bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded text-sm transition-colors mt-2"
+                  >
+                    Modifier l'assignation
+                  </button>
                 </div>
               ))}
               {filterReservationsByDateAndService(reservations.assignee).length === 0 && (
@@ -500,6 +506,12 @@ const ReservationsTab: React.FC<ReservationsTabProps> = ({
                     className="w-full bg-purple-500 hover:bg-purple-600 text-white px-3 py-2 rounded text-sm transition-colors"
                   >
                     Terminer
+                  </button>
+                  <button
+                    onClick={() => handleAssignTable(reservation, [], false)}
+                    className="w-full bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded text-sm transition-colors mt-2"
+                  >
+                    Modifier l'assignation
                   </button>
                 </div>
               ))}

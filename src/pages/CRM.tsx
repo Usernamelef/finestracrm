@@ -411,10 +411,15 @@ const CRM = () => {
         setCurrentService(reservationService);
       }
       
-      // Mettre à jour le statut dans Supabase avec les tables assignées
+      // Déterminer le nouveau statut (garder le statut actuel si déjà assigné/arrivé)
+      const newStatus = (reservation.statut === 'assignee' || reservation.statut === 'arrivee') 
+        ? reservation.statut 
+        : 'assignee';
+      
+      // Mettre à jour dans Supabase avec les tables assignées
       import('../lib/supabase').then(({ updateReservationStatus }) => {
         const primaryTable = tableNumbers[0];
-        updateReservationStatus(reservationId, 'assignee', primaryTable, tableNumbers)
+        updateReservationStatus(reservationId, newStatus, primaryTable, tableNumbers)
           .then(() => {
             // Rafraîchir les réservations
             if (refreshReservationsRef.current) {
@@ -438,7 +443,10 @@ const CRM = () => {
       }));
       
       const tableText = tableNumbers.length > 1 ? `tables ${tableNumbers.join(', ')}` : `table ${tableNumbers[0]}`;
-      addActivity(`${reservation.nom_client || reservation.name} assigné(e) à la ${tableText}`);
+      const actionText = (reservation.statut === 'assignee' || reservation.statut === 'arrivee') 
+        ? `réassigné(e) à la ${tableText}` 
+        : `assigné(e) à la ${tableText}`;
+      addActivity(`${reservation.nom_client || reservation.name} ${actionText}`);
       
       // Nettoyer les variables d'assignation
       setReservationToAssign(null);
