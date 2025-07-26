@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Calendar, Users, MapPin, Clock, Plus, X, Edit, Trash2, Phone, Mail, User, Search, Filter, Download, ChevronDown, Check, Ban, History, MessageSquare } from 'lucide-react';
+import { Calendar, Users, MapPin, Clock, Plus, X, Edit, Trash2, Phone, Mail, User, Search, Filter, Download, ChevronDown, Check, Ban, History, MessageSquare, Menu } from 'lucide-react';
 import { createClient } from '@supabase/supabase-js';
 import DashboardTab from '../components/CRM/DashboardTab';
 import ReservationsTab from '../components/CRM/ReservationsTab';
