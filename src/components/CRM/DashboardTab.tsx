@@ -185,17 +185,17 @@ const DashboardTab: React.FC<DashboardTabProps> = ({
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-4 sm:space-y-8">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
+        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-2">
           Gestion des réservations – La Finestra
         </h1>
-        <p className="text-gray-600">Tableau de bord privé réservé au personnel</p>
+        <p className="text-sm sm:text-base text-gray-600">Tableau de bord privé réservé au personnel</p>
         
         {/* Bannière de service avec sélecteur de date */}
-        <div className="mt-4 p-4 rounded-lg bg-gradient-to-r from-primary via-primary to-accent">
-          <div className="flex justify-between items-center">
-            <h2 className="text-xl font-semibold text-white">
+        <div className="mt-4 p-3 sm:p-4 rounded-lg bg-gradient-to-r from-primary via-primary to-accent">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-2 sm:space-y-0">
+            <h2 className="text-lg sm:text-xl font-semibold text-white">
               Service du {currentService === 'midi' ? 'Midi' : 'Soir'} - {formatSelectedDate(selectedDate)}
             </h2>
             <div className="flex items-center space-x-2">
@@ -204,7 +204,7 @@ const DashboardTab: React.FC<DashboardTabProps> = ({
                 type="date"
                 value={selectedDate}
                 onChange={(e) => handleDateChange(e.target.value)}
-                className="px-3 py-1 rounded-md text-primary font-medium focus:outline-none focus:ring-2 focus:ring-white"
+                className="px-2 sm:px-3 py-1 text-sm sm:text-base rounded-md text-primary font-medium focus:outline-none focus:ring-2 focus:ring-white"
               />
             </div>
           </div>
@@ -212,74 +212,74 @@ const DashboardTab: React.FC<DashboardTabProps> = ({
       </div>
 
       {/* Statistiques du service actuel */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="bg-white p-6 rounded-lg shadow-md">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
+        <div className="bg-white p-3 sm:p-6 rounded-lg shadow-md">
           <div className="flex items-center">
-            <Calendar className="text-primary mr-3" size={24} />
+            <Calendar className="text-primary mr-2 sm:mr-3" size={20} />
             <div>
-              <p className="text-sm text-gray-600">Total réservations</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.totalReservations}</p>
+              <p className="text-xs sm:text-sm text-gray-600">Total réservations</p>
+              <p className="text-lg sm:text-2xl font-bold text-gray-900">{stats.totalReservations}</p>
             </div>
           </div>
         </div>
         
-        <div className="bg-white p-6 rounded-lg shadow-md">
+        <div className="bg-white p-3 sm:p-6 rounded-lg shadow-md">
           <div className="flex items-center">
-            <MapPin className="text-primary mr-3" size={24} />
+            <MapPin className="text-primary mr-2 sm:mr-3" size={20} />
             <div>
-              <p className="text-sm text-gray-600">Tables occupées</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.occupiedTables} / 25</p>
+              <p className="text-xs sm:text-sm text-gray-600">Tables occupées</p>
+              <p className="text-lg sm:text-2xl font-bold text-gray-900">{stats.occupiedTables} / 25</p>
             </div>
           </div>
         </div>
         
-        <div className="bg-white p-6 rounded-lg shadow-md">
+        <div className="bg-white p-3 sm:p-6 rounded-lg shadow-md">
           <div className="flex items-center">
-            <Users className="text-primary mr-3" size={24} />
+            <Users className="text-primary mr-2 sm:mr-3" size={20} />
             <div>
-              <p className="text-sm text-gray-600">Clients présents</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.totalGuests}</p>
+              <p className="text-xs sm:text-sm text-gray-600">Clients présents</p>
+              <p className="text-lg sm:text-2xl font-bold text-gray-900">{stats.totalGuests}</p>
             </div>
           </div>
         </div>
         
-        <div className="bg-white p-6 rounded-lg shadow-md">
+        <div className="bg-white p-3 sm:p-6 rounded-lg shadow-md">
           <div className="flex items-center">
-            <Clock className="text-primary mr-3" size={24} />
+            <Clock className="text-primary mr-2 sm:mr-3" size={20} />
             <div>
-              <p className="text-sm text-gray-600">En attente</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.pendingReservations}</p>
+              <p className="text-xs sm:text-sm text-gray-600">En attente</p>
+              <p className="text-lg sm:text-2xl font-bold text-gray-900">{stats.pendingReservations}</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Statistiques globales */}
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Statistiques globales</h3>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
+        <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">Statistiques globales</h3>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="text-center">
-            <p className="text-2xl font-bold text-blue-600">{globalStats.totalClients}</p>
-            <p className="text-sm text-gray-600">Clients uniques</p>
+            <p className="text-lg sm:text-2xl font-bold text-blue-600">{globalStats.totalClients}</p>
+            <p className="text-xs sm:text-sm text-gray-600">Clients uniques</p>
           </div>
           <div className="text-center">
-            <p className="text-2xl font-bold text-gray-900">{globalStats.totalReservationsEver}</p>
-            <p className="text-sm text-gray-600">Total réservations</p>
+            <p className="text-lg sm:text-2xl font-bold text-gray-900">{globalStats.totalReservationsEver}</p>
+            <p className="text-xs sm:text-sm text-gray-600">Total réservations</p>
           </div>
           <div className="text-center">
-            <p className="text-2xl font-bold text-green-600">{globalStats.completedReservations}</p>
-            <p className="text-sm text-gray-600">Terminées</p>
+            <p className="text-lg sm:text-2xl font-bold text-green-600">{globalStats.completedReservations}</p>
+            <p className="text-xs sm:text-sm text-gray-600">Terminées</p>
           </div>
           <div className="text-center">
-            <p className="text-2xl font-bold text-red-600">{globalStats.cancelledReservations}</p>
-            <p className="text-sm text-gray-600">Annulées</p>
+            <p className="text-lg sm:text-2xl font-bold text-red-600">{globalStats.cancelledReservations}</p>
+            <p className="text-xs sm:text-sm text-gray-600">Annulées</p>
           </div>
         </div>
       </div>
 
       {/* Notes importantes */}
-      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 sm:p-6">
+        <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4 flex items-center">
           <MessageSquare className="text-yellow-600 mr-2" size={20} />
           Notes importantes
         </h3>
@@ -288,12 +288,12 @@ const DashboardTab: React.FC<DashboardTabProps> = ({
         <div className="space-y-3 mb-4">
           {notes.map((note) => (
             <div key={note.id} className="bg-white p-4 rounded-md border border-yellow-200">
-              <p className="text-gray-800 mb-2">{note.content}</p>
-              <div className="flex justify-between items-center text-sm text-gray-600">
+              <p className="text-sm sm:text-base text-gray-800 mb-2">{note.content}</p>
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center text-xs sm:text-sm text-gray-600">
                 <span>Par {note.author} • {formatDateTime(note.createdAt)}</span>
                 <button
                   onClick={() => handleDeleteNote(note.id)}
-                  className="text-red-500 hover:text-red-700 transition-colors"
+                  className="text-red-500 hover:text-red-700 transition-colors mt-1 sm:mt-0"
                 >
                   <Trash2 size={16} />
                 </button>
@@ -305,7 +305,7 @@ const DashboardTab: React.FC<DashboardTabProps> = ({
         {/* Bouton ajouter une note */}
         <button
           onClick={() => setShowNewNoteModal(true)}
-          className="flex items-center space-x-2 bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-md transition-colors"
+          className="flex items-center space-x-2 bg-yellow-600 hover:bg-yellow-700 text-white px-3 sm:px-4 py-2 rounded-md transition-colors text-sm sm:text-base"
         >
           <Plus size={16} />
           <span>Ajouter une note</span>
@@ -313,20 +313,20 @@ const DashboardTab: React.FC<DashboardTabProps> = ({
       </div>
 
       {/* Résumé des réservations du service actuel */}
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+      <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
+        <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">
           Résumé des réservations - Service du {currentService}
         </h3>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           <div className="bg-pink-50 p-4 rounded-lg border border-pink-200">
-            <h4 className="font-medium text-pink-800 mb-2">En attente</h4>
-            <p className="text-2xl font-bold text-pink-600">
+            <h4 className="text-sm sm:text-base font-medium text-pink-800 mb-2">En attente</h4>
+            <p className="text-xl sm:text-2xl font-bold text-pink-600">
               {getReservationsByStatus('pending').length}
             </p>
             <div className="mt-2 space-y-1">
               {getReservationsByStatus('pending').slice(0, 3).map((reservation) => (
-                <div key={reservation.id} className="text-xs text-pink-700">
+                <div key={reservation.id} className="text-xs sm:text-sm text-pink-700">
                   {reservation.nom_client} - {reservation.heure_reservation}
                 </div>
               ))}
@@ -334,13 +334,13 @@ const DashboardTab: React.FC<DashboardTabProps> = ({
           </div>
           
           <div className="bg-red-50 p-4 rounded-lg border border-red-200">
-            <h4 className="font-medium text-red-800 mb-2">Assignées</h4>
-            <p className="text-2xl font-bold text-red-600">
+            <h4 className="text-sm sm:text-base font-medium text-red-800 mb-2">Assignées</h4>
+            <p className="text-xl sm:text-2xl font-bold text-red-600">
               {getReservationsByStatus('assigned').length}
             </p>
             <div className="mt-2 space-y-1">
               {getReservationsByStatus('assigned').slice(0, 3).map((reservation) => (
-                <div key={reservation.id} className="text-xs text-red-700">
+                <div key={reservation.id} className="text-xs sm:text-sm text-red-700">
                   {reservation.nom_client} - Table {reservation.table_assignee}
                 </div>
               ))}
@@ -348,13 +348,13 @@ const DashboardTab: React.FC<DashboardTabProps> = ({
           </div>
           
           <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
-            <h4 className="font-medium text-purple-800 mb-2">Arrivées</h4>
-            <p className="text-2xl font-bold text-purple-600">
+            <h4 className="text-sm sm:text-base font-medium text-purple-800 mb-2">Arrivées</h4>
+            <p className="text-xl sm:text-2xl font-bold text-purple-600">
               {getReservationsByStatus('arrived').length}
             </p>
             <div className="mt-2 space-y-1">
               {getReservationsByStatus('arrived').slice(0, 3).map((reservation) => (
-                <div key={reservation.id} className="text-xs text-purple-700">
+                <div key={reservation.id} className="text-xs sm:text-sm text-purple-700">
                   {reservation.nom_client} - Table {reservation.table_assignee}
                 </div>
               ))}
@@ -364,8 +364,8 @@ const DashboardTab: React.FC<DashboardTabProps> = ({
       </div>
 
       {/* Prochaines réservations */}
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+      <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
+        <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">
           Prochaines réservations aujourd'hui
         </h3>
         
@@ -385,16 +385,16 @@ const DashboardTab: React.FC<DashboardTabProps> = ({
             })
             .slice(0, 5)
             .map((reservation) => (
-            <div key={reservation.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-              <div className="flex items-center space-x-3">
-                <div className="text-sm font-medium text-gray-900">
+            <div key={reservation.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 bg-gray-50 rounded-lg space-y-2 sm:space-y-0">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-1 sm:space-y-0 sm:space-x-3">
+                <div className="text-sm font-medium text-gray-900 min-w-0">
                   {reservation.heure_reservation}
                 </div>
-                <div className="text-sm text-gray-700">
+                <div className="text-sm text-gray-700 min-w-0">
                   {reservation.nom_client} ({reservation.nombre_personnes}p)
                 </div>
                 {reservation.table_assignee && (
-                  <div className="text-xs text-gray-500">
+                  <div className="text-xs text-gray-500 min-w-0">
                     Table {reservation.table_assignee}
                   </div>
                 )}
@@ -424,18 +424,18 @@ const DashboardTab: React.FC<DashboardTabProps> = ({
       </div>
 
       {/* Dernières activités */}
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+      <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
+        <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">
           Dernières activités
         </h3>
         
         <div className="space-y-3">
           {activities.map((activity) => (
-            <div key={activity.id} className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
-              <div className="text-sm text-gray-600 font-medium">
+            <div key={activity.id} className="flex flex-col sm:flex-row items-start sm:items-center space-y-1 sm:space-y-0 sm:space-x-3 p-3 bg-gray-50 rounded-lg">
+              <div className="text-xs sm:text-sm text-gray-600 font-medium min-w-0">
                 {formatTime(activity.timestamp)}
               </div>
-              <div className="text-sm text-gray-800">
+              <div className="text-xs sm:text-sm text-gray-800 min-w-0">
                 {activity.action}
               </div>
             </div>

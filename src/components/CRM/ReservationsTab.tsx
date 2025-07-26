@@ -230,21 +230,21 @@ const ReservationsTab: React.FC<ReservationsTabProps> = ({
   };
   return (
     <>
-      <div className="space-y-6">
-        <div className="flex justify-between items-center">
-          <h1 className="text-3xl font-bold text-gray-900">
+      <div className="space-y-4 sm:space-y-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-3 sm:space-y-0">
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">
             Réservations - Service du {currentService}
           </h1>
-          <div className="flex space-x-3">
+          <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 w-full sm:w-auto">
             <button
               onClick={refreshReservations}
-              className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors"
+              className="bg-gray-500 hover:bg-gray-600 text-white px-3 sm:px-4 py-2 rounded-lg transition-colors text-sm sm:text-base"
             >
               Actualiser
             </button>
             <button
               onClick={() => setShowNewReservationModal(true)}
-              className="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
+              className="bg-primary hover:bg-primary/90 text-white px-3 sm:px-4 py-2 rounded-lg flex items-center justify-center space-x-2 transition-colors text-sm sm:text-base"
             >
               <Plus size={20} />
               <span>Ajouter une réservation</span>
@@ -253,8 +253,8 @@ const ReservationsTab: React.FC<ReservationsTabProps> = ({
         </div>
 
         {/* Section Nouvelles réservations */}
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <h3 className="text-lg font-semibold text-primary mb-4 flex items-center">
+        <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6">
+          <h3 className="text-base sm:text-lg font-semibold text-primary mb-4 flex items-center">
             <div className="w-3 h-3 bg-blue-500 rounded-full mr-3"></div>
             Nouvelles réservations ({reservations.nouvelles.length})
           </h3>
@@ -265,22 +265,22 @@ const ReservationsTab: React.FC<ReservationsTabProps> = ({
           ) : (
             <div className="space-y-4">
               {reservations.nouvelles.map((reservation) => (
-                <div key={reservation.id} className="border border-blue-200 rounded-lg p-4 bg-blue-50">
-                  <div className="flex justify-between items-start">
+                <div key={reservation.id} className="border border-blue-200 rounded-lg p-3 sm:p-4 bg-blue-50">
+                  <div className="flex flex-col lg:flex-row justify-between items-start space-y-3 lg:space-y-0">
                     <div className="flex-1">
-                      <h4 className="font-semibold text-blue-900">{reservation.nom_client}</h4>
-                      <p className="text-sm text-blue-800">
+                      <h4 className="text-sm sm:text-base font-semibold text-blue-900">{reservation.nom_client}</h4>
+                      <p className="text-xs sm:text-sm text-blue-800">
                         {new Date(reservation.date_reservation).toLocaleDateString('fr-FR')} à {reservation.heure_reservation} • {reservation.nombre_personnes} personne{reservation.nombre_personnes > 1 ? 's' : ''}
                       </p>
-                      <p className="text-sm text-blue-700">{reservation.email_client} • {reservation.telephone_client}</p>
+                      <p className="text-xs sm:text-sm text-blue-700 break-all">{reservation.email_client} • {reservation.telephone_client}</p>
                       {reservation.commentaire && (
-                        <p className="text-sm text-blue-600 mt-1 italic">"{reservation.commentaire}"</p>
+                        <p className="text-xs sm:text-sm text-blue-600 mt-1 italic">"{reservation.commentaire}"</p>
                       )}
                     </div>
-                    <div className="flex space-x-2">
+                    <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 w-full lg:w-auto">
                       <button
                         onClick={() => confirmReservation(reservation)}
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm flex items-center space-x-1"
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded text-xs sm:text-sm flex items-center justify-center space-x-1"
                       >
                         <Check size={14} />
                         <span>Confirmer</span>
@@ -290,7 +290,7 @@ const ReservationsTab: React.FC<ReservationsTabProps> = ({
                           setReservationToCancel(reservation);
                           setShowCancelModal(true);
                         }}
-                        className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm flex items-center space-x-1"
+                        className="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded text-xs sm:text-sm flex items-center justify-center space-x-1"
                       >
                         <Ban size={14} />
                         <span>Annuler</span>
@@ -307,8 +307,8 @@ const ReservationsTab: React.FC<ReservationsTabProps> = ({
         </div>
 
         {/* Section Réservations en attente */}
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <h3 className="text-lg font-semibold text-primary mb-4 flex items-center">
+        <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6">
+          <h3 className="text-base sm:text-lg font-semibold text-primary mb-4 flex items-center">
             <div className="w-3 h-3 bg-pink-500 rounded-full mr-3"></div>
             En attente d'assignation ({reservations.en_attente.length})
           </h3>
@@ -327,27 +327,27 @@ const ReservationsTab: React.FC<ReservationsTabProps> = ({
                 return (hourA * 60 + minA) - (hourB * 60 + minB);
               })
               .map((reservation) => (
-                <div key={reservation.id} className="border border-pink-200 rounded-lg p-4 bg-pink-50">
-                  <div className="flex justify-between items-start">
+                <div key={reservation.id} className="border border-pink-200 rounded-lg p-3 sm:p-4 bg-pink-50">
+                  <div className="flex flex-col lg:flex-row justify-between items-start space-y-3 lg:space-y-0">
                     <div className="flex-1">
-                      <h4 className="font-semibold text-pink-900">{reservation.nom_client}</h4>
-                      <p className="text-sm text-pink-800">
+                      <h4 className="text-sm sm:text-base font-semibold text-pink-900">{reservation.nom_client}</h4>
+                      <p className="text-xs sm:text-sm text-pink-800">
                         {new Date(reservation.date_reservation).toLocaleDateString('fr-FR')} à {reservation.heure_reservation} • {reservation.nombre_personnes} personne{reservation.nombre_personnes > 1 ? 's' : ''}
                       </p>
-                      <div className="text-sm text-pink-700">
+                      <div className="text-xs sm:text-sm text-pink-700 break-all">
                         {reservation.email_client && (
                           <span>{reservation.email_client} • </span>
                         )}
                         <span>{reservation.telephone_client}</span>
                       </div>
                       {reservation.commentaire && (
-                        <p className="text-sm text-pink-600 mt-1 italic">"{reservation.commentaire}"</p>
+                        <p className="text-xs sm:text-sm text-pink-600 mt-1 italic">"{reservation.commentaire}"</p>
                       )}
                     </div>
-                    <div className="flex space-x-2">
+                    <div className="w-full lg:w-auto">
                       <button
                         onClick={() => handleAssignTable(reservation, [], false)}
-                        className="bg-pink-600 hover:bg-pink-700 text-white px-3 py-1 rounded text-sm"
+                        className="w-full bg-pink-600 hover:bg-pink-700 text-white px-3 py-2 rounded text-xs sm:text-sm"
                       >
                         Assigner une table
                       </button>
@@ -361,11 +361,11 @@ const ReservationsTab: React.FC<ReservationsTabProps> = ({
           </div>
         </div>
         {/* Interface en 3 colonnes avec opacités graduées */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
 
           {/* Colonne Assignée */}
-          <div className="bg-red-50 rounded-lg p-4 border border-red-200">
-            <h2 className="text-lg font-semibold text-red-800 mb-4 flex items-center">
+          <div className="bg-red-50 rounded-lg p-3 sm:p-4 border border-red-200">
+            <h2 className="text-base sm:text-lg font-semibold text-red-800 mb-4 flex items-center">
               <div className="w-3 h-3 bg-red-500 rounded-full mr-2"></div>
               Assignée ({filterReservationsByDateAndService(reservations.assignee).length})
             </h2>
@@ -385,22 +385,22 @@ const ReservationsTab: React.FC<ReservationsTabProps> = ({
                   return (hourA * 60 + minA) - (hourB * 60 + minB);
                 })
                 .map((reservation) => (
-                <div key={reservation.id} className="bg-white p-4 rounded-lg shadow-sm border">
-                  <div className="flex justify-between items-start mb-2">
-                    <h3 className="font-semibold text-gray-900">{reservation.nom_client}</h3>
-                    <span className="text-sm text-gray-600">{reservation.heure_reservation}</span>
+                <div key={reservation.id} className="bg-white p-3 sm:p-4 rounded-lg shadow-sm border">
+                  <div className="flex flex-col sm:flex-row justify-between items-start mb-2 space-y-1 sm:space-y-0">
+                    <h3 className="text-sm sm:text-base font-semibold text-gray-900">{reservation.nom_client}</h3>
+                    <span className="text-xs sm:text-sm text-gray-600">{reservation.heure_reservation}</span>
                   </div>
-                  <p className="text-sm text-gray-600 mb-1">
+                  <p className="text-xs sm:text-sm text-gray-600 mb-1">
                     {new Date(reservation.date_reservation).toLocaleDateString('fr-FR')}
                   </p>
-                  <p className="text-sm text-gray-600 mb-1">
+                  <p className="text-xs sm:text-sm text-gray-600 mb-1">
                     {reservation.nombre_personnes} personne{reservation.nombre_personnes > 1 ? 's' : ''}
                   </p>
                   {reservation.email_client && (
-                    <p className="text-sm text-gray-600 mb-1">{reservation.email_client}</p>
+                    <p className="text-xs sm:text-sm text-gray-600 mb-1 break-all">{reservation.email_client}</p>
                   )}
                   {reservation.table_assignee && (
-                    <p className="text-sm font-medium text-red-700 mb-3">
+                    <p className="text-xs sm:text-sm font-medium text-red-700 mb-3">
                       {(() => {
                         // Extraire les tables multiples du commentaire si présent
                         if (reservation.commentaire && reservation.commentaire.includes('[Tables:')) {
@@ -413,27 +413,29 @@ const ReservationsTab: React.FC<ReservationsTabProps> = ({
                       })()}
                     </p>
                   )}
-                  <button
-                    onClick={async () => {
-                      try {
-                        await updateReservationStatus(reservation.id, 'arrivee');
-                        await fetchAllReservations();
-                        addActivity(`Client ${reservation.nom_client} marqué comme arrivé.`);
-                      } catch (error) {
-                        console.error("Erreur:", error);
-                        alert("Erreur lors du marquage comme arrivé.");
-                      }
-                    }}
-                    className="w-full bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded text-sm transition-colors"
-                  >
-                    Marquer comme arrivé
-                  </button>
-                  <button
-                    onClick={() => handleAssignTable(reservation, [], false)}
-                    className="w-full bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded text-sm transition-colors mt-2"
-                  >
-                    Modifier l'assignation
-                  </button>
+                  <div className="space-y-2">
+                    <button
+                      onClick={async () => {
+                        try {
+                          await updateReservationStatus(reservation.id, 'arrivee');
+                          await fetchAllReservations();
+                          addActivity(`Client ${reservation.nom_client} marqué comme arrivé.`);
+                        } catch (error) {
+                          console.error("Erreur:", error);
+                          alert("Erreur lors du marquage comme arrivé.");
+                        }
+                      }}
+                      className="w-full bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded text-xs sm:text-sm transition-colors"
+                    >
+                      Marquer comme arrivé
+                    </button>
+                    <button
+                      onClick={() => handleAssignTable(reservation, [], false)}
+                      className="w-full bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded text-xs sm:text-sm transition-colors"
+                    >
+                      Modifier l'assignation
+                    </button>
+                  </div>
                 </div>
               ))}
               {filterReservationsByDateAndService(reservations.assignee).length === 0 && (
@@ -443,8 +445,8 @@ const ReservationsTab: React.FC<ReservationsTabProps> = ({
           </div>
 
           {/* Colonne Arrivé */}
-          <div className="bg-purple-50 rounded-lg p-4 border border-purple-200">
-            <h2 className="text-lg font-semibold text-purple-800 mb-4 flex items-center">
+          <div className="bg-purple-50 rounded-lg p-3 sm:p-4 border border-purple-200">
+            <h2 className="text-base sm:text-lg font-semibold text-purple-800 mb-4 flex items-center">
               <div className="w-3 h-3 bg-purple-500 rounded-full mr-2"></div>
               Arrivé ({filterReservationsByDateAndService(reservations.arrivee).length})
             </h2>
@@ -464,22 +466,22 @@ const ReservationsTab: React.FC<ReservationsTabProps> = ({
                   return (hourA * 60 + minA) - (hourB * 60 + minB);
                 })
                 .map((reservation) => (
-                <div key={reservation.id} className="bg-white p-4 rounded-lg shadow-sm border">
-                  <div className="flex justify-between items-start mb-2">
-                    <h3 className="font-semibold text-gray-900">{reservation.nom_client}</h3>
-                    <span className="text-sm text-gray-600">{reservation.heure_reservation}</span>
+                <div key={reservation.id} className="bg-white p-3 sm:p-4 rounded-lg shadow-sm border">
+                  <div className="flex flex-col sm:flex-row justify-between items-start mb-2 space-y-1 sm:space-y-0">
+                    <h3 className="text-sm sm:text-base font-semibold text-gray-900">{reservation.nom_client}</h3>
+                    <span className="text-xs sm:text-sm text-gray-600">{reservation.heure_reservation}</span>
                   </div>
-                  <p className="text-sm text-gray-600 mb-1">
+                  <p className="text-xs sm:text-sm text-gray-600 mb-1">
                     {new Date(reservation.date_reservation).toLocaleDateString('fr-FR')}
                   </p>
-                  <p className="text-sm text-gray-600 mb-1">
+                  <p className="text-xs sm:text-sm text-gray-600 mb-1">
                     {reservation.nombre_personnes} personne{reservation.nombre_personnes > 1 ? 's' : ''}
                   </p>
                   {reservation.email_client && (
-                    <p className="text-sm text-gray-600 mb-1">{reservation.email_client}</p>
+                    <p className="text-xs sm:text-sm text-gray-600 mb-1 break-all">{reservation.email_client}</p>
                   )}
                   {reservation.table_assignee && (
-                    <p className="text-sm font-medium text-purple-700 mb-3">
+                    <p className="text-xs sm:text-sm font-medium text-purple-700 mb-3">
                       {(() => {
                         // Extraire les tables multiples du commentaire si présent
                         if (reservation.commentaire && reservation.commentaire.includes('[Tables:')) {
@@ -492,27 +494,29 @@ const ReservationsTab: React.FC<ReservationsTabProps> = ({
                       })()}
                     </p>
                   )}
-                  <button
-                    onClick={async () => {
-                      try {
-                        await updateReservationStatus(reservation.id, 'terminee');
-                        await fetchAllReservations();
-                        addActivity(`Réservation de ${reservation.nom_client} terminée.`);
-                      } catch (error) {
-                        console.error("Erreur:", error);
-                        alert("Erreur lors de la finalisation.");
-                      }
-                    }}
-                    className="w-full bg-purple-500 hover:bg-purple-600 text-white px-3 py-2 rounded text-sm transition-colors"
-                  >
-                    Terminer
-                  </button>
-                  <button
-                    onClick={() => handleAssignTable(reservation, [], false)}
-                    className="w-full bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded text-sm transition-colors mt-2"
-                  >
-                    Modifier l'assignation
-                  </button>
+                  <div className="space-y-2">
+                    <button
+                      onClick={async () => {
+                        try {
+                          await updateReservationStatus(reservation.id, 'terminee');
+                          await fetchAllReservations();
+                          addActivity(`Réservation de ${reservation.nom_client} terminée.`);
+                        } catch (error) {
+                          console.error("Erreur:", error);
+                          alert("Erreur lors de la finalisation.");
+                        }
+                      }}
+                      className="w-full bg-purple-500 hover:bg-purple-600 text-white px-3 py-2 rounded text-xs sm:text-sm transition-colors"
+                    >
+                      Terminer
+                    </button>
+                    <button
+                      onClick={() => handleAssignTable(reservation, [], false)}
+                      className="w-full bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded text-xs sm:text-sm transition-colors"
+                    >
+                      Modifier l'assignation
+                    </button>
+                  </div>
                 </div>
               ))}
               {filterReservationsByDateAndService(reservations.arrivee).length === 0 && (

@@ -628,13 +628,13 @@ const CRM = () => {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <header className="bg-primary shadow-lg sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center space-x-8">
               <img
                 src="/assets/lafinestra-geneve-logo-blanc.png"
                 alt="La Finestra"
-                className="h-12 w-auto"
+                className="h-8 sm:h-12 lg:h-14 w-auto"
               />
               
               {/* Sélecteur de service */}
@@ -662,7 +662,7 @@ const CRM = () => {
               </div>
               
               {/* Navigation CRM */}
-              <nav className="hidden md:flex space-x-6">
+              <nav className="hidden lg:flex space-x-6">
                 {[
                   { id: 'dashboard', label: 'Tableau de bord' },
                   { id: 'reservations', label: 'Réservations' },
@@ -695,10 +695,17 @@ const CRM = () => {
               </nav>
             </div>
 
-            <div className="flex items-center space-x-4">
+            {/* Mobile Menu Button */}
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                className="lg:hidden text-white hover:text-secondary transition-colors p-2"
+              >
+                {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+              </button>
               <button
                 onClick={handleLogout}
-                className="text-white hover:text-gray-300 transition-colors"
+                className="hidden sm:block text-white hover:text-gray-300 transition-colors text-sm"
               >
                 Déconnexion
               </button>
@@ -707,8 +714,60 @@ const CRM = () => {
         </div>
       </header>
 
+      {/* Mobile Navigation Menu */}
+      <div className={`fixed inset-0 z-40 lg:hidden transition-opacity duration-300 ${
+        isMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+      }`}>
+        <div className="absolute inset-0 bg-black/50" onClick={() => setIsMenuOpen(false)} />
+        <nav className={`absolute top-0 right-0 h-full w-80 max-w-[90vw] bg-primary shadow-xl transform transition-transform duration-300 ${
+          isMenuOpen ? 'translate-x-0' : 'translate-x-full'
+        }`}>
+          <div className="pt-20 px-4">
+            {[
+              { id: 'dashboard', label: 'Tableau de bord' },
+              { id: 'reservations', label: 'Réservations' },
+              { id: 'salle', label: 'Plan de salle' },
+              { id: 'clients', label: 'Clients' },
+              { id: 'historique', label: 'Historique' }
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => {
+                  setActiveTab(tab.id);
+                  setIsMenuOpen(false);
+                  if (tab.id === 'reservations') {
+                    resetNewReservationCount();
+                  }
+                }}
+                className={`block w-full text-left py-4 px-4 font-sans text-lg transition-colors ${
+                  activeTab === tab.id
+                    ? 'text-secondary border-l-4 border-secondary bg-white/10'
+                    : 'text-white hover:text-secondary hover:bg-white/5'
+                }`}
+              >
+                {tab.label}
+                {tab.id === 'reservations' && newReservationCount > 0 && (
+                  <span className="ml-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 inline-flex items-center justify-center">
+                    {newReservationCount}
+                  </span>
+                )}
+              </button>
+            ))}
+            
+            <div className="border-t border-gray-700 mt-4 pt-4">
+              <button
+                onClick={handleLogout}
+                className="block w-full text-left py-4 px-4 text-white hover:text-secondary transition-colors"
+              >
+                Déconnexion
+              </button>
+            </div>
+          </div>
+        </nav>
+      </div>
+
       {/* Contenu principal */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 py-4 sm:py-8 pt-20 sm:pt-24">
         {activeTab === 'dashboard' && (
           <DashboardTab
             currentService={currentService}
