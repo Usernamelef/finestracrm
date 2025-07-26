@@ -719,8 +719,6 @@ const CRM = () => {
             setNewNote={setNewNote}
             handleAddNote={handleAddNote}
             handleDeleteNote={handleDeleteNote}
-            getStats={getStats}
-            getReservationsByStatus={getReservationsByStatus}
           />
         )}
 
