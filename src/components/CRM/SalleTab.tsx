@@ -175,9 +175,17 @@ const SalleTab: React.FC<SalleTabProps> = ({
         }, 1000);
       }
     } else {
-      // Aucune réservation en attente - afficher les détails de la table
-      setSelectedTable(table);
-      setShowTableModal(true);
+      // Aucune réservation en attente - vérifier s'il y a une réservation sur cette table
+      const tableStatus = getTableStatus(table.number);
+      if (tableStatus.reservation) {
+        // Il y a une réservation sur cette table - afficher le modal de gestion
+        setSelectedTable({...table, currentReservation: tableStatus.reservation});
+        setShowTableModal(true);
+      } else {
+        // Table vide - afficher les détails de la table
+        setSelectedTable(table);
+        setShowTableModal(true);
+      }
     }
   };
 
@@ -416,77 +424,172 @@ const SalleTab: React.FC<SalleTabProps> = ({
       {showTableModal && selectedTable && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              Table {selectedTable.number} - {selectedTable.section === 'main' ? 'Salle principale' : 'Terrasse'}
-            </h3>
-            
-            <div className="space-y-4">
-              <div>
-                <p className="text-sm text-gray-600">Capacité: {selectedTable.capacity} personnes</p>
-                <p className="text-sm text-gray-600">
-                  Statut: <span className={`font-medium ${
-                    selectedTable.status === 'available' ? 'text-green-600' :
-                    selectedTable.status === 'reserved' ? 'text-orange-600' :
-                    selectedTable.status === 'occupied' ? 'text-red-600' :
-                    'text-gray-600'
-                  }`}>
-                    {selectedTable.status === 'available' ? 'Disponible' :
-                     selectedTable.status === 'reserved' ? 'Réservée' :
-                     selectedTable.status === 'occupied' ? 'Occupée' :
-                     'Indisponible'}
-                  </span>
-                </p>
-              </div>
-              
-              {selectedTable.reservations.length > 0 && (
-                <div>
-                  <h4 className="font-medium text-gray-900 mb-2">Réservations:</h4>
-                  {selectedTable.reservations.map((reservation) => (
-                    <div key={reservation.id} className="bg-gray-50 p-2 rounded text-xs border">
-                      <div className="font-medium">{reservation.name}</div>
-                      <div className="text-gray-600">{reservation.time} • {reservation.guests}p</div>
-                      <p className="text-sm text-gray-600">Statut: {reservation.status}</p>
-                    </div>
-                  ))}
+            {selectedTable.currentReservation ? (
+              // Modal pour table avec réservation
+              <>
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                  Gestion de la réservation - Table {selectedTable.number}
+                </h3>
+                
+                <div className="space-y-4">
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <h4 className="font-semibold text-gray-900 mb-2">{selectedTable.currentReservation.name}</h4>
+                    <p className="text-sm text-gray-600">
+                      {selectedTable.currentReservation.time} • {selectedTable.currentReservation.guests} personne{selectedTable.currentReservation.guests > 1 ? 's' : ''}
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      Statut: <span className={`font-medium ${
+                        selectedTable.currentReservation.status === 'assignee' ? 'text-orange-600' : 'text-purple-600'
+                      }`}>
+                        {selectedTable.currentReservation.status === 'assignee' ? 'Assignée' : 'Arrivée'}
+                      </span>
+                    </p>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <button
+                      onClick={async () => {
+                        // Trouver la réservation complète dans supabaseReservations
+                        const fullReservation = supabaseReservations.find(r => r.id === selectedTable.currentReservation.id);
+                        if (fullReservation) {
+                          setSelectedReservation(fullReservation);
+                          setShowTableModal(false);
+                        }
+                      }}
+                      className="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors"
+                    >
+                      Déplacer vers une autre table
+                    </button>
+                    
+                    {selectedTable.currentReservation.status === 'assignee' && (
+                      <button
+                        onClick={async () => {
+                          try {
+                            const { updateReservationStatus } = await import('../../lib/supabase');
+                            await updateReservationStatus(selectedTable.currentReservation.id, 'arrivee');
+                            
+                            // Rafraîchir les données
+                            const { getAllReservations } = await import('../../lib/supabase');
+                            const allReservations = await getAllReservations();
+                            setSupabaseReservations(allReservations);
+                            
+                            setShowTableModal(false);
+                            addActivity(`Client ${selectedTable.currentReservation.name} marqué comme arrivé - Table ${selectedTable.number}`);
+                          } catch (error) {
+                            console.error('Erreur:', error);
+                            alert('Erreur lors du marquage comme arrivé');
+                          }
+                        }}
+                        className="w-full bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md transition-colors"
+                      >
+                        Marquer comme arrivé
+                      </button>
+                    )}
+                    
+                    {selectedTable.currentReservation.status === 'arrivee' && (
+                      <button
+                        onClick={async () => {
+                          try {
+                            const { updateReservationStatus } = await import('../../lib/supabase');
+                            await updateReservationStatus(selectedTable.currentReservation.id, 'terminee');
+                            
+                            // Rafraîchir les données
+                            const { getAllReservations } = await import('../../lib/supabase');
+                            const allReservations = await getAllReservations();
+                            setSupabaseReservations(allReservations);
+                            
+                            setShowTableModal(false);
+                            addActivity(`Table ${selectedTable.number} libérée - ${selectedTable.currentReservation.name}`);
+                          } catch (error) {
+                            console.error('Erreur:', error);
+                            alert('Erreur lors de la finalisation');
+                          }
+                        }}
+                        className="w-full bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md transition-colors"
+                      >
+                        Terminer et libérer la table
+                      </button>
+                    )}
+                    
+                    <button
+                      onClick={async () => {
+                        if (confirm(`Êtes-vous sûr de vouloir annuler la réservation de ${selectedTable.currentReservation.name} ?`)) {
+                          try {
+                            const { updateReservationStatus, sendEmail, getCancellationEmailTemplate } = await import('../../lib/supabase');
+                            
+                            // Trouver la réservation complète
+                            const fullReservation = supabaseReservations.find(r => r.id === selectedTable.currentReservation.id);
+                            if (fullReservation) {
+                              await updateReservationStatus(fullReservation.id, 'annulee');
+                              
+                              // Envoyer email d'annulation
+                              const emailHtml = getCancellationEmailTemplate(
+                                fullReservation.nom_client,
+                                new Date(fullReservation.date_reservation).toLocaleDateString('fr-FR'),
+                                fullReservation.heure_reservation
+                              );
+                              await sendEmail(fullReservation.email_client, 'Annulation de votre réservation à La Finestra', emailHtml);
+                              
+                              // Rafraîchir les données
+                              const { getAllReservations } = await import('../../lib/supabase');
+                              const allReservations = await getAllReservations();
+                              setSupabaseReservations(allReservations);
+                              
+                              setShowTableModal(false);
+                              addActivity(`Réservation de ${selectedTable.currentReservation.name} annulée - Table ${selectedTable.number} libérée`);
+                            }
+                          } catch (error) {
+                            console.error('Erreur:', error);
+                            alert('Erreur lors de l\'annulation');
+                          }
+                        }
+                      }}
+                      className="w-full bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md transition-colors"
+                    >
+                      Annuler la réservation
+                    </button>
+                  </div>
                 </div>
-              )}
-              
-              {selectedReservation && selectedTable.status === 'available' && (
-                <button
-                  onClick={() => {
-                    const guestCount = selectedReservation.nombre_personnes || selectedReservation.guests;
-                    const tablesNeeded = Math.ceil(guestCount / 2); // 2 personnes par table
-                    if (tablesNeeded === 1) {
-                      handleAssignTable(selectedReservation.id, [selectedTable.number], true);
-                    } else {
-                      // Pour les groupes plus grands, proposer des tables adjacentes
-                      const availableCombos = getAvailableAdjacentTables(guestCount);
-                      const combo = availableCombos.find(combo => combo.includes(selectedTable.number));
-                      if (combo) {
-                        handleAssignTable(selectedReservation.id, combo, true);
+              </>
+            ) : (
+              // Modal pour table vide
+              <>
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                  Table {selectedTable.number} - {selectedTable.section === 'main' ? 'Salle principale' : 'Terrasse'}
+                </h3>
+                
+                <div>
+                  <p className="text-sm text-gray-600">Capacité: {selectedTable.capacity} personnes</p>
+                  <p className="text-sm text-gray-600">
+                    Statut: <span className="font-medium text-green-600">Disponible</span>
+                  </p>
+                </div>
+                
+                {selectedReservation && (
+                  <button
+                    onClick={() => {
+                      const guestCount = selectedReservation.nombre_personnes || selectedReservation.guests;
+                      const tablesNeeded = Math.ceil(guestCount / 2); // 2 personnes par table
+                      if (tablesNeeded === 1) {
+                        handleAssignTable(selectedReservation.id, [selectedTable.number], true);
+                      } else {
+                        // Pour les groupes plus grands, proposer des tables adjacentes
+                        const availableCombos = getAvailableAdjacentTables(guestCount);
+                        const combo = availableCombos.find(combo => combo.includes(selectedTable.number));
+                        if (combo) {
+                          handleAssignTable(selectedReservation.id, combo, true);
+                        }
                       }
-                    }
-                    setSelectedReservation(null);
-                    setShowTableModal(false);
-                  }}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors"
-                >
-                  Assigner {selectedReservation.nom_client || selectedReservation.name} à cette table
-                </button>
-              )}
-              
-              {selectedTable.status === 'occupied' && (
-                <button
-                  onClick={() => {
-                    handleFreeTable(selectedTable.number);
-                    setShowTableModal(false);
-                  }}
-                  className="w-full bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md transition-colors"
-                >
-                  Libérer la table
-                </button>
-              )}
-            </div>
+                      setSelectedReservation(null);
+                      setShowTableModal(false);
+                    }}
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors"
+                  >
+                    Assigner {selectedReservation.nom_client || selectedReservation.name} à cette table
+                  </button>
+                )}
+              </>
+            )}
             
             <div className="flex justify-end mt-6">
               <button
