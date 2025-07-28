@@ -146,7 +146,7 @@ const CRM = () => {
   ]);
 
   const [tables, setTables] = useState<Table[]>([
-    // Tables principales (1-13)
+    // Toutes les tables (1-13 + 20-31)
     ...Array.from({ length: 13 }, (_, i) => ({
       number: i + 1,
       capacity: 2,
@@ -154,13 +154,13 @@ const CRM = () => {
       reservations: [],
       section: 'main' as const
     })),
-    // Tables terrasse (20-31)
+    // Tables 20-31
     ...Array.from({ length: 12 }, (_, i) => ({
       number: i + 20,
       capacity: 2,
       status: 'available' as const,
       reservations: [],
-      section: 'terrace' as const
+      section: 'main' as const
     }))
   ]);
 

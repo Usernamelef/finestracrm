@@ -281,114 +281,99 @@ const SalleTab: React.FC<SalleTabProps> = ({
         {/* Salle principale */}
         <div className="bg-white rounded-lg shadow-md p-3 sm:p-6">
           <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4 sm:mb-6">Salle principale</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6 lg:gap-8">
-            {tables.filter(table => table.section === 'main').map((table) => (
-              <div key={table.number} className="flex flex-col lg:flex-row items-center lg:space-x-4 space-y-2 lg:space-y-0">
-                {/* Table */}
-                {(() => {
-                  const isOccupied = selectedReservation && isTableOccupiedAtTime(
-                    table.number, 
-                    selectedDateLocal, 
-                    selectedReservation.heure_reservation || selectedReservation.time
-                  );
-                  const isSelected = selectedTables.includes(table.number);
-                  const tableStatus = getTableStatus(table.number);
-                  
-                  return (
-                <div
-                  onClick={() => handleTableClick(table)}
-                  className={`w-16 h-16 sm:w-20 sm:h-20 rounded-lg border-2 flex items-center justify-center cursor-pointer transition-all hover:scale-105 ${
-                    isSelected ? 'bg-blue-200 border-blue-500' :
-                    isOccupied ? 'bg-red-200 border-red-500' :
-                    tableStatus.status === 'available' ? 'bg-green-100 border-green-300 hover:bg-green-200' :
-                    tableStatus.status === 'reserved' ? 'bg-orange-100 border-orange-300 hover:bg-orange-200' :
-                    tableStatus.status === 'occupied' ? 'bg-red-100 border-red-300 hover:bg-red-200' :
-                    'bg-gray-100 border-gray-300'
-                  }`}
-                >
-                  <div className="text-center">
-                    <div className="text-sm sm:text-base font-bold text-gray-800">{table.number}</div>
-                    <div className="text-xs text-gray-600">{table.capacity}p</div>
+          
+          {/* Plan de salle selon l'image */}
+          <div className="relative min-h-[600px] bg-gray-50 rounded-lg p-4">
+            
+            {/* Fonction pour rendre une table */}
+            {(() => {
+              const renderTable = (tableNumber: number, style: React.CSSProperties) => {
+                const table = tables.find(t => t.number === tableNumber);
+                if (!table) return null;
+                
+                const isOccupied = selectedReservation && isTableOccupiedAtTime(
+                  table.number, 
+                  selectedDateLocal, 
+                  selectedReservation.heure_reservation || selectedReservation.time
+                );
+                const isSelected = selectedTables.includes(table.number);
+                const tableStatus = getTableStatus(table.number);
+                
+                return (
+                  <div key={table.number} className="absolute" style={style}>
+                    <div
+                      onClick={() => handleTableClick(table)}
+                      className={`w-16 h-16 sm:w-20 sm:h-20 rounded-lg border-2 flex items-center justify-center cursor-pointer transition-all hover:scale-105 ${
+                        isSelected ? 'bg-blue-200 border-blue-500' :
+                        isOccupied ? 'bg-red-200 border-red-500' :
+                        tableStatus.status === 'available' ? 'bg-green-100 border-green-300 hover:bg-green-200' :
+                        tableStatus.status === 'reserved' ? 'bg-orange-100 border-orange-300 hover:bg-orange-200' :
+                        tableStatus.status === 'occupied' ? 'bg-red-100 border-red-300 hover:bg-red-200' :
+                        'bg-gray-100 border-gray-300'
+                      }`}
+                    >
+                      <div className="text-center">
+                        <div className="text-sm sm:text-base font-bold text-gray-800">{table.number}</div>
+                        <div className="text-xs text-gray-600">{table.capacity}p</div>
+                      </div>
+                    </div>
+                    
+                    {/* Réservation sous la table */}
+                    {(() => {
+                      const tableStatus = getTableStatus(table.number);
+                      if (tableStatus.reservation) {
+                        return (
+                          <div className="absolute top-20 left-0 w-16 sm:w-20 bg-gray-50 p-1 rounded text-xs border text-center">
+                            <div className="font-medium truncate text-xs">{tableStatus.reservation.name}</div>
+                            <div className="text-gray-600 text-xs">{tableStatus.reservation.time}</div>
+                          </div>
+                        );
+                      }
+                      return null;
+                    })()}
                   </div>
-                </div>
-                  );
-                })()}
-
-                {/* Réservations à droite de la table */}
-                <div className="flex-1 space-y-1 sm:space-y-2 w-full lg:w-auto">
-                  {(() => {
-                    const tableStatus = getTableStatus(table.number);
-                    if (tableStatus.reservation) {
-                      return (
-                        <div key={tableStatus.reservation.id} className="bg-gray-50 p-2 rounded text-xs border text-center lg:text-left">
-                          <div className="font-medium truncate">{tableStatus.reservation.name}</div>
-                          <div className="text-gray-600">{tableStatus.reservation.time} • {tableStatus.reservation.guests}p</div>
-                          <div className="text-gray-500 text-xs">{tableStatus.reservation.status === 'assignee' ? 'Réservé' : 'Arrivé'}</div>
-                        </div>
-                      );
-                    }
-                    return null;
-                  })()}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Terrasse */}
-        <div className="bg-white rounded-lg shadow-md p-3 sm:p-6">
-          <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4 sm:mb-6">Terrasse</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6 lg:gap-8">
-            {tables.filter(table => table.section === 'terrace').map((table) => (
-              <div key={table.number} className="flex flex-col lg:flex-row items-center lg:space-x-4 space-y-2 lg:space-y-0">
-                {/* Table */}
-                {(() => {
-                  const isOccupied = selectedReservation && isTableOccupiedAtTime(
-                    table.number, 
-                    selectedDateLocal, 
-                    selectedReservation.heure_reservation || selectedReservation.time
-                  );
-                  const isSelected = selectedTables.includes(table.number);
-                  const tableStatus = getTableStatus(table.number);
+                );
+              };
+              
+              return (
+                <>
+                  {/* Rangée du haut */}
+                  {renderTable(28, { top: '20px', left: '50px' })}
+                  {renderTable(29, { top: '20px', left: '150px' })}
+                  {renderTable(31, { top: '20px', right: '150px' })}
+                  {renderTable(30, { top: '20px', right: '50px' })}
                   
-                  return (
-                <div
-                  onClick={() => handleTableClick(table)}
-                  className={`w-16 h-16 sm:w-20 sm:h-20 rounded-lg border-2 flex items-center justify-center cursor-pointer transition-all hover:scale-105 ${
-                    isSelected ? 'bg-blue-200 border-blue-500' :
-                    isOccupied ? 'bg-red-200 border-red-500' :
-                    tableStatus.status === 'available' ? 'bg-green-100 border-green-300 hover:bg-green-200' :
-                    tableStatus.status === 'reserved' ? 'bg-orange-100 border-orange-300 hover:bg-orange-200' :
-                    tableStatus.status === 'occupied' ? 'bg-red-100 border-red-300 hover:bg-red-200' :
-                    'bg-gray-100 border-gray-300'
-                  }`}
-                >
-                  <div className="text-center">
-                    <div className="text-sm sm:text-base font-bold text-gray-800">{table.number}</div>
-                    <div className="text-xs text-gray-600">{table.capacity}p</div>
-                  </div>
-                </div>
-                  );
-                })()}
-
-                {/* Réservations à droite de la table */}
-                <div className="flex-1 space-y-1 sm:space-y-2 w-full lg:w-auto">
-                  {(() => {
-                    const tableStatus = getTableStatus(table.number);
-                    if (tableStatus.reservation) {
-                      return (
-                        <div key={tableStatus.reservation.id} className="bg-gray-50 p-2 rounded text-xs border text-center lg:text-left">
-                          <div className="font-medium truncate">{tableStatus.reservation.name}</div>
-                          <div className="text-gray-600">{tableStatus.reservation.time} • {tableStatus.reservation.guests}p</div>
-                          <div className="text-gray-500 text-xs">{tableStatus.reservation.status === 'assignee' ? 'Réservé' : 'Arrivé'}</div>
-                        </div>
-                      );
-                    }
-                    return null;
-                  })()}
-                </div>
-              </div>
-            ))}
+                  {/* Deuxième rangée */}
+                  {renderTable(26, { top: '120px', left: '50px' })}
+                  {renderTable(27, { top: '120px', left: '150px' })}
+                  {renderTable(7, { top: '120px', left: '300px' })}
+                  {renderTable(8, { top: '120px', left: '450px' })}
+                  {renderTable(10, { top: '120px', right: '150px' })}
+                  {renderTable(12, { top: '120px', right: '50px' })}
+                  
+                  {/* Troisième rangée */}
+                  {renderTable(6, { top: '220px', left: '200px' })}
+                  {renderTable(9, { top: '220px', left: '450px' })}
+                  {renderTable(11, { top: '220px', right: '150px' })}
+                  {renderTable(13, { top: '220px', right: '50px' })}
+                  
+                  {/* Colonne de gauche (tables 20-25) */}
+                  {renderTable(25, { top: '320px', left: '50px' })}
+                  {renderTable(24, { top: '400px', left: '50px' })}
+                  {renderTable(23, { top: '480px', left: '50px' })}
+                  {renderTable(22, { top: '560px', left: '50px' })}
+                  {renderTable(21, { top: '640px', left: '50px' })}
+                  {renderTable(20, { top: '720px', left: '50px' })}
+                  
+                  {/* Rangée du bas (tables 1-5) */}
+                  {renderTable(5, { bottom: '20px', left: '300px' })}
+                  {renderTable(4, { bottom: '20px', left: '400px' })}
+                  {renderTable(3, { bottom: '20px', left: '500px' })}
+                  {renderTable(2, { bottom: '20px', left: '600px' })}
+                  {renderTable(1, { bottom: '20px', left: '700px' })}
+                </>
+              );
+            })()}
           </div>
         </div>
 
