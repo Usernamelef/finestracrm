@@ -283,11 +283,11 @@ const SalleTab: React.FC<SalleTabProps> = ({
           <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4 sm:mb-6">Salle principale</h2>
           
           {/* Plan de salle selon l'image */}
-          <div className="relative min-h-[600px] bg-gray-50 rounded-lg p-4">
+          <div className="relative min-h-[700px] bg-gray-50 rounded-lg p-6 overflow-hidden">
             
             {/* Fonction pour rendre une table */}
             {(() => {
-              const renderTable = (tableNumber: number, style: React.CSSProperties) => {
+              const renderTable = (tableNumber: number, className: string) => {
                 const table = tables.find(t => t.number === tableNumber);
                 if (!table) return null;
                 
@@ -300,10 +300,10 @@ const SalleTab: React.FC<SalleTabProps> = ({
                 const tableStatus = getTableStatus(table.number);
                 
                 return (
-                  <div key={table.number} className="absolute" style={style}>
+                  <div key={table.number} className={className}>
                     <div
                       onClick={() => handleTableClick(table)}
-                      className={`w-16 h-16 sm:w-20 sm:h-20 rounded-lg border-2 flex items-center justify-center cursor-pointer transition-all hover:scale-105 ${
+                      className={`w-16 h-16 sm:w-20 sm:h-20 rounded-lg border-2 flex flex-col items-center justify-center cursor-pointer transition-all hover:scale-105 ${
                         isSelected ? 'bg-blue-200 border-blue-500' :
                         isOccupied ? 'bg-red-200 border-red-500' :
                         tableStatus.status === 'available' ? 'bg-green-100 border-green-300 hover:bg-green-200' :
@@ -312,10 +312,8 @@ const SalleTab: React.FC<SalleTabProps> = ({
                         'bg-gray-100 border-gray-300'
                       }`}
                     >
-                      <div className="text-center">
-                        <div className="text-sm sm:text-base font-bold text-gray-800">{table.number}</div>
-                        <div className="text-xs text-gray-600">{table.capacity}p</div>
-                      </div>
+                      <div className="text-sm sm:text-base font-bold text-gray-800">{table.number}</div>
+                      <div className="text-xs text-gray-600">{table.capacity}p</div>
                     </div>
                     
                     {/* Réservation sous la table */}
@@ -323,7 +321,7 @@ const SalleTab: React.FC<SalleTabProps> = ({
                       const tableStatus = getTableStatus(table.number);
                       if (tableStatus.reservation) {
                         return (
-                          <div className="absolute top-20 left-0 w-16 sm:w-20 bg-gray-50 p-1 rounded text-xs border text-center">
+                          <div className="mt-1 w-16 sm:w-20 bg-white p-1 rounded text-xs border text-center shadow-sm">
                             <div className="font-medium truncate text-xs">{tableStatus.reservation.name}</div>
                             <div className="text-gray-600 text-xs">{tableStatus.reservation.time}</div>
                           </div>
@@ -336,42 +334,92 @@ const SalleTab: React.FC<SalleTabProps> = ({
               };
               
               return (
-                <>
-                  {/* Rangée du haut */}
-                  {renderTable(28, { top: '20px', left: '50px' })}
-                  {renderTable(29, { top: '20px', left: '150px' })}
-                  {renderTable(31, { top: '20px', right: '150px' })}
-                  {renderTable(30, { top: '20px', right: '50px' })}
+                <div className="w-full h-full grid grid-cols-12 grid-rows-8 gap-2 sm:gap-4">
+                  {/* Rangée 1 - Tables 28, 29 à gauche et 31, 30 à droite */}
+                  <div className="col-start-1 row-start-1">
+                    {renderTable(28, '')}
+                  </div>
+                  <div className="col-start-2 row-start-1">
+                    {renderTable(29, '')}
+                  </div>
+                  <div className="col-start-11 row-start-1">
+                    {renderTable(31, '')}
+                  </div>
+                  <div className="col-start-12 row-start-1">
+                    {renderTable(30, '')}
+                  </div>
                   
-                  {/* Deuxième rangée */}
-                  {renderTable(26, { top: '120px', left: '50px' })}
-                  {renderTable(27, { top: '120px', left: '150px' })}
-                  {renderTable(7, { top: '120px', left: '300px' })}
-                  {renderTable(8, { top: '120px', left: '450px' })}
-                  {renderTable(10, { top: '120px', right: '150px' })}
-                  {renderTable(12, { top: '120px', right: '50px' })}
+                  {/* Rangée 2 - Tables 26, 27, 7, 8, 10, 12 */}
+                  <div className="col-start-1 row-start-2">
+                    {renderTable(26, '')}
+                  </div>
+                  <div className="col-start-2 row-start-2">
+                    {renderTable(27, '')}
+                  </div>
+                  <div className="col-start-5 row-start-2">
+                    {renderTable(7, '')}
+                  </div>
+                  <div className="col-start-7 row-start-2">
+                    {renderTable(8, '')}
+                  </div>
+                  <div className="col-start-10 row-start-2">
+                    {renderTable(10, '')}
+                  </div>
+                  <div className="col-start-12 row-start-2">
+                    {renderTable(12, '')}
+                  </div>
                   
-                  {/* Troisième rangée */}
-                  {renderTable(6, { top: '220px', left: '200px' })}
-                  {renderTable(9, { top: '220px', left: '450px' })}
-                  {renderTable(11, { top: '220px', right: '150px' })}
-                  {renderTable(13, { top: '220px', right: '50px' })}
+                  {/* Rangée 3 - Tables 6, 9, 11, 13 */}
+                  <div className="col-start-4 row-start-3">
+                    {renderTable(6, '')}
+                  </div>
+                  <div className="col-start-7 row-start-3">
+                    {renderTable(9, '')}
+                  </div>
+                  <div className="col-start-10 row-start-3">
+                    {renderTable(11, '')}
+                  </div>
+                  <div className="col-start-12 row-start-3">
+                    {renderTable(13, '')}
+                  </div>
                   
-                  {/* Colonne de gauche (tables 20-25) */}
-                  {renderTable(25, { top: '320px', left: '50px' })}
-                  {renderTable(24, { top: '400px', left: '50px' })}
-                  {renderTable(23, { top: '480px', left: '50px' })}
-                  {renderTable(22, { top: '560px', left: '50px' })}
-                  {renderTable(21, { top: '640px', left: '50px' })}
-                  {renderTable(20, { top: '720px', left: '50px' })}
+                  {/* Colonne gauche - Tables 25, 24, 23, 22, 21, 20 */}
+                  <div className="col-start-1 row-start-4">
+                    {renderTable(25, '')}
+                  </div>
+                  <div className="col-start-1 row-start-5">
+                    {renderTable(24, '')}
+                  </div>
+                  <div className="col-start-1 row-start-6">
+                    {renderTable(23, '')}
+                  </div>
+                  <div className="col-start-1 row-start-7">
+                    {renderTable(22, '')}
+                  </div>
+                  <div className="col-start-1 row-start-8">
+                    {renderTable(21, '')}
+                  </div>
+                  <div className="col-start-2 row-start-8">
+                    {renderTable(20, '')}
+                  </div>
                   
-                  {/* Rangée du bas (tables 1-5) */}
-                  {renderTable(5, { bottom: '20px', left: '300px' })}
-                  {renderTable(4, { bottom: '20px', left: '400px' })}
-                  {renderTable(3, { bottom: '20px', left: '500px' })}
-                  {renderTable(2, { bottom: '20px', left: '600px' })}
-                  {renderTable(1, { bottom: '20px', left: '700px' })}
-                </>
+                  {/* Rangée du bas - Tables 5, 4, 3, 2, 1 */}
+                  <div className="col-start-5 row-start-7">
+                    {renderTable(5, '')}
+                  </div>
+                  <div className="col-start-7 row-start-7">
+                    {renderTable(4, '')}
+                  </div>
+                  <div className="col-start-8 row-start-7">
+                    {renderTable(3, '')}
+                  </div>
+                  <div className="col-start-10 row-start-7">
+                    {renderTable(2, '')}
+                  </div>
+                  <div className="col-start-12 row-start-7">
+                    {renderTable(1, '')}
+                  </div>
+                </div>
               );
             })()}
           </div>
