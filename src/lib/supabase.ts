@@ -189,7 +189,9 @@ export const sendSMS = async (to: string, message: string, sender?: string) => {
     })
 
     if (!response.ok) {
-      throw new Error('Erreur lors de l\'envoi du SMS')
+      const errorData = await response.json().catch(() => ({}))
+      const errorMessage = errorData.error || `HTTP ${response.status}: ${response.statusText}`
+      throw new Error(`Erreur SMS: ${errorMessage}`)
     }
 
     return await response.json()
