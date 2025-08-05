@@ -227,11 +227,13 @@ export const getConfirmationEmailTemplate = (nom: string, date: string, heure: s
 
 // Templates de SMS
 export const getConfirmationSMSTemplate = (nom: string, date: string, heure: string, personnes: number) => {
-  return `Bonjour ${nom}, votre réservation du ${date} à ${heure} pour ${personnes} personne${personnes > 1 ? 's' : ''} est confirmée. À bientôt à La Finestra ! +41(0)22 312 23 22`
+  const message = `Bonjour ${nom}, réservation ${date} ${heure} pour ${personnes}p confirmée. À bientôt ! La Finestra +41223122322`
+  return message.length > 150 ? message.substring(0, 147) + '...' : message
 }
 
 export const getCancellationSMSTemplate = (nom: string, date: string, heure: string) => {
-  return `Bonjour ${nom}, votre réservation du ${date} à ${heure} a été annulée. Contactez-nous pour réserver à nouveau. La Finestra +41(0)22 312 23 22`
+  const message = `Bonjour ${nom}, réservation ${date} ${heure} annulée. Contactez-nous pour réserver. La Finestra +41223122322`
+  return message.length > 150 ? message.substring(0, 147) + '...' : message
 }
 
 // Fonction pour nettoyer le numéro de téléphone (format international)

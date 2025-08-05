@@ -26,6 +26,13 @@ Deno.serve(async (req) => {
     console.log('- Destinataire:', to)
     console.log('- Message:', message)
     console.log('- Expéditeur:', sender || 'La Finestra')
+    console.log('- Longueur du message:', message.length, 'caractères')
+    
+    // Vérifier la longueur du message
+    if (message.length > 150) {
+      console.error('Message trop long:', message.length, 'caractères (max 150)')
+      throw new Error(`Message trop long: ${message.length} caractères (maximum 150)`)
+    }
 
     // Format des données selon la documentation SMS Gateway API
     const smsData = {
