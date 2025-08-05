@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Calendar, Clock, Users, MessageSquare, CheckCircle } from 'lucide-react';
-import { createReservation } from '../lib/supabase';
+import { createReservation, sendEmail, sendSMS, getConfirmationEmailTemplate, getConfirmationSMSTemplate, formatPhoneNumber } from '../lib/supabase';
 
 const Reservations = () => {
   const [formData, setFormData] = useState({
@@ -45,6 +45,35 @@ const Reservations = () => {
       console.log('Enregistrement dans Supabase...')
       const supabaseResult = await createReservation(supabaseData);
       console.log('Supabase - Succès:', supabaseResult)
+
+      // 2.5. Envoyer email et SMS de confirmation automatique
+      try {
+        // Email de confirmation
+        const emailHtml = getConfirmationEmailTemplate(
+          formData.name,
+          new Date(formData.date).toLocaleDateString('fr-FR'),
+          formData.time,
+          parseInt(formData.guests)
+        );
+        await sendEmail(formData.email, 'Confirmation de votre réservation à La Finestra', emailHtml);
+        console.log('Email de confirmation envoyé');
+
+        // SMS de confirmation si téléphone valide
+        if (formData.phone && formData.phone.trim() !== '') {
+          const smsMessage = getConfirmationSMSTemplate(
+            formData.name,
+            new Date(formData.date).toLocaleDateString('fr-FR'),
+            formData.time,
+            parseInt(formData.guests)
+          );
+          const formattedPhone = formatPhoneNumber(formData.phone);
+          await sendSMS(formattedPhone, smsMessage);
+          console.log('SMS de confirmation envoyé');
+        }
+      } catch (notificationError) {
+        console.error('Erreur lors de l\'envoi des notifications:', notificationError);
+        // Ne pas faire échouer la réservation si les notifications échouent
+      }
 
       // 3. Ensuite envoyer à Formspree
       console.log('Envoi à Formspree...')

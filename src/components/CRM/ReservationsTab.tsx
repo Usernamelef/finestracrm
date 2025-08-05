@@ -4,8 +4,12 @@ import {
   getReservationsByStatus, 
   updateReservationStatus, 
   sendEmail, 
+  sendSMS,
   getConfirmationEmailTemplate, 
   getCancellationEmailTemplate,
+  getConfirmationSMSTemplate,
+  getCancellationSMSTemplate,
+  formatPhoneNumber,
   type Reservation 
 } from '../../lib/supabase';
 
@@ -176,6 +180,7 @@ const ReservationsTab: React.FC<ReservationsTabProps> = ({
     try {
       await updateReservationStatus(reservation.id, 'en_attente');
       
+      // Envoyer l'email de confirmation
       const emailHtml = getConfirmationEmailTemplate(
         reservation.nom_client,
         new Date(reservation.date_reservation).toLocaleDateString('fr-FR'),
@@ -183,6 +188,24 @@ const ReservationsTab: React.FC<ReservationsTabProps> = ({
         reservation.nombre_personnes
       );
       await sendEmail(reservation.email_client, 'Confirmation de votre réservation à La Finestra', emailHtml);
+
+      // Envoyer le SMS de confirmation si le téléphone est valide
+      if (reservation.telephone_client && reservation.telephone_client !== 'N/A') {
+        try {
+          const smsMessage = getConfirmationSMSTemplate(
+            reservation.nom_client,
+            new Date(reservation.date_reservation).toLocaleDateString('fr-FR'),
+            reservation.heure_reservation,
+            reservation.nombre_personnes
+          );
+          const formattedPhone = formatPhoneNumber(reservation.telephone_client);
+          await sendSMS(formattedPhone, smsMessage);
+          console.log('SMS de confirmation envoyé avec succès');
+        } catch (smsError) {
+          console.error('Erreur lors de l\'envoi du SMS:', smsError);
+          // Ne pas faire échouer la confirmation si le SMS échoue
+        }
+      }
 
       // Rafraîchir toutes les réservations
       await fetchAllReservations();
@@ -198,12 +221,30 @@ const ReservationsTab: React.FC<ReservationsTabProps> = ({
     try {
       await updateReservationStatus(reservation.id, 'annulee');
       
+      // Envoyer l'email d'annulation
       const emailHtml = getCancellationEmailTemplate(
         reservation.nom_client,
         new Date(reservation.date_reservation).toLocaleDateString('fr-FR'),
         reservation.heure_reservation
       );
       await sendEmail(reservation.email_client, 'Annulation de votre réservation à La Finestra', emailHtml);
+
+      // Envoyer le SMS d'annulation si le téléphone est valide
+      if (reservation.telephone_client && reservation.telephone_client !== 'N/A') {
+        try {
+          const smsMessage = getCancellationSMSTemplate(
+            reservation.nom_client,
+            new Date(reservation.date_reservation).toLocaleDateString('fr-FR'),
+            reservation.heure_reservation
+          );
+          const formattedPhone = formatPhoneNumber(reservation.telephone_client);
+          await sendSMS(formattedPhone, smsMessage);
+          console.log('SMS d\'annulation envoyé avec succès');
+        } catch (smsError) {
+          console.error('Erreur lors de l\'envoi du SMS:', smsError);
+          // Ne pas faire échouer l'annulation si le SMS échoue
+        }
+      }
 
       // Rafraîchir toutes les réservations
       await fetchAllReservations();

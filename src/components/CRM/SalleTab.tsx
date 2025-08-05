@@ -549,6 +549,7 @@ const SalleTab: React.FC<SalleTabProps> = ({
                         if (confirm(`Êtes-vous sûr de vouloir annuler la réservation de ${selectedTable.currentReservation.name} ?`)) {
                           try {
                             const { updateReservationStatus, sendEmail, getCancellationEmailTemplate } = await import('../../lib/supabase');
+                            const { sendSMS, getCancellationSMSTemplate, formatPhoneNumber } = await import('../../lib/supabase');
                             
                             // Trouver la réservation complète
                             const fullReservation = supabaseReservations.find(r => r.id === selectedTable.currentReservation.id);
@@ -562,6 +563,21 @@ const SalleTab: React.FC<SalleTabProps> = ({
                                 fullReservation.heure_reservation
                               );
                               await sendEmail(fullReservation.email_client, 'Annulation de votre réservation à La Finestra', emailHtml);
+                              
+                              // Envoyer SMS d'annulation si le téléphone est valide
+                              if (fullReservation.telephone_client && fullReservation.telephone_client !== 'N/A') {
+                                try {
+                                  const smsMessage = getCancellationSMSTemplate(
+                                    fullReservation.nom_client,
+                                    new Date(fullReservation.date_reservation).toLocaleDateString('fr-FR'),
+                                    fullReservation.heure_reservation
+                                  );
+                                  const formattedPhone = formatPhoneNumber(fullReservation.telephone_client);
+                                  await sendSMS(formattedPhone, smsMessage);
+                                } catch (smsError) {
+                                  console.error('Erreur SMS:', smsError);
+                                }
+                              }
                               
                               // Rafraîchir les données
                               const { getAllReservations } = await import('../../lib/supabase');

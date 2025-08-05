@@ -171,6 +171,34 @@ export const sendEmail = async (to: string, subject: string, html: string) => {
   }
 }
 
+// Fonction pour envoyer un SMS
+export const sendSMS = async (to: string, message: string, sender?: string) => {
+  try {
+    const response = await fetch(`${supabaseUrl}/functions/v1/send-sms`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': supabaseAnonKey,
+        'Authorization': `Bearer ${supabaseAnonKey}`
+      },
+      body: JSON.stringify({
+        to,
+        message,
+        sender: sender || 'La Finestra'
+      })
+    })
+
+    if (!response.ok) {
+      throw new Error('Erreur lors de l\'envoi du SMS')
+    }
+
+    return await response.json()
+  } catch (error) {
+    console.error('Erreur SMS:', error)
+    throw error
+  }
+}
+
 // Templates d'emails
 export const getConfirmationEmailTemplate = (nom: string, date: string, heure: string, personnes: number) => {
   return `
@@ -189,6 +217,42 @@ export const getConfirmationEmailTemplate = (nom: string, date: string, heure: s
   `
 }
 
+// Templates de SMS
+export const getConfirmationSMSTemplate = (nom: string, date: string, heure: string, personnes: number) => {
+  return `Bonjour ${nom}, votre réservation du ${date} à ${heure} pour ${personnes} personne${personnes > 1 ? 's' : ''} est confirmée. À bientôt à La Finestra ! +41(0)22 312 23 22`
+}
+
+export const getCancellationSMSTemplate = (nom: string, date: string, heure: string) => {
+  return `Bonjour ${nom}, votre réservation du ${date} à ${heure} a été annulée. Contactez-nous pour réserver à nouveau. La Finestra +41(0)22 312 23 22`
+}
+
+// Fonction pour nettoyer le numéro de téléphone (format international)
+export const formatPhoneNumber = (phone: string) => {
+  // Supprimer tous les espaces, tirets, parenthèses
+  let cleaned = phone.replace(/[\s\-\(\)]/g, '')
+  
+  // Si le numéro commence par +41, le garder tel quel
+  if (cleaned.startsWith('+41')) {
+    return cleaned.replace('+', '')
+  }
+  
+  // Si le numéro commence par 0041, le garder tel quel
+  if (cleaned.startsWith('0041')) {
+    return cleaned
+  }
+  
+  // Si le numéro commence par 0, remplacer par 41
+  if (cleaned.startsWith('0')) {
+    return '41' + cleaned.substring(1)
+  }
+  
+  // Si le numéro ne commence pas par 41, l'ajouter
+  if (!cleaned.startsWith('41')) {
+    return '41' + cleaned
+  }
+  
+  return cleaned
+}
 export const getCancellationEmailTemplate = (nom: string, date: string, heure: string) => {
   return `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
