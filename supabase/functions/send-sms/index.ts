@@ -1,11 +1,9 @@
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
-
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-serve(async (req) => {
+Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
@@ -29,13 +27,14 @@ serve(async (req) => {
     console.log('- Message:', message)
     console.log('- Expéditeur:', sender || 'La Finestra')
 
-    const data = JSON.stringify({
+    // Format des données selon la documentation SMS Gateway API
+    const smsData = {
       message: message,
       to: to,
       sender: sender || 'La Finestra',
-    })
+    }
     
-    console.log('Données JSON à envoyer:', data)
+    console.log('Données SMS à envoyer:', smsData)
 
     console.log('Envoi de la requête à l\'API SMS...')
     const response = await fetch('https://api.smsgatewayapi.com/v1/message/send', {
@@ -45,7 +44,7 @@ serve(async (req) => {
         'X-Client-Secret': client_secret,
         'Content-Type': 'application/json',
       },
-      body: data,
+      body: JSON.stringify(smsData),
     })
 
     console.log('Statut de la réponse API:', response.status)
@@ -58,7 +57,20 @@ serve(async (req) => {
       console.error('=== ERREUR API SMS ===')
       console.error('Statut:', response.status)
       console.error('Réponse:', result)
-      throw new Error(`SMS API Error (${response.status}): ${result.message || result.error || JSON.stringify(result)}`)
+      
+      // Gestion spécifique des codes d'erreur
+      let errorMessage = `SMS API Error (${response.status})`
+      if (result.error) {
+        errorMessage += `: ${result.error}`
+      } else if (result.message) {
+        errorMessage += `: ${result.message}`
+      } else if (result.code) {
+        errorMessage += `: Code ${result.code}`
+      } else {
+        errorMessage += `: ${JSON.stringify(result)}`
+      }
+      
+      throw new Error(errorMessage)
     }
 
     console.log('=== SMS ENVOYÉ AVEC SUCCÈS ===')
