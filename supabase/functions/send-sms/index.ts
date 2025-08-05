@@ -13,8 +13,12 @@ serve(async (req) => {
   try {
     const { to, message, sender } = await req.json()
 
-    const client_id = "13742224586362909733"
-    const client_secret = "gOMbIkbDEN3k2zPRrupC"
+    const client_id = Deno.env.get('SMS_CLIENT_ID')
+    const client_secret = Deno.env.get('SMS_CLIENT_SECRET')
+
+    if (!client_id || !client_secret) {
+      throw new Error('SMS API credentials not configured')
+    }
 
     const data = JSON.stringify({
       message: message,
