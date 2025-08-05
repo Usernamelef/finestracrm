@@ -11,18 +11,33 @@ serve(async (req) => {
   }
 
   try {
-    const { to, message, sender } = await req.json()
+    console.log('=== DÉBUT FONCTION SMS ===')
+    
+    const requestBody = await req.json()
+    console.log('Corps de la requête reçu:', requestBody)
+    
+    const { to, message, sender } = requestBody
 
-    // Utiliser directement les identifiants pour éviter les problèmes de configuration
+    // Vos identifiants corrects
     const client_id = '13742224586362909733'
     const client_secret = 'gOMbIkbDEN3k2zPRrupC'
+    
+    console.log('Identifiants utilisés:')
+    console.log('- Client ID:', client_id)
+    console.log('- Client Secret:', client_secret ? '[DÉFINI]' : '[NON DÉFINI]')
+    console.log('- Destinataire:', to)
+    console.log('- Message:', message)
+    console.log('- Expéditeur:', sender || 'La Finestra')
 
     const data = JSON.stringify({
       message: message,
       to: to,
       sender: sender || 'La Finestra',
     })
+    
+    console.log('Données JSON à envoyer:', data)
 
+    console.log('Envoi de la requête à l\'API SMS...')
     const response = await fetch('https://api.smsgatewayapi.com/v1/message/send', {
       method: 'POST',
       headers: {
@@ -33,12 +48,21 @@ serve(async (req) => {
       body: data,
     })
 
+    console.log('Statut de la réponse API:', response.status)
+    console.log('Headers de la réponse:', Object.fromEntries(response.headers.entries()))
+
     const result = await response.json()
+    console.log('Réponse complète de l\'API:', result)
 
     if (!response.ok) {
-      console.error('SMS API Error:', result)
-      throw new Error(`SMS API Error: ${result.message || result.error || 'Unknown error'}`)
+      console.error('=== ERREUR API SMS ===')
+      console.error('Statut:', response.status)
+      console.error('Réponse:', result)
+      throw new Error(`SMS API Error (${response.status}): ${result.message || result.error || JSON.stringify(result)}`)
     }
+
+    console.log('=== SMS ENVOYÉ AVEC SUCCÈS ===')
+    console.log('Résultat:', result)
 
     return new Response(
       JSON.stringify({ success: true, data: result }),
@@ -48,9 +72,17 @@ serve(async (req) => {
       },
     )
   } catch (error) {
-    console.error('SMS Error:', error)
+    console.error('=== ERREUR DANS LA FONCTION SMS ===')
+    console.error('Type d\'erreur:', error.constructor.name)
+    console.error('Message d\'erreur:', error.message)
+    console.error('Stack trace:', error.stack)
+    
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ 
+        error: error.message,
+        type: error.constructor.name,
+        details: 'Voir les logs pour plus de détails'
+      }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 400,
