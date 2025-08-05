@@ -13,12 +13,9 @@ serve(async (req) => {
   try {
     const { to, message, sender } = await req.json()
 
-    const client_id = Deno.env.get('SMS_CLIENT_ID')
-    const client_secret = Deno.env.get('SMS_CLIENT_SECRET')
-
-    if (!client_id || !client_secret) {
-      throw new Error('SMS API credentials not configured')
-    }
+    // Utiliser directement les identifiants pour éviter les problèmes de configuration
+    const client_id = '13742224586362909733'
+    const client_secret = 'gOMbIkbDEN3k2zPRrupC'
 
     const data = JSON.stringify({
       message: message,
@@ -39,7 +36,8 @@ serve(async (req) => {
     const result = await response.json()
 
     if (!response.ok) {
-      throw new Error(`SMS API Error: ${result.message || 'Unknown error'}`)
+      console.error('SMS API Error:', result)
+      throw new Error(`SMS API Error: ${result.message || result.error || 'Unknown error'}`)
     }
 
     return new Response(

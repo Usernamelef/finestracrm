@@ -60,6 +60,7 @@ const Reservations = () => {
 
         // SMS de confirmation si téléphone valide
         if (formData.phone && formData.phone.trim() !== '') {
+          console.log('Tentative d\'envoi SMS vers:', formData.phone);
           const smsMessage = getConfirmationSMSTemplate(
             formData.name,
             new Date(formData.date).toLocaleDateString('fr-FR'),
@@ -67,12 +68,15 @@ const Reservations = () => {
             parseInt(formData.guests)
           );
           const formattedPhone = formatPhoneNumber(formData.phone);
+          console.log('Numéro formaté:', formattedPhone);
+          console.log('Message SMS:', smsMessage);
           await sendSMS(formattedPhone, smsMessage);
           console.log('SMS de confirmation envoyé');
         }
       } catch (notificationError) {
         console.error('Erreur lors de l\'envoi des notifications:', notificationError);
-        // Ne pas faire échouer la réservation si les notifications échouent
+        // Afficher l'erreur mais continuer la réservation
+        alert(`Réservation enregistrée mais erreur notification: ${notificationError.message}`);
       }
 
       // 3. Ensuite envoyer à Formspree

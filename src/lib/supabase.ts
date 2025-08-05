@@ -174,6 +174,8 @@ export const sendEmail = async (to: string, subject: string, html: string) => {
 // Fonction pour envoyer un SMS
 export const sendSMS = async (to: string, message: string, sender?: string) => {
   try {
+    console.log('Envoi SMS vers:', to, 'Message:', message)
+    
     const response = await fetch(`${supabaseUrl}/functions/v1/send-sms`, {
       method: 'POST',
       headers: {
@@ -188,13 +190,17 @@ export const sendSMS = async (to: string, message: string, sender?: string) => {
       })
     })
 
+    console.log('Réponse SMS status:', response.status)
+    
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}))
-      const errorMessage = errorData.error || `HTTP ${response.status}: ${response.statusText}`
-      throw new Error(`Erreur SMS: ${errorMessage}`)
+      const errorText = await response.text()
+      console.error('Erreur SMS response:', errorText)
+      throw new Error(`Erreur SMS (${response.status}): ${errorText}`)
     }
 
-    return await response.json()
+    const result = await response.json()
+    console.log('SMS envoyé avec succès:', result)
+    return result
   } catch (error) {
     console.error('Erreur SMS:', error)
     throw error
@@ -233,14 +239,14 @@ export const formatPhoneNumber = (phone: string) => {
   // Supprimer tous les espaces, tirets, parenthèses
   let cleaned = phone.replace(/[\s\-\(\)]/g, '')
   
-  // Si le numéro commence par +41, le garder tel quel
+  // Si le numéro commence par +41, supprimer le +
   if (cleaned.startsWith('+41')) {
-    return cleaned.replace('+', '')
+    return cleaned.substring(1)
   }
   
-  // Si le numéro commence par 0041, le garder tel quel
+  // Si le numéro commence par 0041, le garder
   if (cleaned.startsWith('0041')) {
-    return cleaned
+    return cleaned.substring(2) // Supprimer 00 pour garder 41
   }
   
   // Si le numéro commence par 0, remplacer par 41
