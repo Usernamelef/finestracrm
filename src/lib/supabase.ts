@@ -19,7 +19,7 @@ if (!supabaseUrl.startsWith('https://') || !supabaseUrl.includes('.supabase.co')
 
 if (!supabaseAnonKey || supabaseAnonKey.length < 100) {
   throw new Error(
-    'VITE_SUPABASE_ANON_KEY invalide. Vérifiez que vous avez copié la clé complète depuis Supabase'
+    'VITE_SUPABASE_ANON_KEY manquante ou invalide. Vérifiez que vous avez défini cette variable dans votre fichier .env'
   )
 }
 
