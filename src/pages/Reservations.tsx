@@ -119,9 +119,18 @@ const Reservations = () => {
     } catch (error) {
       console.error('Erreur lors de la soumission:', error);
       
-      // Message d'erreur plus spécifique
-      const errorMessage = error instanceof Error ? error.message : 'Une erreur inconnue est survenue';
-      alert(`Une erreur est survenue: ${errorMessage}. Veuillez réessayer ou nous contacter directement.`);
+      // Gestion spécifique des erreurs de configuration
+      if (error instanceof Error) {
+        if (error.message.includes('Clé API Supabase invalide')) {
+          alert(`❌ Configuration Supabase incorrecte\n\n${error.message}\n\nPour résoudre ce problème :\n1. Allez sur supabase.com\n2. Ouvrez votre projet\n3. Settings → API\n4. Copiez la clé "anon public"\n5. Mettez-la dans votre fichier .env`);
+        } else if (error.message.includes('Configuration Supabase manquante')) {
+          alert(`❌ Configuration Supabase manquante\n\n${error.message}\n\nVeuillez créer un fichier .env avec :\nVITE_SUPABASE_URL=votre_url_supabase\nVITE_SUPABASE_ANON_KEY=votre_clé_supabase`);
+        } else {
+          alert(`Une erreur est survenue: ${error.message}\n\nVeuillez réessayer ou nous contacter directement.`);
+        }
+      } else {
+        alert('Une erreur inconnue est survenue. Veuillez réessayer ou nous contacter directement.');
+      }
       
       console.log('Détails de l\'erreur complète:', error);
     }

@@ -50,7 +50,7 @@ export interface Reservation {
 // Fonction pour créer une réservation
 export const createReservation = async (reservationData: Omit<Reservation, 'id' | 'date_creation'> & { statut?: string }) => {
   if (!isSupabaseConfigured) {
-    throw new Error('Supabase n\'est pas configuré. Veuillez configurer VITE_SUPABASE_URL et VITE_SUPABASE_ANON_KEY dans votre fichier .env')
+    throw new Error('Configuration Supabase manquante. Veuillez configurer VITE_SUPABASE_URL et VITE_SUPABASE_ANON_KEY dans votre fichier .env')
   }
 
   try {
@@ -73,7 +73,13 @@ export const createReservation = async (reservationData: Omit<Reservation, 'id' 
     if (!response.ok) {
       const errorText = await response.text()
       console.error('Erreur HTTP lors de la création de réservation:', response.status, errorText)
-      throw new Error(`Erreur base de données: ${response.status} - ${errorText}`)
+      
+      // Gestion spécifique de l'erreur 401 (clé API invalide)
+      if (response.status === 401) {
+        throw new Error('Clé API Supabase invalide. Veuillez vérifier votre VITE_SUPABASE_ANON_KEY dans le fichier .env. Consultez les paramètres API de votre projet Supabase pour obtenir la bonne clé.')
+      }
+      
+      throw new Error(`Erreur base de données (${response.status}): ${errorText}`)
     }
     
     const data = await response.json()
