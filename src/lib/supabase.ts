@@ -228,12 +228,12 @@ export const getConfirmationEmailTemplate = (nom: string, date: string, heure: s
 // Templates de SMS
 export const getConfirmationSMSTemplate = (nom: string, date: string, heure: string, personnes: number) => {
   const message = `Bonjour ${nom}, réservation ${date} ${heure} pour ${personnes}p confirmée. À bientôt ! La Finestra +41223122322`
-  return message.length > 150 ? message.substring(0, 147) + '...' : message
+  return message.length > 150 ? message.substring(0, 146) + '...' : message
 }
 
 export const getCancellationSMSTemplate = (nom: string, date: string, heure: string) => {
   const message = `Bonjour ${nom}, réservation ${date} ${heure} annulée. Contactez-nous pour réserver. La Finestra +41223122322`
-  return message.length > 150 ? message.substring(0, 147) + '...' : message
+  return message.length > 150 ? message.substring(0, 146) + '...' : message
 }
 
 // Fonction pour nettoyer le numéro de téléphone (format international)
