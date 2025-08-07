@@ -20,10 +20,10 @@ Deno.serve(async (req) => {
     const client_id = Deno.env.get('SMS_CLIENT_ID') || '13742224586362909733'
     const client_secret = Deno.env.get('SMS_CLIENT_SECRET') || 'gOMbIkbDEN3k2zPRrupC'
     
-    // if (!client_id || !client_secret) {
-    //   console.error('Variables d\'environnement manquantes: SMS_CLIENT_ID ou SMS_CLIENT_SECRET')
-    //   throw new Error('Configuration SMS manquante')
-    // }
+    if (!Deno.env.get('SMS_CLIENT_ID') || !Deno.env.get('SMS_CLIENT_SECRET')) {
+      console.error('Variables d\'environnement manquantes: SMS_CLIENT_ID ou SMS_CLIENT_SECRET')
+      console.error('Utilisation des identifiants par défaut')
+    }
     
     console.log('Identifiants utilisés:')
     console.log('- Client ID:', client_id)
