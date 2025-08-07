@@ -61,12 +61,20 @@ const Reservations = () => {
           // SMS de confirmation si téléphone valide
           if (formData.phone && formData.phone.trim() !== '') {
             const smsMessage = getConfirmationSMSTemplate(
+              console.log('=== TENTATIVE ENVOI SMS ===')
+              console.log('Téléphone saisi:', formData.phone)
+              
               formData.name,
+              console.log('Message SMS généré:', smsMessage)
+              
               new Date(formData.date).toLocaleDateString('fr-FR'),
+              console.log('Numéro formaté:', formattedPhone)
+              
               formData.time,
               parseInt(formData.guests)
             );
-            const formattedPhone = formatPhoneNumber(formData.phone);
+              console.error('=== ERREUR SMS DANS RESERVATIONS ===');
+              console.error('Erreur complète:', smsError);
             await sendSMS(formattedPhone, smsMessage);
             console.log('SMS de confirmation envoyé');
           }

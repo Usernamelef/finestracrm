@@ -203,11 +203,21 @@ export const sendEmail = async (to: string, subject: string, html: string) => {
 // Fonction pour envoyer un SMS
 export const sendSMS = async (to: string, message: string, sender?: string) => {
   if (!isSupabaseConfigured) {
-    throw new Error('Supabase n\'est pas configuré pour l\'envoi de SMS')
+    console.warn('Supabase non configuré - SMS ignoré')
+    return { success: false, message: 'SMS non envoyé - configuration manquante' }
   }
 
   try {
-    console.log('Envoi SMS vers:', to, 'Message:', message)
+    console.log('=== ENVOI SMS ===')
+    console.log('Destinataire:', to)
+    console.log('Message:', message)
+    console.log('Longueur:', message.length, 'caractères')
+    
+    // Vérifier la longueur du message
+    if (message.length > 150) {
+      console.error('Message SMS trop long:', message.length, 'caractères')
+      throw new Error(`Message trop long: ${message.length} caractères (max 150)`)
+    }
     
     const response = await fetch(`${supabaseUrl}/functions/v1/send-sms`, {
       method: 'POST',
@@ -223,19 +233,27 @@ export const sendSMS = async (to: string, message: string, sender?: string) => {
       })
     })
 
-    console.log('Réponse SMS status:', response.status)
+    console.log('=== RÉPONSE SMS ===')
+    console.log('Status:', response.status)
+    console.log('Headers:', Object.fromEntries(response.headers.entries()))
     
     if (!response.ok) {
       const errorText = await response.text()
-      console.error('Erreur SMS response:', errorText)
+      console.error('=== ERREUR SMS ===')
+      console.error('Status:', response.status)
+      console.error('Response:', errorText)
       throw new Error(`Erreur SMS (${response.status}): ${errorText}`)
     }
 
     const result = await response.json()
-    console.log('SMS envoyé avec succès:', result)
+    console.log('=== SMS ENVOYÉ AVEC SUCCÈS ===')
+    console.log('Résultat:', result)
     return result
   } catch (error) {
-    console.error('Erreur SMS:', error)
+    console.error('=== ERREUR DANS sendSMS ===')
+    console.error('Type:', error.constructor.name)
+    console.error('Message:', error.message)
+    console.error('Stack:', error.stack)
     throw error
   }
 }
@@ -271,29 +289,42 @@ export const getCancellationSMSTemplate = (nom: string, date: string, heure: str
 
 // Fonction pour nettoyer le numéro de téléphone (format international)
 export const formatPhoneNumber = (phone: string) => {
+  console.log('=== FORMATAGE NUMÉRO ===')
+  console.log('Numéro original:', phone)
+  
   // Supprimer tous les espaces, tirets, parenthèses
   let cleaned = phone.replace(/[\s\-\(\)]/g, '')
+  console.log('Après nettoyage:', cleaned)
   
   // Si le numéro commence par +41, supprimer le +
   if (cleaned.startsWith('+41')) {
-    return cleaned.substring(1)
+    const result = cleaned.substring(1)
+    console.log('Format +41 détecté, résultat:', result)
+    return result
   }
   
   // Si le numéro commence par 0041, le garder
   if (cleaned.startsWith('0041')) {
-    return cleaned.substring(2) // Supprimer 00 pour garder 41
+    const result = '41' + cleaned.substring(4) // Supprimer 0041 et ajouter 41
+    console.log('Format 0041 détecté, résultat:', result)
+    return result
   }
   
   // Si le numéro commence par 0, remplacer par 41
   if (cleaned.startsWith('0')) {
-    return '41' + cleaned.substring(1)
+    const result = '41' + cleaned.substring(1)
+    console.log('Format 0 détecté, résultat:', result)
+    return result
   }
   
   // Si le numéro ne commence pas par 41, l'ajouter
   if (!cleaned.startsWith('41')) {
-    return '41' + cleaned
+    const result = '41' + cleaned
+    console.log('Ajout du préfixe 41, résultat:', result)
+    return result
   }
   
+  console.log('Numéro déjà au bon format:', cleaned)
   return cleaned
 }
 export const getCancellationEmailTemplate = (nom: string, date: string, heure: string) => {
