@@ -3,38 +3,21 @@ import { createClient } from '@supabase/supabase-js'
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 
-// Validation des variables d'environnement Supabase
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error(
-    'Variables d\'environnement Supabase manquantes. ' +
-    'Veuillez définir VITE_SUPABASE_URL et VITE_SUPABASE_ANON_KEY dans votre fichier .env'
-  )
-}
+// Vérification de la disponibilité de Supabase
+const isSupabaseConfigured = supabaseUrl && supabaseAnonKey && 
+  supabaseUrl.startsWith('https://') && 
+  supabaseUrl.includes('.supabase.co') && 
+  supabaseAnonKey.length > 50
 
-if (!supabaseUrl.startsWith('https://') || !supabaseUrl.includes('.supabase.co')) {
-  throw new Error(
-    'VITE_SUPABASE_URL invalide. Format attendu: https://your-project-id.supabase.co'
-  )
-}
-
-if (!supabaseAnonKey || supabaseAnonKey.length < 100) {
-  throw new Error(
-    'VITE_SUPABASE_ANON_KEY manquante ou invalide. Vérifiez que vous avez défini cette variable dans votre fichier .env'
-  )
-}
-
-// Client Supabase principal (avec authentification)
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
-
-// Client Supabase complètement anonyme - force l'utilisation du rôle anon
-export const supabaseAnon = createClient(supabaseUrl, supabaseAnonKey, {
+// Clients Supabase (null si non configuré)
+export const supabase = isSupabaseConfigured ? createClient(supabaseUrl, supabaseAnonKey) : null
+export const supabaseAnon = isSupabaseConfigured ? createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
     persistSession: false,
     autoRefreshToken: false,
     detectSessionInUrl: false,
-    storageKey: 'sb-anon-only', // Clé de stockage différente pour éviter les conflits
+    storageKey: 'sb-anon-only',
     storage: {
-      // Stockage factice qui ne sauvegarde rien
       getItem: () => null,
       setItem: () => {},
       removeItem: () => {}
@@ -42,12 +25,12 @@ export const supabaseAnon = createClient(supabaseUrl, supabaseAnonKey, {
   },
   global: {
     headers: {
-      // Force l'utilisation de la clé anon uniquement
       'apikey': supabaseAnonKey,
       'Authorization': `Bearer ${supabaseAnonKey}`
     }
   }
-})
+}) : null
+
 
 export interface Reservation {
   id?: string
@@ -66,6 +49,10 @@ export interface Reservation {
 
 // Fonction pour créer une réservation
 export const createReservation = async (reservationData: Omit<Reservation, 'id' | 'date_creation'> & { statut?: string }) => {
+  if (!isSupabaseConfigured) {
+    throw new Error('Supabase n\'est pas configuré. Veuillez configurer VITE_SUPABASE_URL et VITE_SUPABASE_ANON_KEY dans votre fichier .env')
+  }
+
   try {
     // Utilisation directe de fetch pour éviter complètement le SDK Supabase
     // et garantir qu'aucun token d'authentification ne soit envoyé
@@ -105,6 +92,10 @@ export const createReservation = async (reservationData: Omit<Reservation, 'id' 
 
 // Fonction pour récupérer les réservations par statut
 export const getReservationsByStatus = async (statut: string) => {
+  if (!supabase) {
+    throw new Error('Supabase n\'est pas configuré')
+  }
+
   const { data, error } = await supabase
     .from('reservations')
     .select('*')
@@ -117,6 +108,10 @@ export const getReservationsByStatus = async (statut: string) => {
 
 // Fonction pour récupérer toutes les réservations
 export const getAllReservations = async () => {
+  if (!supabase) {
+    throw new Error('Supabase n\'est pas configuré')
+  }
+
   const { data, error } = await supabase
     .from('reservations')
     .select('*')
@@ -128,6 +123,10 @@ export const getAllReservations = async () => {
 
 // Fonction pour mettre à jour le statut d'une réservation
 export const updateReservationStatus = async (id: string, statut: string, tableAssignee?: number, tablesMultiples?: number[]) => {
+  if (!supabase) {
+    throw new Error('Supabase n\'est pas configuré')
+  }
+
   const updateData: any = { statut }
   
   if (tableAssignee) {
@@ -165,6 +164,10 @@ export const updateReservationStatus = async (id: string, statut: string, tableA
 
 // Fonction pour envoyer un email
 export const sendEmail = async (to: string, subject: string, html: string) => {
+  if (!isSupabaseConfigured) {
+    throw new Error('Supabase n\'est pas configuré pour l\'envoi d\'emails')
+  }
+
   try {
     const response = await fetch(`${supabaseUrl}/functions/v1/send-email`, {
       method: 'POST',
@@ -193,6 +196,10 @@ export const sendEmail = async (to: string, subject: string, html: string) => {
 
 // Fonction pour envoyer un SMS
 export const sendSMS = async (to: string, message: string, sender?: string) => {
+  if (!isSupabaseConfigured) {
+    throw new Error('Supabase n\'est pas configuré pour l\'envoi de SMS')
+  }
+
   try {
     console.log('Envoi SMS vers:', to, 'Message:', message)
     
