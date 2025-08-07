@@ -28,58 +28,56 @@ const Reservations = () => {
     try {
       console.log('Début de la soumission du formulaire...')
       
-      // 1. Préparer les données pour Supabase
-      const supabaseData = {
-        nom_client: formData.name,
-        email_client: formData.email,
-        telephone_client: formData.phone,
-        date_reservation: formData.date,
-        heure_reservation: formData.time,
-        nombre_personnes: parseInt(formData.guests),
-        commentaire: formData.message || null
-      };
-
-      console.log('Données à envoyer:', supabaseData)
-
-      // 2. Enregistrer dans Supabase d'abord
-      console.log('Enregistrement dans Supabase...')
-      const supabaseResult = await createReservation(supabaseData);
-      console.log('Supabase - Succès:', supabaseResult)
-
-      // 2.5. Envoyer email et SMS de confirmation automatique
+      // 1. Essayer d'enregistrer dans Supabase
+      let supabaseSuccess = false;
       try {
-        // Email de confirmation
-        const emailHtml = getConfirmationEmailTemplate(
-          formData.name,
-          new Date(formData.date).toLocaleDateString('fr-FR'),
-          formData.time,
-          parseInt(formData.guests)
-        );
-        await sendEmail(formData.email, 'Confirmation de votre réservation à La Finestra', emailHtml);
-        console.log('Email de confirmation envoyé');
+        const supabaseData = {
+          nom_client: formData.name,
+          email_client: formData.email,
+          telephone_client: formData.phone,
+          date_reservation: formData.date,
+          heure_reservation: formData.time,
+          nombre_personnes: parseInt(formData.guests),
+          commentaire: formData.message || null
+        };
 
-        // SMS de confirmation si téléphone valide
-        if (formData.phone && formData.phone.trim() !== '') {
-          console.log('Tentative d\'envoi SMS vers:', formData.phone);
-          const smsMessage = getConfirmationSMSTemplate(
+        console.log('Tentative d\'enregistrement dans Supabase...')
+        await createReservation(supabaseData);
+        console.log('Supabase - Succès')
+        supabaseSuccess = true;
+
+        // Envoyer email et SMS de confirmation automatique
+        try {
+          // Email de confirmation
+          const emailHtml = getConfirmationEmailTemplate(
             formData.name,
             new Date(formData.date).toLocaleDateString('fr-FR'),
             formData.time,
             parseInt(formData.guests)
           );
-          const formattedPhone = formatPhoneNumber(formData.phone);
-          console.log('Numéro formaté:', formattedPhone);
-          console.log('Message SMS:', smsMessage);
-          await sendSMS(formattedPhone, smsMessage);
-          console.log('SMS de confirmation envoyé');
+          await sendEmail(formData.email, 'Confirmation de votre réservation à La Finestra', emailHtml);
+          console.log('Email de confirmation envoyé');
+
+          // SMS de confirmation si téléphone valide
+          if (formData.phone && formData.phone.trim() !== '') {
+            const smsMessage = getConfirmationSMSTemplate(
+              formData.name,
+              new Date(formData.date).toLocaleDateString('fr-FR'),
+              formData.time,
+              parseInt(formData.guests)
+            );
+            const formattedPhone = formatPhoneNumber(formData.phone);
+            await sendSMS(formattedPhone, smsMessage);
+            console.log('SMS de confirmation envoyé');
+          }
+        } catch (notificationError) {
+          console.error('Erreur lors de l\'envoi des notifications:', notificationError);
         }
-      } catch (notificationError) {
-        console.error('Erreur lors de l\'envoi des notifications:', notificationError);
-        // Afficher l'erreur mais continuer la réservation
-        alert(`Réservation enregistrée mais erreur notification: ${notificationError.message}`);
+      } catch (supabaseError) {
+        console.warn('Supabase non disponible, utilisation de Formspree uniquement:', supabaseError);
       }
 
-      // 3. Ensuite envoyer à Formspree
+      // 2. Envoyer à Formspree (toujours)
       console.log('Envoi à Formspree...')
       const form = e.target as HTMLFormElement;
       const formDataForFormspree = new FormData(form);
@@ -101,8 +99,14 @@ const Reservations = () => {
       console.log('Formspree - Succès')
       console.log('Soumission complète réussie!')
 
-      // 4. Afficher le succès
+      // 3. Afficher le succès
       setIsSubmitted(true);
+      
+      // Afficher un message différent selon si Supabase a fonctionné
+      if (!supabaseSuccess) {
+        console.log('Réservation envoyée par email uniquement (Supabase non disponible)');
+      }
+      
       setTimeout(() => {
         setIsSubmitted(false);
         setFormData({ 
@@ -119,18 +123,7 @@ const Reservations = () => {
     } catch (error) {
       console.error('Erreur lors de la soumission:', error);
       
-      // Gestion spécifique des erreurs de configuration
-      if (error instanceof Error) {
-        if (error.message.includes('Clé API Supabase invalide')) {
-          alert(`❌ Configuration Supabase incorrecte\n\n${error.message}\n\nPour résoudre ce problème :\n1. Allez sur supabase.com\n2. Ouvrez votre projet\n3. Settings → API\n4. Copiez la clé "anon public"\n5. Mettez-la dans votre fichier .env`);
-        } else if (error.message.includes('Configuration Supabase manquante')) {
-          alert(`❌ Configuration Supabase manquante\n\n${error.message}\n\nVeuillez créer un fichier .env avec :\nVITE_SUPABASE_URL=votre_url_supabase\nVITE_SUPABASE_ANON_KEY=votre_clé_supabase`);
-        } else {
-          alert(`Une erreur est survenue: ${error.message}\n\nVeuillez réessayer ou nous contacter directement.`);
-        }
-      } else {
-        alert('Une erreur inconnue est survenue. Veuillez réessayer ou nous contacter directement.');
-      }
+      alert(`Une erreur est survenue lors de l'envoi: ${error.message}\n\nVeuillez réessayer ou nous contacter directement au +41(0)22 312 23 22.`);
       
       console.log('Détails de l\'erreur complète:', error);
     }
@@ -196,8 +189,8 @@ const Reservations = () => {
           <CheckCircle className="text-green-500 mx-auto mb-4" size={64} />
           <h2 className="text-2xl font-bold text-primary mb-4">Demande envoyée !</h2>
           <p className="text-gray-700 mb-6">
-            Merci pour votre demande de réservation. Nous vous confirmerons les détails 
-            par email ou téléphone dans les plus brefs délais.
+            Merci pour votre demande de réservation. Nous avons bien reçu votre demande
+            et vous confirmerons les détails par email ou téléphone dans les plus brefs délais.
           </p>
           <div className="bg-secondary p-4 rounded-lg">
             <h3 className="font-semibold text-primary mb-2">Récapitulatif</h3>
