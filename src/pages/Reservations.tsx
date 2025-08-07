@@ -28,66 +28,7 @@ const Reservations = () => {
     try {
       console.log('Début de la soumission du formulaire...')
       
-      // 1. Essayer d'enregistrer dans Supabase
-      let supabaseSuccess = false;
-      try {
-        const supabaseData = {
-          nom_client: formData.name,
-          email_client: formData.email,
-          telephone_client: formData.phone,
-          date_reservation: formData.date,
-          heure_reservation: formData.time,
-          nombre_personnes: parseInt(formData.guests),
-          commentaire: formData.message || null
-        };
-
-        console.log('Tentative d\'enregistrement dans Supabase...')
-        await createReservation(supabaseData);
-        console.log('Supabase - Succès')
-        supabaseSuccess = true;
-
-        // Envoyer email et SMS de confirmation automatique
-        try {
-          // Email de confirmation
-          const emailHtml = getConfirmationEmailTemplate(
-            formData.name,
-            new Date(formData.date).toLocaleDateString('fr-FR'),
-            formData.time,
-            parseInt(formData.guests)
-          );
-          await sendEmail(formData.email, 'Confirmation de votre réservation à La Finestra', emailHtml);
-          console.log('Email de confirmation envoyé');
-
-          // SMS de confirmation si téléphone valide
-          if (formData.phone && formData.phone.trim() !== '') {
-            console.log('=== TENTATIVE ENVOI SMS ===');
-            console.log('Téléphone saisi:', formData.phone);
-            
-            const smsMessage = getConfirmationSMSTemplate(
-              formData.name,
-              new Date(formData.date).toLocaleDateString('fr-FR'),
-              formData.time,
-              parseInt(formData.guests)
-            );
-            
-            console.log('Message SMS généré:', smsMessage);
-            
-            const formattedPhone = formatPhoneNumber(formData.phone);
-            console.log('Numéro formaté:', formattedPhone);
-            
-            await sendSMS(formattedPhone, smsMessage);
-            console.log('SMS de confirmation envoyé');
-          }
-        } catch (notificationError) {
-          console.error('=== ERREUR SMS DANS RESERVATIONS ===');
-          console.error('Erreur complète:', notificationError);
-          console.error('Erreur lors de l\'envoi des notifications:', notificationError);
-        }
-      } catch (supabaseError) {
-        console.warn('Supabase non disponible, utilisation de Formspree uniquement:', supabaseError);
-      }
-
-      // 2. Envoyer à Formspree (toujours)
+      // Envoyer à Formspree (méthode principale)
       console.log('Envoi à Formspree...')
       const form = e.target as HTMLFormElement;
       const formDataForFormspree = new FormData(form);
@@ -109,13 +50,10 @@ const Reservations = () => {
       console.log('Formspree - Succès')
       console.log('Soumission complète réussie!')
 
-      // 3. Afficher le succès
+      // Afficher le succès
       setIsSubmitted(true);
       
-      // Afficher un message différent selon si Supabase a fonctionné
-      if (!supabaseSuccess) {
-        console.log('Réservation envoyée par email uniquement (Supabase non disponible)');
-      }
+      console.log('Réservation envoyée par email via Formspree');
       
       setTimeout(() => {
         setIsSubmitted(false);
