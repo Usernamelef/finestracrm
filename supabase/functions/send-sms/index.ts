@@ -16,13 +16,20 @@ Deno.serve(async (req) => {
     
     const { to, message, sender } = requestBody
 
-    // IDENTIFIANTS EN DUR POUR TEST
-    const client_id = "13742224586362909733"
-    const client_secret = "gOMbIkbDEN3k2zPRrupC"
+    // Récupération des identifiants depuis les variables d'environnement
+    const client_id = Deno.env.get('SMSTOOLS_CLIENT_ID')
+    const client_secret = Deno.env.get('SMSTOOLS_CLIENT_SECRET')
     
-    console.log('=== IDENTIFIANTS UTILISÉS (EN DUR) ===')
+    if (!client_id || !client_secret) {
+      console.error('=== ERREUR: VARIABLES D\'ENVIRONNEMENT MANQUANTES ===')
+      console.error('SMSTOOLS_CLIENT_ID:', client_id ? 'DÉFINI' : 'MANQUANT')
+      console.error('SMSTOOLS_CLIENT_SECRET:', client_secret ? 'DÉFINI' : 'MANQUANT')
+      throw new Error('Variables d\'environnement SMSTOOLS_CLIENT_ID et SMSTOOLS_CLIENT_SECRET requises')
+    }
+    
+    console.log('=== IDENTIFIANTS UTILISÉS (DEPUIS ENV) ===')
     console.log('Client ID:', client_id)
-    console.log('Client Secret:', client_secret)
+    console.log('Client Secret:', client_secret ? '***DÉFINI***' : 'MANQUANT')
     console.log('Destinataire:', to)
     console.log('Message:', message)
     console.log('Expéditeur:', sender || 'La Finestra')
