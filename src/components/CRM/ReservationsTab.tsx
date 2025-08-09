@@ -203,7 +203,7 @@ const ReservationsTab: React.FC<ReservationsTabProps> = ({
           console.log('SMS de confirmation envoyé avec succès');
         } catch (smsError) {
           console.error('Erreur lors de l\'envoi du SMS:', smsError);
-          // Ne pas faire échouer la confirmation si le SMS échoue
+          // SMS désactivé temporairement - ne pas faire échouer la confirmation
         }
       }
 
@@ -242,7 +242,7 @@ const ReservationsTab: React.FC<ReservationsTabProps> = ({
           console.log('SMS d\'annulation envoyé avec succès');
         } catch (smsError) {
           console.warn('Erreur lors de l\'envoi du SMS:', smsError);
-          // Ne pas faire échouer l'annulation si le SMS échoue
+          // SMS désactivé temporairement - ne pas faire échouer l'annulation
         }
       }
 
