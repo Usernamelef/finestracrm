@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { sendSMS } from '../utils/smsService';
+import { sendSMS } from '../lib/supabase';
 
 interface SMSFormState {
   numero: string;
