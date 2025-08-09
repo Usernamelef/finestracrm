@@ -49,7 +49,10 @@ Deno.serve(async (req) => {
     console.log('Données SMS à envoyer:', smsData)
 
     console.log('Envoi de la requête à SMSTools API...')
-    const response = await fetch('https://api.smsgatewayapi.com/v1/message/send', {
+    const apiUrl = 'https://api.smsgatewayapi.com/v1/message/send'
+    console.log('URL API appelée:', apiUrl)
+    
+    const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
         'X-Client-Id': client_id,
@@ -75,7 +78,7 @@ Deno.serve(async (req) => {
       const textResponse = await responseForText.text()
       console.error('Réponse HTML/texte de SMSTools:', textResponse)
       
-      throw new Error(`SMSTools API a retourné une page HTML d'erreur au lieu de JSON. Vérifiez vos identifiants. Réponse: ${textResponse.substring(0, 200)}...`)
+      throw new Error(`Erreur parsing JSON. Status: ${response.status}. Réponse: ${textResponse.substring(0, 300)}`)
     }
 
     if (!response.ok) {
@@ -84,15 +87,23 @@ Deno.serve(async (req) => {
       console.error('Réponse:', result)
       
       // Gestion spécifique des codes d'erreur SMSTools
-      let errorMessage = `SMSTools API Error (${response.status})`
-      if (result.error) {
-        errorMessage += `: ${result.error}`
+      let errorMessage = `SMSTools Error ${response.status}`
+      
+      // Codes d'erreur SMSTools courants
+      if (result.error === '111') {
+        errorMessage += ': Identifiants invalides (Client ID/Secret incorrects)'
+      } else if (result.error === '112') {
+        errorMessage += ': Numéro de téléphone invalide'
+      } else if (result.error === '113') {
+        errorMessage += ': Message vide ou trop long'
+      } else if (result.error === '114') {
+        errorMessage += ': Crédit insuffisant'
+      } else if (result.error) {
+        errorMessage += `: Code ${result.error}`
       } else if (result.message) {
         errorMessage += `: ${result.message}`
-      } else if (result.code) {
-        errorMessage += `: Code ${result.code}`
       } else {
-        errorMessage += `: ${JSON.stringify(result)}`
+        errorMessage += `: ${JSON.stringify(result).substring(0, 100)}`
       }
       
       throw new Error(errorMessage)
