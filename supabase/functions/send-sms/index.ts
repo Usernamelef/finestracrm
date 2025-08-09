@@ -9,23 +9,18 @@ Deno.serve(async (req) => {
   }
 
   try {
-    console.log('=== DÉBUT FONCTION SMS ===')
+    console.log('=== DÉBUT FONCTION SMS SMSTOOLS ===')
     
     const requestBody = await req.json()
     console.log('Corps de la requête reçu:', requestBody)
     
     const { to, message, sender } = requestBody
 
-    // Récupération des identifiants depuis les variables d'environnement
+    // Récupération des identifiants SMSTools depuis les variables d'environnement
     const client_id = Deno.env.get('SMS_CLIENT_ID') || '13742224586362909733'
     const client_secret = Deno.env.get('SMS_CLIENT_SECRET') || 'gOMbIkbDEN3k2zPRrupC'
     
-    if (!Deno.env.get('SMS_CLIENT_ID') || !Deno.env.get('SMS_CLIENT_SECRET')) {
-      console.error('Variables d\'environnement manquantes: SMS_CLIENT_ID ou SMS_CLIENT_SECRET')
-      console.error('Utilisation des identifiants par défaut')
-    }
-    
-    console.log('Identifiants utilisés:')
+    console.log('Identifiants SMSTools utilisés:')
     console.log('- Client ID:', client_id)
     console.log('- Client Secret:', client_secret ? '[DÉFINI]' : '[NON DÉFINI]')
     console.log('- Destinataire:', to)
@@ -34,12 +29,12 @@ Deno.serve(async (req) => {
     console.log('- Longueur du message:', message.length, 'caractères')
     
     // Vérifier la longueur du message
-    if (message.length > 150) {
-      console.error('Message trop long:', message.length, 'caractères (max 150)')
-      throw new Error(`Message trop long: ${message.length} caractères (maximum 150)`)
+    if (message.length > 160) {
+      console.error('Message trop long:', message.length, 'caractères (max 160)')
+      throw new Error(`Message trop long: ${message.length} caractères (maximum 160)`)
     }
 
-    // Format des données selon la documentation SMS Gateway API
+    // Format des données pour SMSTools API
     const smsData = {
       message: message,
       to: to,
@@ -48,8 +43,8 @@ Deno.serve(async (req) => {
     
     console.log('Données SMS à envoyer:', smsData)
 
-    console.log('Envoi de la requête à l\'API SMS...')
-    const response = await fetch('https://api.smsgatewayapi.com/v1/message/send', {
+    console.log('Envoi de la requête à SMSTools API...')
+    const response = await fetch('https://api.smstools.com/send', {
       method: 'POST',
       headers: {
         'X-Client-Id': client_id,
@@ -59,19 +54,19 @@ Deno.serve(async (req) => {
       body: JSON.stringify(smsData),
     })
 
-    console.log('Statut de la réponse API:', response.status)
+    console.log('Statut de la réponse SMSTools:', response.status)
     console.log('Headers de la réponse:', Object.fromEntries(response.headers.entries()))
 
     const result = await response.json()
-    console.log('Réponse complète de l\'API:', result)
+    console.log('Réponse complète de SMSTools:', result)
 
     if (!response.ok) {
-      console.error('=== ERREUR API SMS ===')
+      console.error('=== ERREUR API SMSTOOLS ===')
       console.error('Statut:', response.status)
       console.error('Réponse:', result)
       
-      // Gestion spécifique des codes d'erreur
-      let errorMessage = `SMS API Error (${response.status})`
+      // Gestion spécifique des codes d'erreur SMSTools
+      let errorMessage = `SMSTools API Error (${response.status})`
       if (result.error) {
         errorMessage += `: ${result.error}`
       } else if (result.message) {
@@ -85,7 +80,7 @@ Deno.serve(async (req) => {
       throw new Error(errorMessage)
     }
 
-    console.log('=== SMS ENVOYÉ AVEC SUCCÈS ===')
+    console.log('=== SMS ENVOYÉ AVEC SUCCÈS VIA SMSTOOLS ===')
     console.log('Résultat:', result)
 
     return new Response(
@@ -96,7 +91,7 @@ Deno.serve(async (req) => {
       },
     )
   } catch (error) {
-    console.error('=== ERREUR DANS LA FONCTION SMS ===')
+    console.error('=== ERREUR DANS LA FONCTION SMS SMSTOOLS ===')
     console.error('Type d\'erreur:', error.constructor.name)
     console.error('Message d\'erreur:', error.message)
     console.error('Stack trace:', error.stack)

@@ -53,6 +53,32 @@ const Reservations = () => {
       
       console.log('Formspree - Succès')
       
+      // Tentative d'envoi SMS de confirmation si Supabase est configuré
+      try {
+        console.log('=== TENTATIVE ENVOI SMS ===')
+        console.log('Téléphone saisi:', formData.phone)
+        
+        const formattedPhone = formatPhoneNumber(formData.phone);
+        console.log('Téléphone formaté:', formattedPhone)
+        
+        const smsMessage = getConfirmationSMSTemplate(
+          formData.name,
+          new Date(formData.date).toLocaleDateString('fr-FR'),
+          formData.time,
+          parseInt(formData.guests)
+        );
+        console.log('Message SMS généré:', smsMessage)
+        console.log('Longueur du message:', smsMessage.length, 'caractères')
+        
+        const smsResult = await sendSMS(formattedPhone, smsMessage);
+        console.log('=== SMS ENVOYÉ AVEC SUCCÈS ===')
+        console.log('Résultat SMS:', smsResult)
+      } catch (smsError) {
+        console.error('=== ERREUR SMS (NON BLOQUANTE) ===')
+        console.error('Erreur SMS:', smsError)
+        // Ne pas faire échouer la réservation si le SMS échoue
+      }
+      
       // Envoyer un email de confirmation au client via Formspree
       console.log('Envoi email de confirmation au client...')
       const confirmationData = new FormData();

@@ -203,8 +203,7 @@ export const sendEmail = async (to: string, subject: string, html: string) => {
 // Fonction pour envoyer un SMS
 export const sendSMS = async (to: string, message: string, sender?: string) => {
   if (!isSupabaseConfigured) {
-    console.warn('Supabase non configuré - SMS ignoré')
-    return { success: false, message: 'SMS non envoyé - configuration manquante' }
+    throw new Error('Configuration Supabase manquante pour l\'envoi de SMS')
   }
 
   try {
