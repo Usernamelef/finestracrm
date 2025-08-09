@@ -53,6 +53,27 @@ const Reservations = () => {
       
       console.log('Formspree - Succès')
       
+      // Enregistrer la réservation dans Supabase pour le CRM
+      try {
+        console.log('Enregistrement dans Supabase pour le CRM...')
+        const reservationData = {
+          nom_client: formData.name,
+          email_client: formData.email,
+          telephone_client: formData.phone,
+          date_reservation: formData.date,
+          heure_reservation: formData.time,
+          nombre_personnes: parseInt(formData.guests),
+          commentaire: formData.message || null,
+          statut: 'nouvelle' // Statut pour apparaître dans "Nouvelles réservations"
+        };
+        
+        await createReservation(reservationData);
+        console.log('Réservation enregistrée dans Supabase avec succès');
+      } catch (supabaseError) {
+        console.warn('Erreur Supabase (non bloquante):', supabaseError);
+        // Ne pas faire échouer la réservation si Supabase échoue
+      }
+      
       // Tentative d'envoi SMS de confirmation si Supabase est configuré
       try {
         console.log('=== TENTATIVE ENVOI SMS ===')
