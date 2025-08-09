@@ -16,9 +16,9 @@ Deno.serve(async (req) => {
     
     const { to, message, sender } = requestBody
 
-    // Récupération des identifiants SMSTools depuis les variables d'environnement
-    const client_id = Deno.env.get('SMS_CLIENT_ID') || '13742224586362909733'
-    const client_secret = Deno.env.get('SMS_CLIENT_SECRET') || 'gOMbIkbDEN3k2zPRrupC'
+    // Identifiants SMSTools
+    const client_id = "13742224586362909733"
+    const client_secret = "gOMbIkbDEN3k2zPRrupC"
     
     console.log('Identifiants SMSTools utilisés:')
     console.log('- Client ID:', client_id)
@@ -44,7 +44,7 @@ Deno.serve(async (req) => {
     console.log('Données SMS à envoyer:', smsData)
 
     console.log('Envoi de la requête à SMSTools API...')
-    const response = await fetch('https://api.smstools.com/send', {
+    const response = await fetch('https://api.smsgatewayapi.com/v1/message/send', {
       method: 'POST',
       headers: {
         'X-Client-Id': client_id,
@@ -70,7 +70,7 @@ Deno.serve(async (req) => {
       const textResponse = await responseForText.text()
       console.error('Réponse HTML/texte de SMSTools:', textResponse)
       
-      throw new Error(`SMSTools API a retourné une page HTML d'erreur au lieu de JSON. Vérifiez vos identifiants SMS_CLIENT_ID et SMS_CLIENT_SECRET. Réponse: ${textResponse.substring(0, 200)}...`)
+      throw new Error(`SMSTools API a retourné une page HTML d'erreur au lieu de JSON. Vérifiez vos identifiants. Réponse: ${textResponse.substring(0, 200)}...`)
     }
 
     if (!response.ok) {
