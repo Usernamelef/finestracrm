@@ -232,19 +232,22 @@ export const sendSMS = async (to: string, message: string, sender?: string) => {
       })
     })
 
+    // Cloner la réponse immédiatement pour éviter l'erreur "Body already consumed"
+    const clonedResponse = response.clone()
+
     console.log('=== RÉPONSE SMS ===')
     console.log('Status:', response.status)
     console.log('Headers:', Object.fromEntries(response.headers.entries()))
     
     if (!response.ok) {
-      const errorText = await response.text()
+      const errorText = await clonedResponse.text()
       console.error('=== ERREUR SMS ===')
       console.error('Status:', response.status)
       console.error('Response:', errorText)
       throw new Error(`Erreur SMS (${response.status}): ${errorText}`)
     }
 
-    const result = await response.json()
+    const result = await clonedResponse.json()
     console.log('=== SMS ENVOYÉ AVEC SUCCÈS ===')
     console.log('Résultat:', result)
     return result
