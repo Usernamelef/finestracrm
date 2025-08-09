@@ -33,6 +33,10 @@ const Reservations = () => {
       const form = e.target as HTMLFormElement;
       const formDataForFormspree = new FormData(form);
       
+      // Ajouter des champs cachés pour Formspree
+      formDataForFormspree.append('_subject', `Nouvelle réservation - ${formData.name}`);
+      formDataForFormspree.append('_template', 'table');
+      
       const formspreeResponse = await fetch('https://formspree.io/f/xblyzvwk', {
         method: 'POST',
         body: formDataForFormspree,
@@ -48,6 +52,32 @@ const Reservations = () => {
       }
       
       console.log('Formspree - Succès')
+      
+      // Envoyer un email de confirmation au client via Formspree
+      console.log('Envoi email de confirmation au client...')
+      const confirmationData = new FormData();
+      confirmationData.append('email', formData.email);
+      confirmationData.append('name', formData.name);
+      confirmationData.append('date', formData.date);
+      confirmationData.append('time', formData.time);
+      confirmationData.append('guests', formData.guests);
+      confirmationData.append('_subject', 'Confirmation de votre réservation - La Finestra');
+      confirmationData.append('_template', 'confirmation');
+      
+      // Envoyer la confirmation au client (optionnel - ne pas faire échouer si ça ne marche pas)
+      try {
+        await fetch('https://formspree.io/f/xblyzvwk', {
+          method: 'POST',
+          body: confirmationData,
+          headers: {
+            'Accept': 'application/json'
+          }
+        });
+        console.log('Email de confirmation envoyé au client');
+      } catch (confirmError) {
+        console.warn('Erreur envoi confirmation client (non bloquant):', confirmError);
+      }
+      
       console.log('Soumission complète réussie!')
 
       // Afficher le succès
