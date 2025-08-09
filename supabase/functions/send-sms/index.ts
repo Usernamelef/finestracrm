@@ -38,22 +38,31 @@ Deno.serve(async (req) => {
     console.log('=== VÉRIFICATION DU NUMÉRO ===')
     console.log('Numéro original:', to)
     
-    // Le numéro doit être au format international sans le +
+    // Nettoyer le numéro : supprimer espaces, tirets, parenthèses, +
     let cleanedNumber = to.replace(/[\s\-\(\)\+]/g, '')
     console.log('Numéro nettoyé:', cleanedNumber)
     
-    // Si le numéro commence par 00, le remplacer par rien
-    if (cleanedNumber.startsWith('00')) {
-      cleanedNumber = cleanedNumber.substring(2)
-      console.log('Après suppression 00:', cleanedNumber)
+    // Gestion spécifique des formats suisses
+    if (cleanedNumber.startsWith('41')) {
+      // Déjà au bon format
+      console.log('Format 41 détecté, gardé tel quel:', cleanedNumber)
+    } else if (cleanedNumber.startsWith('0041')) {
+      cleanedNumber = cleanedNumber.substring(2) // Supprimer 00, garder 41
+      console.log('Format 0041 converti en:', cleanedNumber)
+    } else if (cleanedNumber.startsWith('0')) {
+      cleanedNumber = '41' + cleanedNumber.substring(1) // Remplacer 0 par 41
+      console.log('Format 0 converti en:', cleanedNumber)
+    } else {
+      // Ajouter 41 si pas de code pays
+      cleanedNumber = '41' + cleanedNumber
+      console.log('Ajout du code pays 41:', cleanedNumber)
     }
     
-    // Si le numéro ne commence pas par un code pays, ajouter 41 (Suisse)
-    if (!cleanedNumber.match(/^[1-9]\d{10,14}$/)) {
-      if (cleanedNumber.startsWith('0')) {
-        cleanedNumber = '41' + cleanedNumber.substring(1)
-        console.log('Ajout code pays suisse:', cleanedNumber)
-      }
+    // Validation finale du format
+    if (!cleanedNumber.match(/^41\d{9}$/)) {
+      console.error('ERREUR: Format de numéro invalide après nettoyage:', cleanedNumber)
+      console.error('Le numéro doit être au format 41XXXXXXXXX (12 chiffres total)')
+      throw new Error(`Format de numéro invalide: ${cleanedNumber}. Attendu: 41XXXXXXXXX`)
     }
     
     console.log('Numéro final utilisé:', cleanedNumber)
