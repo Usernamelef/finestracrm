@@ -74,8 +74,8 @@ const Reservations = () => {
         console.log('=== SMS ENVOYÉ AVEC SUCCÈS ===')
         console.log('Résultat SMS:', smsResult)
       } catch (smsError) {
-        console.error('=== ERREUR SMS (NON BLOQUANTE) ===')
-        console.error('Erreur SMS:', smsError)
+        console.warn('=== ERREUR SMS (NON BLOQUANTE) ===')
+        console.warn('Erreur SMS:', smsError)
         // Ne pas faire échouer la réservation si le SMS échoue
       }
       

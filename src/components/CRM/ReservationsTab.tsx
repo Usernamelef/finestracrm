@@ -241,7 +241,7 @@ const ReservationsTab: React.FC<ReservationsTabProps> = ({
           await sendSMS(formattedPhone, smsMessage);
           console.log('SMS d\'annulation envoyé avec succès');
         } catch (smsError) {
-          console.error('Erreur lors de l\'envoi du SMS:', smsError);
+          console.warn('Erreur lors de l\'envoi du SMS:', smsError);
           // Ne pas faire échouer l'annulation si le SMS échoue
         }
       }
