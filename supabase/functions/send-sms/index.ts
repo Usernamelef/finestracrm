@@ -9,35 +9,24 @@ Deno.serve(async (req) => {
   }
 
   try {
-    console.log('=== DÉBUT FONCTION SMS SMSTOOLS ===')
+    console.log('=== DÉBUT FONCTION SMS SMSTOOLS (TEST) ===')
     
     const requestBody = await req.json()
     console.log('Corps de la requête reçu:', requestBody)
     
     const { to, message, sender } = requestBody
 
-    // Identifiants SMSTools depuis les variables d'environnement
-    const client_id = Deno.env.get('SMSTOOLS_CLIENT_ID')
-    const client_secret = Deno.env.get('SMSTOOLS_CLIENT_SECRET')
+    // IDENTIFIANTS EN DUR POUR TEST
+    const client_id = "13742224586362909733"
+    const client_secret = "gOMbIkbDEN3k2zPRrupC"
     
-    console.log('=== VÉRIFICATION DES IDENTIFIANTS ===')
-    console.log('SMSTOOLS_CLIENT_ID depuis env:', client_id)
-    console.log('SMSTOOLS_CLIENT_SECRET depuis env:', client_secret ? '[DÉFINI - longueur: ' + client_secret.length + ']' : '[NON DÉFINI]')
-    
-    if (!client_id || !client_secret) {
-      console.error('Variables d\'environnement SMSTools manquantes')
-      console.error('client_id présent:', !!client_id)
-      console.error('client_secret présent:', !!client_secret)
-      throw new Error('Configuration SMSTools manquante: SMSTOOLS_CLIENT_ID et SMSTOOLS_CLIENT_SECRET requis')
-    }
-    
-    console.log('Identifiants SMSTools utilisés:')
-    console.log('- Client ID:', client_id)
-    console.log('- Client Secret:', client_secret ? '[DÉFINI]' : '[NON DÉFINI]')
-    console.log('- Destinataire:', to)
-    console.log('- Message:', message)
-    console.log('- Expéditeur:', sender || 'La Finestra')
-    console.log('- Longueur du message:', message.length, 'caractères')
+    console.log('=== IDENTIFIANTS UTILISÉS (EN DUR) ===')
+    console.log('Client ID:', client_id)
+    console.log('Client Secret:', client_secret)
+    console.log('Destinataire:', to)
+    console.log('Message:', message)
+    console.log('Expéditeur:', sender || 'La Finestra')
+    console.log('Longueur du message:', message.length, 'caractères')
     
     // Vérifier la longueur du message
     if (message.length > 160) {
@@ -45,88 +34,135 @@ Deno.serve(async (req) => {
       throw new Error(`Message trop long: ${message.length} caractères (maximum 160)`)
     }
 
+    // Vérifier le format du numéro de téléphone
+    console.log('=== VÉRIFICATION DU NUMÉRO ===')
+    console.log('Numéro original:', to)
+    
+    // Le numéro doit être au format international sans le +
+    let cleanedNumber = to.replace(/[\s\-\(\)\+]/g, '')
+    console.log('Numéro nettoyé:', cleanedNumber)
+    
+    // Si le numéro commence par 00, le remplacer par rien
+    if (cleanedNumber.startsWith('00')) {
+      cleanedNumber = cleanedNumber.substring(2)
+      console.log('Après suppression 00:', cleanedNumber)
+    }
+    
+    // Si le numéro ne commence pas par un code pays, ajouter 41 (Suisse)
+    if (!cleanedNumber.match(/^[1-9]\d{10,14}$/)) {
+      if (cleanedNumber.startsWith('0')) {
+        cleanedNumber = '41' + cleanedNumber.substring(1)
+        console.log('Ajout code pays suisse:', cleanedNumber)
+      }
+    }
+    
+    console.log('Numéro final utilisé:', cleanedNumber)
+
     // Format des données pour SMSTools API
     const smsData = {
       message: message,
-      to: to,
+      to: cleanedNumber,
       sender: sender || 'La Finestra',
     }
     
-    console.log('Données SMS à envoyer:', smsData)
+    console.log('=== DONNÉES ENVOYÉES À SMSTOOLS ===')
+    console.log('Données complètes:', JSON.stringify(smsData, null, 2))
 
-    console.log('Envoi de la requête à SMSTools API...')
     const apiUrl = 'https://api.smsgatewayapi.com/v1/message/send'
-    console.log('URL API appelée:', apiUrl)
+    console.log('URL API:', apiUrl)
     
+    const headers = {
+      'X-Client-Id': client_id,
+      'X-Client-Secret': client_secret,
+      'Content-Type': 'application/json',
+    }
+    
+    console.log('=== HEADERS ENVOYÉS ===')
+    console.log('Headers:', JSON.stringify(headers, null, 2))
+    
+    console.log('=== ENVOI DE LA REQUÊTE ===')
     const response = await fetch(apiUrl, {
       method: 'POST',
-      headers: {
-        'X-Client-Id': client_id,
-        'X-Client-Secret': client_secret,
-        'Content-Type': 'application/json',
-      },
+      headers: headers,
       body: JSON.stringify(smsData),
     })
 
-    console.log('Statut de la réponse SMSTools:', response.status)
-    console.log('Headers de la réponse:', Object.fromEntries(response.headers.entries()))
+    console.log('=== RÉPONSE REÇUE ===')
+    console.log('Statut:', response.status)
+    console.log('Status Text:', response.statusText)
+    console.log('Headers de réponse:', Object.fromEntries(response.headers.entries()))
 
     // Cloner la réponse pour éviter l'erreur "Body already consumed"
-    const responseForJson = response.clone()
-    const responseForText = response.clone()
+    const responseText = await response.text()
+    console.log('Corps de la réponse (texte brut):', responseText)
 
     let result
     try {
-      result = await responseForJson.json()
-      console.log('Réponse complète de SMSTools:', result)
+      result = JSON.parse(responseText)
+      console.log('Réponse parsée en JSON:', result)
     } catch (jsonError) {
-      console.error('Erreur de parsing JSON, récupération du texte brut...')
-      const textResponse = await responseForText.text()
-      console.error('Réponse HTML/texte de SMSTools:', textResponse)
-      
-      throw new Error(`Erreur parsing JSON. Status: ${response.status}. Réponse: ${textResponse.substring(0, 300)}`)
+      console.error('Impossible de parser en JSON:', jsonError)
+      result = { raw_response: responseText }
     }
 
     if (!response.ok) {
       console.error('=== ERREUR API SMSTOOLS ===')
-      console.error('Statut:', response.status)
-      console.error('Réponse:', result)
+      console.error('Statut HTTP:', response.status)
+      console.error('Réponse complète:', result)
       
-      // Gestion spécifique des codes d'erreur SMSTools
+      // Analyse détaillée des erreurs SMSTools
       let errorMessage = `SMSTools Error ${response.status}`
       
-      // Codes d'erreur SMSTools courants
-      if (result.error === '111') {
-        errorMessage += ': Identifiants invalides (Client ID/Secret incorrects)'
-      } else if (result.error === '112') {
-        errorMessage += ': Numéro de téléphone invalide'
-      } else if (result.error === '113') {
-        errorMessage += ': Message vide ou trop long'
-      } else if (result.error === '114') {
-        errorMessage += ': Crédit insuffisant'
-      } else if (result.error) {
-        errorMessage += `: Code ${result.error}`
-      } else if (result.message) {
-        errorMessage += `: ${result.message}`
+      if (result.error) {
+        console.error('Code d\'erreur SMSTools:', result.error)
+        
+        switch (result.error) {
+          case '111':
+            errorMessage += ': Identifiants invalides (Client ID/Secret incorrects)'
+            console.error('DIAGNOSTIC: Vérifiez que les identifiants SMSTools sont corrects')
+            break
+          case '112':
+            errorMessage += ': Numéro de téléphone invalide'
+            console.error('DIAGNOSTIC: Format du numéro incorrect:', cleanedNumber)
+            break
+          case '113':
+            errorMessage += ': Message vide ou trop long'
+            console.error('DIAGNOSTIC: Problème avec le message:', message)
+            break
+          case '114':
+            errorMessage += ': Crédit insuffisant'
+            console.error('DIAGNOSTIC: Pas assez de crédit sur le compte SMSTools')
+            break
+          default:
+            errorMessage += `: Code d'erreur ${result.error}`
+        }
       } else {
-        errorMessage += `: ${JSON.stringify(result).substring(0, 100)}`
+        errorMessage += `: ${responseText}`
       }
       
       throw new Error(errorMessage)
     }
 
-    console.log('=== SMS ENVOYÉ AVEC SUCCÈS VIA SMSTOOLS ===')
-    console.log('Résultat:', result)
+    console.log('=== SMS ENVOYÉ AVEC SUCCÈS ===')
+    console.log('Résultat final:', result)
 
     return new Response(
-      JSON.stringify({ success: true, data: result }),
+      JSON.stringify({ 
+        success: true, 
+        data: result,
+        debug: {
+          original_number: to,
+          cleaned_number: cleanedNumber,
+          message_length: message.length
+        }
+      }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200,
       },
     )
   } catch (error) {
-    console.error('=== ERREUR DANS LA FONCTION SMS SMSTOOLS ===')
+    console.error('=== ERREUR DANS LA FONCTION SMS ===')
     console.error('Type d\'erreur:', error.constructor.name)
     console.error('Message d\'erreur:', error.message)
     console.error('Stack trace:', error.stack)
@@ -135,7 +171,7 @@ Deno.serve(async (req) => {
       JSON.stringify({ 
         error: error.message,
         type: error.constructor.name,
-        details: 'Voir les logs pour plus de détails'
+        details: 'Voir les logs Supabase pour plus de détails'
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
