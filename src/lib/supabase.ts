@@ -220,9 +220,9 @@ export const sendSMS = async (to: string, message: string, sender?: string) => {
     console.log('Longueur:', message.length, 'caractères')
     
     // Vérifier la longueur du message
-    if (message.length > 150) {
+    if (message.length > 160) {
       console.error('Message SMS trop long:', message.length, 'caractères')
-      throw new Error(`Message trop long: ${message.length} caractères (max 150)`)
+      throw new Error(`Message trop long: ${message.length} caractères (max 160)`)
     }
     
     console.log('=== APPEL FONCTION EDGE SMS ===')
