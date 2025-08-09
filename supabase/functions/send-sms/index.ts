@@ -57,8 +57,17 @@ Deno.serve(async (req) => {
     console.log('Statut de la réponse SMSTools:', response.status)
     console.log('Headers de la réponse:', Object.fromEntries(response.headers.entries()))
 
-    const result = await response.json()
-    console.log('Réponse complète de SMSTools:', result)
+    let result
+    try {
+      result = await response.json()
+      console.log('Réponse complète de SMSTools:', result)
+    } catch (jsonError) {
+      console.error('Erreur de parsing JSON, récupération du texte brut...')
+      const textResponse = await response.text()
+      console.error('Réponse HTML/texte de SMSTools:', textResponse)
+      
+      throw new Error(`SMSTools API a retourné une page HTML d'erreur au lieu de JSON. Vérifiez vos identifiants SMS_CLIENT_ID et SMS_CLIENT_SECRET. Réponse: ${textResponse.substring(0, 200)}...`)
+    }
 
     if (!response.ok) {
       console.error('=== ERREUR API SMSTOOLS ===')
