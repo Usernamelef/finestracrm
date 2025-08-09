@@ -358,7 +358,7 @@ const CRM = () => {
         
         // Envoyer l'email de confirmation au client
         try {
-          const { sendEmail, getConfirmationEmailTemplate } = await import('./lib/supabase');
+          const { sendEmail, getConfirmationEmailTemplate } = await import('../lib/supabase');
           const emailHtml = getConfirmationEmailTemplate(
             newReservation.name,
             new Date(newReservation.date).toLocaleDateString('fr-FR'),
@@ -374,7 +374,7 @@ const CRM = () => {
         
         // Envoyer le SMS de confirmation si possible
         try {
-          const { sendSMS, getConfirmationSMSTemplate, formatPhoneNumber } = await import('./lib/supabase');
+          const { sendSMS, getConfirmationSMSTemplate, formatPhoneNumber } = await import('../lib/supabase');
           const smsMessage = getConfirmationSMSTemplate(
             newReservation.name,
             new Date(newReservation.date).toLocaleDateString('fr-FR'),
