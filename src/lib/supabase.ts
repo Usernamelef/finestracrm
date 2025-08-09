@@ -235,7 +235,7 @@ export const sendSMS = async (to: string, message: string, sender?: string) => {
       body: JSON.stringify({
         to,
         message,
-        sender: sender || 'La Finestra'
+        sender: sender || 'Finestra'
       })
     })
 

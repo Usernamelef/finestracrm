@@ -54,7 +54,7 @@ Deno.serve(async (req) => {
     const smsData = {
       message: message,
       to: cleanedNumber,
-      sender: sender || 'LaFinestra',
+      sender: sender || 'Finestra',
     }
     
     console.log('=== ENVOI À SMSTOOLS ===')
