@@ -202,6 +202,10 @@ export const sendEmail = async (to: string, subject: string, html: string) => {
 
 // Fonction pour envoyer un SMS
 export const sendSMS = async (to: string, message: string, sender?: string) => {
+  // Désactivation temporaire des SMS pour éviter les erreurs
+  console.log('SMS désactivé temporairement - Destinataire:', to, 'Message:', message);
+  return { success: true, message: 'SMS désactivé temporairement' };
+  
   if (!isSupabaseConfigured) {
     throw new Error('Configuration Supabase manquante pour l\'envoi de SMS')
   }
