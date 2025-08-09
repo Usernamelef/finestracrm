@@ -20,8 +20,14 @@ Deno.serve(async (req) => {
     const client_id = Deno.env.get('SMSTOOLS_CLIENT_ID')
     const client_secret = Deno.env.get('SMSTOOLS_CLIENT_SECRET')
     
+    console.log('=== VÉRIFICATION DES IDENTIFIANTS ===')
+    console.log('SMSTOOLS_CLIENT_ID depuis env:', client_id)
+    console.log('SMSTOOLS_CLIENT_SECRET depuis env:', client_secret ? '[DÉFINI - longueur: ' + client_secret.length + ']' : '[NON DÉFINI]')
+    
     if (!client_id || !client_secret) {
       console.error('Variables d\'environnement SMSTools manquantes')
+      console.error('client_id présent:', !!client_id)
+      console.error('client_secret présent:', !!client_secret)
       throw new Error('Configuration SMSTools manquante: SMSTOOLS_CLIENT_ID et SMSTOOLS_CLIENT_SECRET requis')
     }
     
