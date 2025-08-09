@@ -356,6 +356,39 @@ const CRM = () => {
         // Créer la réservation dans Supabase
         await createReservation(reservationData);
         
+        // Envoyer l'email de confirmation au client
+        try {
+          const { sendEmail, getConfirmationEmailTemplate } = await import('./lib/supabase');
+          const emailHtml = getConfirmationEmailTemplate(
+            newReservation.name,
+            new Date(newReservation.date).toLocaleDateString('fr-FR'),
+            newReservation.time,
+            parseInt(newReservation.guests)
+          );
+          await sendEmail(newReservation.email, 'Confirmation de votre réservation à La Finestra', emailHtml);
+          console.log('Email de confirmation envoyé au client');
+        } catch (emailError) {
+          console.warn('Erreur lors de l\'envoi de l\'email de confirmation:', emailError);
+          // Ne pas faire échouer la création de réservation si l'email échoue
+        }
+        
+        // Envoyer le SMS de confirmation si possible
+        try {
+          const { sendSMS, getConfirmationSMSTemplate, formatPhoneNumber } = await import('./lib/supabase');
+          const smsMessage = getConfirmationSMSTemplate(
+            newReservation.name,
+            new Date(newReservation.date).toLocaleDateString('fr-FR'),
+            newReservation.time,
+            parseInt(newReservation.guests)
+          );
+          const formattedPhone = formatPhoneNumber(newReservation.phone);
+          await sendSMS(formattedPhone, smsMessage);
+          console.log('SMS de confirmation envoyé au client');
+        } catch (smsError) {
+          console.warn('Erreur lors de l\'envoi du SMS de confirmation:', smsError);
+          // Ne pas faire échouer la création de réservation si le SMS échoue
+        }
+        
         // Réinitialiser le formulaire
         setNewReservation({
           name: '',
@@ -373,7 +406,7 @@ const CRM = () => {
           refreshReservationsRef.current();
         }
         
-        addActivity(`Réservation ajoutée pour ${newReservation.name} (${newReservation.guests} pers.) – En attente d'assignation`);
+        addActivity(`Réservation ajoutée pour ${newReservation.name} (${newReservation.guests} pers.) – Email de confirmation envoyé`);
       } catch (error) {
         console.error('Erreur lors de l\'ajout de la réservation:', error);
         alert('Erreur lors de l\'ajout de la réservation. Veuillez réessayer.');
