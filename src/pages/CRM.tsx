@@ -241,6 +241,8 @@ const CRM = () => {
 
   const [newReservation, setNewReservation] = useState({
     name: '',
+    email: '',
+    phone: '',
     date: '',
     time: '',
     guests: '',
@@ -329,7 +331,7 @@ const CRM = () => {
   };
 
   const handleAddReservation = async () => {
-    if (newReservation.name && newReservation.date && newReservation.time && newReservation.guests) {
+    if (newReservation.name && newReservation.email && newReservation.phone && newReservation.date && newReservation.time && newReservation.guests) {
       // Déterminer le service basé sur l'heure
       const hour = parseInt(newReservation.time.split(':')[0]);
       const minute = parseInt(newReservation.time.split(':')[1]);
@@ -342,8 +344,8 @@ const CRM = () => {
         // Préparer les données pour Supabase
         const reservationData = {
           nom_client: newReservation.name,
-          email_client: 'crm@lafinestra.ch', // Email par défaut pour les réservations CRM
-          telephone_client: 'N/A', // Téléphone par défaut
+          email_client: newReservation.email,
+          telephone_client: newReservation.phone,
           date_reservation: newReservation.date,
           heure_reservation: newReservation.time,
           nombre_personnes: parseInt(newReservation.guests),
@@ -357,6 +359,8 @@ const CRM = () => {
         // Réinitialiser le formulaire
         setNewReservation({
           name: '',
+          email: '',
+          phone: '',
           date: '',
           time: '',
           guests: '',
@@ -911,6 +915,28 @@ const CRM = () => {
                 />
               </div>
               
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <input
+                  type="email"
+                  value={newReservation.email}
+                  onChange={(e) => setNewReservation({...newReservation, email: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="email@exemple.com"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Téléphone</label>
+                <input
+                  type="tel"
+                  value={newReservation.phone}
+                  onChange={(e) => setNewReservation({...newReservation, phone: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="+41 xx xxx xx xx"
+                />
+              </div>
+              
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Date</label>
@@ -974,7 +1000,7 @@ const CRM = () => {
               </button>
               <button
                 onClick={handleAddReservation}
-                disabled={!newReservation.name || !newReservation.date || !newReservation.time || !newReservation.guests}
+                disabled={!newReservation.name || !newReservation.email || !newReservation.phone || !newReservation.date || !newReservation.time || !newReservation.guests}
                 className="px-4 py-2 bg-primary hover:bg-primary/90 disabled:bg-gray-300 text-white rounded-md transition-colors"
               >
                 Ajouter
