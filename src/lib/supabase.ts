@@ -198,10 +198,6 @@ export const sendEmail = async (to: string, subject: string, html: string) => {
     console.error('Erreur email:', error)
     throw error
   }
-}
-
-// Fonction pour envoyer un SMS
-export const sendSMS = async (to: string, message: string, sender?: string) => {
   if (!isSupabaseConfigured) {
     throw new Error('Configuration Supabase manquante pour l\'envoi de SMS')
   }
