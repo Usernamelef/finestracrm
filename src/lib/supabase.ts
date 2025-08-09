@@ -207,6 +207,13 @@ export const sendSMS = async (to: string, message: string, sender?: string) => {
   }
 
   try {
+    console.log('=== DÉBUT ENVOI SMS ===')
+    console.log('URL Supabase:', supabaseUrl)
+    console.log('Destinataire:', to)
+    console.log('Message:', message)
+    console.log('Longueur message:', message.length, 'caractères')
+    console.log('Sender:', sender || 'La Finestra')
+    
     console.log('=== ENVOI SMS ===')
     console.log('Destinataire:', to)
     console.log('Message:', message)
@@ -218,6 +225,7 @@ export const sendSMS = async (to: string, message: string, sender?: string) => {
       throw new Error(`Message trop long: ${message.length} caractères (max 150)`)
     }
     
+    console.log('=== APPEL FONCTION EDGE SMS ===')
     const response = await fetch(`${supabaseUrl}/functions/v1/send-sms`, {
       method: 'POST',
       headers: {
@@ -241,11 +249,12 @@ export const sendSMS = async (to: string, message: string, sender?: string) => {
     
     if (!response.ok) {
       const errorText = await clonedResponse.text()
-      console.warn('=== ERREUR SMS (NON BLOQUANTE) ===')
-      console.warn('Status:', response.status)
-      console.warn('Response:', errorText)
+      console.error('=== ERREUR SMS ===')
+      console.error('Status:', response.status)
+      console.error('Response complète:', errorText)
+      console.error('URL appelée:', `${supabaseUrl}/functions/v1/send-sms`)
       // Ne pas faire échouer - retourner un succès simulé
-      return { success: true, message: 'SMS non envoyé (erreur configuration)', error: errorText }
+      throw new Error(`Erreur SMS (${response.status}): ${errorText}`)
     }
 
     const result = await clonedResponse.json()
@@ -253,11 +262,12 @@ export const sendSMS = async (to: string, message: string, sender?: string) => {
     console.log('Résultat:', result)
     return result
   } catch (error) {
-    console.warn('=== ERREUR SMS (NON BLOQUANTE) ===')
-    console.warn('Type:', error.constructor.name)
-    console.warn('Message:', error.message)
+    console.error('=== ERREUR SMS ===')
+    console.error('Type:', error.constructor.name)
+    console.error('Message:', error.message)
+    console.error('Stack:', error.stack)
     // Ne pas faire échouer - retourner un succès simulé
-    return { success: true, message: 'SMS non envoyé (erreur technique)', error: error.message }
+    throw error
   }
 }
 
