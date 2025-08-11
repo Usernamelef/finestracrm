@@ -392,6 +392,16 @@ const ReservationsTab: React.FC<ReservationsTabProps> = ({
                       >
                         Assigner une table
                       </button>
+                      <button
+                        onClick={() => {
+                          setReservationToCancel(reservation);
+                          setShowCancelModal(true);
+                        }}
+                        className="w-full mt-2 bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded text-xs sm:text-sm flex items-center justify-center space-x-1"
+                      >
+                        <Ban size={14} />
+                        <span>Supprimer</span>
+                      </button>
                     </div>
                   </div>
                 </div>
