@@ -214,7 +214,7 @@ const SalleTab: React.FC<SalleTabProps> = ({
     setSelectedTables([]);
     setIsSelectingTables(false);
   };
-  return (
+
   // Fonctions de glisser-déposer
   const handleDragStart = (e: React.DragEvent, reservation: any, tableNumber: number) => {
     const dragData: DraggedReservation = {
@@ -295,6 +295,7 @@ const SalleTab: React.FC<SalleTabProps> = ({
     setDragOverTable(null);
   };
 
+  return (
     <>
       <div className="space-y-4 sm:space-y-8">
         <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">
