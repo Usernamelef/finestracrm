@@ -54,7 +54,7 @@ scp -r dist/ user@votre-ip-vps:/var/www/html/lafinestra/
 
 ### Pour Nginx :
 1. Copiez le fichier `nginx.conf` fourni
-2. Modifiez les chemins et le nom de domaine selon votre configuration
+2. Modifiez les chemins, le nom de domaine et le port selon votre configuration (actuellement configuré sur le port 3006)
 3. Activez la configuration :
    ```bash
    sudo cp nginx.conf /etc/nginx/sites-available/lafinestra

@@ -9,7 +9,7 @@
     "build:production": "NODE_ENV=production vite build",
     "preview": "vite preview",
     "lint": "eslint .",
-    "serve": "vite preview --port 3000"
+    "serve": "vite preview --port 3006"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.52.0",
