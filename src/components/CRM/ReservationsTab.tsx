@@ -153,8 +153,14 @@ const ReservationsTab: React.FC<ReservationsTabProps> = ({
   const getServiceFromTime = (heure: string) => {
     const [hour, minute] = heure.split(':').map(Number);
     const totalMinutes = hour * 60 + minute;
-    // 00:01 à 16:00 = midi, 16:01 à 00:00 = soir
-    return totalMinutes <= 16 * 60 ? 'midi' : 'soir';
+    // 12:00 à 13:45 = midi, 18:00 à 21:45 = soir
+    if (totalMinutes >= 12 * 60 && totalMinutes <= 13 * 60 + 45) {
+      return 'midi';
+    } else if (totalMinutes >= 18 * 60 && totalMinutes <= 21 * 60 + 45) {
+      return 'soir';
+    }
+    // Par défaut, déterminer selon l'heure (avant 16h = midi, après = soir)
+    return totalMinutes < 16 * 60 ? 'midi' : 'soir';
   };
 
   // Fonction pour filtrer les réservations assignées et arrivées par date et service

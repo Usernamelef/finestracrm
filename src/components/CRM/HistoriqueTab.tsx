@@ -134,7 +134,16 @@ const HistoriqueTab: React.FC = () => {
 
   const getServiceFromTime = (heure: string) => {
     const [hour] = heure.split(':').map(Number);
-    return hour <= 16 ? 'Midi' : 'Soir';
+    const [hourNum, minute] = heure.split(':').map(Number);
+    const totalMinutes = hourNum * 60 + minute;
+    // 12:00 à 13:45 = midi, 18:00 à 21:45 = soir
+    if (totalMinutes >= 12 * 60 && totalMinutes <= 13 * 60 + 45) {
+      return 'Midi';
+    } else if (totalMinutes >= 18 * 60 && totalMinutes <= 21 * 60 + 45) {
+      return 'Soir';
+    }
+    // Par défaut, déterminer selon l'heure (avant 16h = midi, après = soir)
+    return totalMinutes < 16 * 60 ? 'Midi' : 'Soir';
   };
 
   const exportToCSV = () => {
