@@ -51,6 +51,7 @@ const SalleTab: React.FC<SalleTabProps> = ({
 
   const [supabaseReservations, setSupabaseReservations] = useState<any[]>([]);
   const [selectedTables, setSelectedTables] = useState<number[]>([]);
+  const [isSelectingTables, setIsSelectingTables] = useState(false);
 
   // Charger les réservations depuis Supabase
   useEffect(() => {
@@ -143,9 +144,6 @@ const SalleTab: React.FC<SalleTabProps> = ({
   const handleTableClick = (table: Table) => {
     // Si une réservation est en attente d'assignation
     if (selectedReservation) {
-      const guestCount = selectedReservation.nombre_personnes || selectedReservation.guests;
-      const tablesNeeded = Math.ceil(guestCount / 2); // 2 personnes par table
-      
       // Vérifier si la table est disponible
       const tableStatus = getTableStatus(table.number);
       if (tableStatus.status !== 'available') {
@@ -153,34 +151,16 @@ const SalleTab: React.FC<SalleTabProps> = ({
         return;
       }
       
-      // Gestion des tables multiples
-      const newSelectedTables = [...selectedTables, table.number];
-      setSelectedTables(newSelectedTables);
-      
-      if (newSelectedTables.length === tablesNeeded) {
-        // Toutes les tables nécessaires sont sélectionnées
-        console.log('Assignation des tables', newSelectedTables, 'à la réservation', selectedReservation);
-        handleAssignTable(selectedReservation, newSelectedTables, true);
-        setSelectedReservation(null);
-        setSelectedTables([]);
+      // Gestion manuelle de la sélection des tables
+      if (selectedTables.includes(table.number)) {
+        // Désélectionner la table si elle est déjà sélectionnée
+        setSelectedTables(prev => prev.filter(t => t !== table.number));
       } else {
-        // Encore des tables à sélectionner
-        const remaining = tablesNeeded - newSelectedTables.length;
-        alert(`Table ${table.number} sélectionnée. Sélectionnez encore ${remaining} table(s).`);
+        // Ajouter la table à la sélection
+        setSelectedTables(prev => [...prev, table.number]);
       }
       
-      // Recharger les réservations après assignation
-      if (newSelectedTables.length === tablesNeeded) {
-        setTimeout(async () => {
-          try {
-            const { getAllReservations } = await import('../../lib/supabase');
-            const allReservations = await getAllReservations();
-            setSupabaseReservations(allReservations);
-          } catch (error) {
-            console.error('Erreur lors du rechargement:', error);
-          }
-        }, 1000);
-      }
+      setIsSelectingTables(true);
     } else {
       // Aucune réservation en attente - vérifier s'il y a une réservation sur cette table
       const tableStatus = getTableStatus(table.number);
@@ -196,6 +176,34 @@ const SalleTab: React.FC<SalleTabProps> = ({
     }
   };
 
+  // Fonction pour confirmer l'assignation des tables sélectionnées
+  const confirmTableAssignment = async () => {
+    if (selectedReservation && selectedTables.length > 0) {
+      console.log('Assignation des tables', selectedTables, 'à la réservation', selectedReservation);
+      handleAssignTable(selectedReservation, selectedTables, true);
+      setSelectedReservation(null);
+      setSelectedTables([]);
+      setIsSelectingTables(false);
+      
+      // Recharger les réservations après assignation
+      setTimeout(async () => {
+        try {
+          const { getAllReservations } = await import('../../lib/supabase');
+          const allReservations = await getAllReservations();
+          setSupabaseReservations(allReservations);
+        } catch (error) {
+          console.error('Erreur lors du rechargement:', error);
+        }
+      }, 1000);
+    }
+  };
+
+  // Fonction pour annuler la sélection
+  const cancelTableSelection = () => {
+    setSelectedReservation(null);
+    setSelectedTables([]);
+    setIsSelectingTables(false);
+  };
   return (
     <>
       <div className="space-y-4 sm:space-y-8">
@@ -249,10 +257,10 @@ const SalleTab: React.FC<SalleTabProps> = ({
         {selectedReservation && (
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-4">
             <h3 className="text-sm sm:text-base font-semibold text-blue-800 mb-2">
-              {selectedReservation.statut === 'assignee' || selectedReservation.statut === 'arrivee' ? 'Modification d\'assignation' : 'Assignation en cours'} pour: {selectedReservation.nom_client || selectedReservation.name}
+              {selectedReservation.statut === 'assignee' || selectedReservation.statut === 'arrivee' ? 'Modification d\'assignation' : 'Sélection des tables'} pour: {selectedReservation.nom_client || selectedReservation.name}
             </h3>
             <p className="text-xs sm:text-sm text-blue-700">
-              {selectedReservation.nombre_personnes || selectedReservation.guests} personne{(selectedReservation.nombre_personnes || selectedReservation.guests) > 1 ? 's' : ''} • {selectedReservation.heure_reservation || selectedReservation.time} • {Math.ceil((selectedReservation.nombre_personnes || selectedReservation.guests) / 2)} table(s) nécessaire(s)
+              {selectedReservation.nombre_personnes || selectedReservation.guests} personne{(selectedReservation.nombre_personnes || selectedReservation.guests) > 1 ? 's' : ''} • {selectedReservation.heure_reservation || selectedReservation.time}
             </p>
             <p className="text-xs sm:text-sm text-blue-600">
               Date: {selectedReservation.date_reservation || selectedReservation.date}
@@ -270,18 +278,30 @@ const SalleTab: React.FC<SalleTabProps> = ({
             )}
             {selectedTables.length > 0 && (
               <p className="text-xs sm:text-sm text-blue-600 mt-2">
-                Tables sélectionnées: {selectedTables.join(', ')} ({selectedTables.length}/{Math.ceil((selectedReservation.nombre_personnes || selectedReservation.guests) / 2)})
+                Tables sélectionnées: {selectedTables.join(', ')} ({selectedTables.length} table{selectedTables.length > 1 ? 's' : ''})
               </p>
             )}
-            <button
-              onClick={() => {
-                setSelectedReservation(null);
-                setSelectedTables([]);
-              }}
-              className="mt-2 bg-gray-500 hover:bg-gray-600 text-white px-3 py-2 rounded text-xs sm:text-sm"
-            >
-              Annuler
-            </button>
+            <div className="flex flex-col sm:flex-row gap-2 mt-3">
+              {selectedTables.length > 0 && (
+                <button
+                  onClick={confirmTableAssignment}
+                  className="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded text-xs sm:text-sm font-medium"
+                >
+                  Confirmer l'assignation ({selectedTables.length} table{selectedTables.length > 1 ? 's' : ''})
+                </button>
+              )}
+              <button
+                onClick={cancelTableSelection}
+                className="bg-gray-500 hover:bg-gray-600 text-white px-3 py-2 rounded text-xs sm:text-sm"
+              >
+                Annuler
+              </button>
+            </div>
+            <p className="text-xs text-gray-600 mt-2">
+              💡 <strong>Instructions:</strong> Cliquez sur les tables disponibles (vertes) pour les sélectionner. 
+              Vous pouvez sélectionner autant de tables que nécessaire. 
+              Cliquez à nouveau sur une table sélectionnée pour la désélectionner.
+            </p>
           </div>
         )}
 
@@ -311,7 +331,7 @@ const SalleTab: React.FC<SalleTabProps> = ({
                     <div
                       onClick={() => handleTableClick(table)}
                       className={`w-16 h-16 sm:w-20 sm:h-20 rounded-lg border-2 flex flex-col items-center justify-center cursor-pointer transition-all hover:scale-105 ${
-                        isSelected ? 'bg-blue-200 border-blue-500' :
+                        isSelected ? 'bg-blue-500 border-blue-700 text-white shadow-lg' :
                         isOccupied ? 'bg-red-200 border-red-500' :
                         tableStatus.status === 'available' ? 'bg-green-100 border-green-300 hover:bg-green-200' :
                         tableStatus.status === 'reserved' ? 'bg-orange-100 border-orange-300 hover:bg-orange-200' :
@@ -319,8 +339,13 @@ const SalleTab: React.FC<SalleTabProps> = ({
                         'bg-gray-100 border-gray-300'
                       }`}
                     >
-                      <div className="text-sm sm:text-base font-bold text-gray-800">{table.number}</div>
-                      <div className="text-xs text-gray-600">{table.capacity}p</div>
+                      <div className={`text-sm sm:text-base font-bold ${isSelected ? 'text-white' : 'text-gray-800'}`}>{table.number}</div>
+                      <div className={`text-xs ${isSelected ? 'text-blue-100' : 'text-gray-600'}`}>{table.capacity}p</div>
+                      {isSelected && (
+                        <div className="absolute -top-1 -right-1 w-4 h-4 bg-blue-600 rounded-full flex items-center justify-center">
+                          <span className="text-white text-xs">✓</span>
+                        </div>
+                      )}
                     </div>
                     
                     {/* Réservation sous la table */}
@@ -441,7 +466,7 @@ const SalleTab: React.FC<SalleTabProps> = ({
               <span className="text-xs sm:text-sm text-gray-700">Disponible</span>
             </div>
             <div className="flex items-center space-x-2">
-              <div className="w-4 h-4 bg-blue-200 border border-blue-500 rounded"></div>
+              <div className="w-4 h-4 bg-blue-500 border border-blue-700 rounded"></div>
               <span className="text-xs sm:text-sm text-gray-700">Sélectionnée</span>
             </div>
             <div className="flex items-center space-x-2">
