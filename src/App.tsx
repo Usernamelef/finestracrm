@@ -38,13 +38,6 @@ const AppContent = () => {
           <Route path="/contact" element={<Contact />} />
           <Route path="/crm" element={<CRM />} />
           <Route path="/test-sms" element={<TestSMS />} />
-          {/* Redirections pour les URLs avec slash final */}
-          <Route path="/about/" element={<Navigate to="/about" replace />} />
-          <Route path="/menu/" element={<Navigate to="/menu" replace />} />
-          <Route path="/events/" element={<Navigate to="/events" replace />} />
-          <Route path="/reservations/" element={<Navigate to="/reservations" replace />} />
-          <Route path="/contact/" element={<Navigate to="/contact" replace />} />
-          <Route path="/crm/" element={<Navigate to="/crm" replace />} />
           {/* Catch-all route pour les 404 */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

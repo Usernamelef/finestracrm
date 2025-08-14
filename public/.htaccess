@@ -2,11 +2,6 @@
 Options -MultiViews
 RewriteEngine On
 
-# Redirection des URLs avec slash final vers sans slash (sauf pour la racine)
-RewriteCond %{REQUEST_URI} ^(.+)/$
-RewriteCond %{REQUEST_URI} !^/$
-RewriteRule ^(.+)/$ /$1 [R=301,L]
-
 # Gestion des routes React Router
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
