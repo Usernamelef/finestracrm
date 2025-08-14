@@ -8,6 +8,14 @@ interface Table {
   section: 'main' | 'terrace';
 }
 
+interface DraggedReservation {
+  id: string;
+  name: string;
+  time: string;
+  guests: number;
+  status: string;
+  sourceTable: number;
+}
 interface SalleTabProps {
   currentService: 'midi' | 'soir';
   setCurrentService: (service: 'midi' | 'soir') => void;
@@ -52,6 +60,8 @@ const SalleTab: React.FC<SalleTabProps> = ({
   const [supabaseReservations, setSupabaseReservations] = useState<any[]>([]);
   const [selectedTables, setSelectedTables] = useState<number[]>([]);
   const [isSelectingTables, setIsSelectingTables] = useState(false);
+  const [draggedReservation, setDraggedReservation] = useState<DraggedReservation | null>(null);
+  const [dragOverTable, setDragOverTable] = useState<number | null>(null);
 
   // Charger les réservations depuis Supabase
   useEffect(() => {
@@ -205,6 +215,86 @@ const SalleTab: React.FC<SalleTabProps> = ({
     setIsSelectingTables(false);
   };
   return (
+  // Fonctions de glisser-déposer
+  const handleDragStart = (e: React.DragEvent, reservation: any, tableNumber: number) => {
+    const dragData: DraggedReservation = {
+      id: reservation.id,
+      name: reservation.name,
+      time: reservation.time,
+      guests: reservation.guests,
+      status: reservation.status,
+      sourceTable: tableNumber
+    };
+    setDraggedReservation(dragData);
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', ''); // Nécessaire pour certains navigateurs
+  };
+
+  const handleDragOver = (e: React.DragEvent, tableNumber: number) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    setDragOverTable(tableNumber);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    // Vérifier si on quitte vraiment la zone (pas juste un enfant)
+    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+    const x = e.clientX;
+    const y = e.clientY;
+    
+    if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) {
+      setDragOverTable(null);
+    }
+  };
+
+  const handleDrop = async (e: React.DragEvent, targetTableNumber: number) => {
+    e.preventDefault();
+    setDragOverTable(null);
+    
+    if (!draggedReservation) return;
+    
+    // Vérifier que la table cible est disponible
+    const targetTableStatus = getTableStatus(targetTableNumber);
+    if (targetTableStatus.status !== 'available') {
+      alert('Cette table n\'est pas disponible.');
+      setDraggedReservation(null);
+      return;
+    }
+    
+    // Vérifier qu'on ne dépose pas sur la même table
+    if (draggedReservation.sourceTable === targetTableNumber) {
+      setDraggedReservation(null);
+      return;
+    }
+    
+    try {
+      // Trouver la réservation complète dans supabaseReservations
+      const fullReservation = supabaseReservations.find(r => r.id === draggedReservation.id);
+      if (fullReservation) {
+        // Mettre à jour la table assignée
+        const { updateReservationStatus } = await import('../../lib/supabase');
+        await updateReservationStatus(fullReservation.id, fullReservation.statut, targetTableNumber);
+        
+        // Rafraîchir les données
+        const { getAllReservations } = await import('../../lib/supabase');
+        const allReservations = await getAllReservations();
+        setSupabaseReservations(allReservations);
+        
+        addActivity(`${draggedReservation.name} déplacé(e) de la table ${draggedReservation.sourceTable} vers la table ${targetTableNumber}`);
+      }
+    } catch (error) {
+      console.error('Erreur lors du déplacement:', error);
+      alert('Erreur lors du déplacement de la réservation');
+    }
+    
+    setDraggedReservation(null);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedReservation(null);
+    setDragOverTable(null);
+  };
+
     <>
       <div className="space-y-4 sm:space-y-8">
         <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">
@@ -325,13 +415,19 @@ const SalleTab: React.FC<SalleTabProps> = ({
                 );
                 const isSelected = selectedTables.includes(table.number);
                 const tableStatus = getTableStatus(table.number);
+                const isDragOver = dragOverTable === table.number;
+                const canDropHere = draggedReservation && tableStatus.status === 'available';
                 
                 return (
                   <div key={table.number} className={className}>
                     <div
                       onClick={() => handleTableClick(table)}
+                      onDragOver={(e) => canDropHere ? handleDragOver(e, table.number) : e.preventDefault()}
+                      onDragLeave={handleDragLeave}
+                      onDrop={(e) => canDropHere ? handleDrop(e, table.number) : e.preventDefault()}
                       className={`w-16 h-16 sm:w-20 sm:h-20 rounded-lg border-2 flex flex-col items-center justify-center cursor-pointer transition-all hover:scale-105 ${
                         isSelected ? 'bg-blue-500 border-blue-700 text-white shadow-lg' :
+                        isDragOver && canDropHere ? 'bg-green-300 border-green-500 shadow-lg scale-110' :
                         isOccupied ? 'bg-red-200 border-red-500' :
                         tableStatus.status === 'available' ? 'bg-green-100 border-green-300 hover:bg-green-200' :
                         tableStatus.status === 'reserved' ? 'bg-orange-100 border-orange-300 hover:bg-orange-200' :
@@ -346,6 +442,11 @@ const SalleTab: React.FC<SalleTabProps> = ({
                           <span className="text-white text-xs">✓</span>
                         </div>
                       )}
+                      {isDragOver && canDropHere && (
+                        <div className="absolute inset-0 bg-green-400 bg-opacity-50 rounded-lg flex items-center justify-center">
+                          <span className="text-white text-xs font-bold">Déposer ici</span>
+                        </div>
+                      )}
                     </div>
                     
                     {/* Réservation sous la table */}
@@ -353,9 +454,16 @@ const SalleTab: React.FC<SalleTabProps> = ({
                       const tableStatus = getTableStatus(table.number);
                       if (tableStatus.reservation) {
                         return (
-                          <div className="mt-1 w-16 sm:w-20 bg-white p-1 rounded text-xs border text-center shadow-sm">
+                          <div 
+                            className="mt-1 w-16 sm:w-20 bg-white p-1 rounded text-xs border text-center shadow-sm cursor-move hover:shadow-md transition-shadow"
+                            draggable={true}
+                            onDragStart={(e) => handleDragStart(e, tableStatus.reservation, table.number)}
+                            onDragEnd={handleDragEnd}
+                            title="Glissez pour déplacer vers une autre table"
+                          >
                             <div className="font-medium truncate text-xs">{tableStatus.reservation.name}</div>
                             <div className="text-gray-600 text-xs">{tableStatus.reservation.time}</div>
+                            <div className="text-gray-400 text-xs">↔️</div>
                           </div>
                         );
                       }
@@ -481,6 +589,18 @@ const SalleTab: React.FC<SalleTabProps> = ({
               <div className="w-4 h-4 bg-gray-100 border border-gray-300 rounded"></div>
               <span className="text-xs sm:text-sm text-gray-700">Hors service</span>
             </div>
+            <div className="flex items-center space-x-2">
+              <div className="w-4 h-4 bg-green-300 border border-green-500 rounded"></div>
+              <span className="text-xs sm:text-sm text-gray-700">Zone de dépôt</span>
+            </div>
+          </div>
+          
+          <div className="mt-4 p-3 bg-blue-50 rounded-lg">
+            <h4 className="text-sm font-semibold text-blue-800 mb-2">💡 Glisser-Déposer</h4>
+            <p className="text-xs text-blue-700">
+              <strong>Déplacer une réservation :</strong> Cliquez et glissez la carte de réservation (sous la table) vers une table disponible (verte). 
+              La table de destination s'illuminera en vert clair quand vous pourrez y déposer la réservation.
+            </p>
           </div>
         </div>
       </div>
