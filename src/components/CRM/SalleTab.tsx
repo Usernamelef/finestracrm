@@ -268,6 +268,22 @@ const SalleTab: React.FC<SalleTabProps> = ({
     }
     
     try {
+      // Mise à jour optimiste de l'interface AVANT l'appel API
+      // Supprimer immédiatement la réservation de l'ancienne table
+      setSupabaseReservations(prev => prev.map(reservation => {
+        if (reservation.id === draggedReservation.id) {
+          return {
+            ...reservation,
+            table_assignee: targetTableNumber,
+            // Nettoyer le commentaire des anciennes tables multiples
+            commentaire: reservation.commentaire 
+              ? reservation.commentaire.replace(/\[Tables: [^\]]+\]/g, '').trim()
+              : null
+          };
+        }
+        return reservation;
+      }));
+      
       // Trouver la réservation complète dans supabaseReservations
       const fullReservation = supabaseReservations.find(r => r.id === draggedReservation.id);
       if (fullReservation) {
@@ -275,7 +291,7 @@ const SalleTab: React.FC<SalleTabProps> = ({
         const { updateReservationStatus } = await import('../../lib/supabase');
         await updateReservationStatus(fullReservation.id, fullReservation.statut, targetTableNumber);
         
-        // Rafraîchir les données
+        // Rafraîchir les données depuis la base pour confirmer
         const { getAllReservations } = await import('../../lib/supabase');
         const allReservations = await getAllReservations();
         setSupabaseReservations(allReservations);
@@ -284,6 +300,14 @@ const SalleTab: React.FC<SalleTabProps> = ({
       }
     } catch (error) {
       console.error('Erreur lors du déplacement:', error);
+      // En cas d'erreur, recharger les données pour annuler la mise à jour optimiste
+      try {
+        const { getAllReservations } = await import('../../lib/supabase');
+        const allReservations = await getAllReservations();
+        setSupabaseReservations(allReservations);
+      } catch (reloadError) {
+        console.error('Erreur lors du rechargement:', reloadError);
+      }
       alert('Erreur lors du déplacement de la réservation');
     }
     
