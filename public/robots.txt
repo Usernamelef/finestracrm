@@ -1,0 +1,19 @@
+User-agent: *
+Allow: /
+
+# Sitemap (optionnel - remplacez par votre domaine)
+Sitemap: https://lafinestra.ch/sitemap.xml
+
+# Optimisation pour les moteurs de recherche
+# Autoriser l'accès à tous les contenus publics
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+# Bloquer l'accès aux fichiers sensibles (optionnel)
+Disallow: /admin/
+Disallow: /crm/
+Disallow: /.env
+Disallow: /test-sms/
