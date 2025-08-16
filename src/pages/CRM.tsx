@@ -363,53 +363,6 @@ const CRM = () => {
     setPassword('');
   };
 
-  const handleServiceChange = (service: 'midi' | 'soir') => {
-        setCurrentService('soir');
-        localStorage.setItem('crm-current-service', 'soir');
-      }
-      // Optionnel: Basculer vers "midi" à 6h du matin pour le jour suivant
-      else if (currentHour >= 6 && currentHour < 17 && currentService === 'soir') {
-        setCurrentService('midi');
-        localStorage.setItem('crm-current-service', 'midi');
-      }
-    };
-
-    // Vérifier immédiatement
-    checkTime();
-    
-    // Puis vérifier toutes les minutes
-    const interval = setInterval(checkTime, 60000);
-    
-    return () => clearInterval(interval);
-  }, [currentService]);
-
-  const addActivity = (action: string) => {
-    const newActivity: Activity = {
-      id: Date.now().toString(),
-      action,
-      timestamp: new Date().toISOString()
-    };
-    setActivities(prev => [newActivity, ...prev.slice(0, 4)]); // Garder seulement les 5 dernières
-  };
-
-  const handleNewReservation = () => {
-    setNewReservationCount(prev => prev + 1);
-  };
-
-  const resetNewReservationCount = () => {
-    setNewReservationCount(0);
-  };
-  const handleLogin = (e: React.FormEvent) => {
-    // Initialiser Supabase pour l'authentification
-    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-    const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-    const supabase = createClient(supabaseUrl, supabaseAnonKey);
-    e.preventDefault();
-    setCurrentService(service);
-  const handleDateChange = (date: string) => {
-    setSelectedDate(date);
-  };
-
   const handleAddNote = () => {
     if (newNote.author.trim() && newNote.content.trim()) {
       const note: Note = {
