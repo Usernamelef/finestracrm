@@ -283,8 +283,87 @@ const CRM = () => {
       const swissTime = new Date(now.toLocaleString("en-US", {timeZone: "Europe/Zurich"}));
       const currentHour = swissTime.getHours();
       
-      // Basculer vers "soir" à 17h exactement
+      // Suggestion de basculement vers "soir" à 17h (mais pas forcé)
       if (currentHour >= 17 && currentService === 'midi') {
+        // Seulement si l'utilisateur n'a pas fait de choix manuel récent
+        const lastManualChange = localStorage.getItem('crm-last-manual-change');
+        const now = Date.now();
+        
+        // Si pas de changement manuel dans les 5 dernières minutes, basculer automatiquement
+        if (!lastManualChange || (now - parseInt(lastManualChange)) > 5 * 60 * 1000) {
+          setCurrentService('soir');
+          localStorage.setItem('crm-current-service', 'soir');
+        }
+      }
+      // Suggestion de basculement vers "midi" à 6h du matin
+      else if (currentHour >= 6 && currentHour < 17 && currentService === 'soir') {
+        const lastManualChange = localStorage.getItem('crm-last-manual-change');
+        const now = Date.now();
+        
+        if (!lastManualChange || (now - parseInt(lastManualChange)) > 5 * 60 * 1000) {
+          setCurrentService('midi');
+          localStorage.setItem('crm-current-service', 'midi');
+        }
+      }
+    };
+
+    // Vérifier immédiatement
+    checkTime();
+    
+    // Puis vérifier toutes les minutes
+    const interval = setInterval(checkTime, 60000);
+    
+    return () => clearInterval(interval);
+  }, [currentService]);
+
+  const handleServiceChange = (service: 'midi' | 'soir') => {
+    setCurrentService(service);
+    localStorage.setItem('crm-current-service', service);
+    // Enregistrer le timestamp du changement manuel
+    localStorage.setItem('crm-last-manual-change', Date.now().toString());
+  };
+
+  const handleDateChange = (date: string) => {
+    setSelectedDate(date);
+  };
+
+  const addActivity = (action: string) => {
+    const newActivity: Activity = {
+      id: Date.now().toString(),
+      action,
+      timestamp: new Date().toISOString()
+    };
+    setActivities(prev => [newActivity, ...prev.slice(0, 4)]); // Garder seulement les 5 dernières
+  };
+
+  const handleNewReservation = () => {
+    setNewReservationCount(prev => prev + 1);
+  };
+
+  const resetNewReservationCount = () => {
+    setNewReservationCount(0);
+  };
+  const handleLogin = (e: React.FormEvent) => {
+    // Initialiser Supabase pour l'authentification
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+    const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+    const supabase = createClient(supabaseUrl, supabaseAnonKey);
+    e.preventDefault();
+    if (password === 'Finestra2025!') {
+      setIsAuthenticated(true);
+      localStorage.setItem('crm-authenticated', 'true');
+    } else {
+      alert('Mot de passe incorrect');
+    }
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    localStorage.removeItem('crm-authenticated');
+    setPassword('');
+  };
+
+  const handleServiceChange = (service: 'midi' | 'soir') => {
         setCurrentService('soir');
         localStorage.setItem('crm-current-service', 'soir');
       }
@@ -326,24 +405,7 @@ const CRM = () => {
     const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
     const supabase = createClient(supabaseUrl, supabaseAnonKey);
     e.preventDefault();
-    if (password === 'Finestra2025!') {
-      setIsAuthenticated(true);
-      localStorage.setItem('crm-authenticated', 'true');
-    } else {
-      alert('Mot de passe incorrect');
-    }
-  };
-
-  const handleLogout = () => {
-    setIsAuthenticated(false);
-    localStorage.removeItem('crm-authenticated');
-    setPassword('');
-  };
-
-  const handleServiceChange = (service: 'midi' | 'soir') => {
     setCurrentService(service);
-  };
-
   const handleDateChange = (date: string) => {
     setSelectedDate(date);
   };
