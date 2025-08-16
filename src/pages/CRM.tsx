@@ -258,10 +258,51 @@ const CRM = () => {
       setIsAuthenticated(true);
     }
     
-    if (savedService) {
+    // Déterminer le service basé sur l'heure actuelle (heure suisse)
+    const now = new Date();
+    const swissTime = new Date(now.toLocaleString("en-US", {timeZone: "Europe/Zurich"}));
+    const currentHour = swissTime.getHours();
+    
+    // Basculer automatiquement vers "soir" à partir de 17h
+    const autoService = currentHour >= 17 ? 'soir' : 'midi';
+    
+    // Utiliser le service automatique ou le service sauvegardé (si pas encore 17h)
+    if (savedService && currentHour < 17) {
       setCurrentService(savedService);
+    } else {
+      setCurrentService(autoService);
+      // Sauvegarder le nouveau service
+      localStorage.setItem('crm-current-service', autoService);
     }
   }, []);
+
+  // Vérifier l'heure toutes les minutes pour basculer automatiquement
+  useEffect(() => {
+    const checkTime = () => {
+      const now = new Date();
+      const swissTime = new Date(now.toLocaleString("en-US", {timeZone: "Europe/Zurich"}));
+      const currentHour = swissTime.getHours();
+      
+      // Basculer vers "soir" à 17h exactement
+      if (currentHour >= 17 && currentService === 'midi') {
+        setCurrentService('soir');
+        localStorage.setItem('crm-current-service', 'soir');
+      }
+      // Optionnel: Basculer vers "midi" à 6h du matin pour le jour suivant
+      else if (currentHour >= 6 && currentHour < 17 && currentService === 'soir') {
+        setCurrentService('midi');
+        localStorage.setItem('crm-current-service', 'midi');
+      }
+    };
+
+    // Vérifier immédiatement
+    checkTime();
+    
+    // Puis vérifier toutes les minutes
+    const interval = setInterval(checkTime, 60000);
+    
+    return () => clearInterval(interval);
+  }, [currentService]);
 
   const addActivity = (action: string) => {
     const newActivity: Activity = {
