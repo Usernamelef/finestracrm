@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-
+import { Users, MapPin, Clock, Plus, X, Edit, Trash2, Phone, Mail, User, ChevronDown, Check, Ban, Calendar } from 'lucide-react';
 interface Table {
   number: number;
   capacity: number;
