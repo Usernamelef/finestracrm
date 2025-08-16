@@ -19,6 +19,7 @@ interface DraggedReservation {
 interface SalleTabProps {
   currentService: 'midi' | 'soir';
   setCurrentService: (service: 'midi' | 'soir') => void;
+  selectedDate: string;
   selectedReservation: any;
   setSelectedReservation: React.Dispatch<React.SetStateAction<any>>;
   handleAssignTable: (reservationId: string, tableNumbers: number[], fromSalleTab: boolean) => void;
@@ -39,6 +40,7 @@ interface SalleTabProps {
 const SalleTab: React.FC<SalleTabProps> = ({
   currentService,
   setCurrentService,
+  selectedDate,
   selectedReservation,
   setSelectedReservation,
   handleAssignTable,
@@ -55,13 +57,23 @@ const SalleTab: React.FC<SalleTabProps> = ({
   formatSelectedDate,
   handleDateChange
 }) => {
-  const [selectedDateLocal, setSelectedDateLocal] = useState(new Date().toISOString().split('T')[0]);
+  const [selectedDateLocal, setSelectedDateLocal] = useState(selectedDate);
 
   const [supabaseReservations, setSupabaseReservations] = useState<any[]>([]);
   const [selectedTables, setSelectedTables] = useState<number[]>([]);
   const [isSelectingTables, setIsSelectingTables] = useState(false);
   const [draggedReservation, setDraggedReservation] = useState<DraggedReservation | null>(null);
   const [dragOverTable, setDragOverTable] = useState<number | null>(null);
+  const [showNewReservationModal, setShowNewReservationModal] = useState(false);
+  const [selectedTableForReservation, setSelectedTableForReservation] = useState<number | null>(null);
+  const [newReservation, setNewReservation] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    time: '',
+    guests: '',
+    message: ''
+  });
 
   // Charger les réservations depuis Supabase
   useEffect(() => {
@@ -179,7 +191,7 @@ const SalleTab: React.FC<SalleTabProps> = ({
         setSelectedTable({...table, currentReservation: tableStatus.reservation});
         setShowTableModal(true);
       } else {
-        // Table vide - afficher les détails de la table
+        // Table vide - proposer de créer une réservation ou voir les détails
         setSelectedTable(table);
         setShowTableModal(true);
       }
@@ -314,6 +326,124 @@ const SalleTab: React.FC<SalleTabProps> = ({
     setDraggedReservation(null);
   };
 
+  // Fonction pour créer une nouvelle réservation
+  const handleCreateReservation = async () => {
+    if (newReservation.name && newReservation.email && newReservation.phone && newReservation.time && newReservation.guests) {
+      try {
+        const { createReservation, sendEmail, sendSMS, getConfirmationEmailTemplate, getConfirmationSMSTemplate, formatPhoneNumber } = await import('../../lib/supabase');
+        
+        // Préparer les données pour Supabase
+        const reservationData = {
+          nom_client: newReservation.name,
+          email_client: newReservation.email,
+          telephone_client: newReservation.phone,
+          date_reservation: selectedDateLocal,
+          heure_reservation: newReservation.time,
+          nombre_personnes: parseInt(newReservation.guests),
+          commentaire: newReservation.message || null,
+          statut: 'assignee' // Directement assignée à la table sélectionnée
+        };
+
+        // Créer la réservation dans Supabase
+        const createdReservation = await createReservation(reservationData);
+        
+        // Assigner immédiatement la table
+        if (selectedTableForReservation && createdReservation) {
+          const { updateReservationStatus } = await import('../../lib/supabase');
+          await updateReservationStatus(createdReservation.id, 'assignee', selectedTableForReservation);
+        }
+        
+        // Envoyer l'email de confirmation au client
+        try {
+          const emailHtml = getConfirmationEmailTemplate(
+            newReservation.name,
+            new Date(selectedDateLocal).toLocaleDateString('fr-FR'),
+            newReservation.time,
+            parseInt(newReservation.guests)
+          );
+          await sendEmail(newReservation.email, 'Confirmation de votre réservation à La Finestra', emailHtml);
+          console.log('Email de confirmation envoyé au client');
+        } catch (emailError) {
+          console.warn('Erreur lors de l\'envoi de l\'email de confirmation:', emailError);
+        }
+        
+        // Envoyer le SMS de confirmation si possible
+        try {
+          const smsMessage = getConfirmationSMSTemplate(
+            newReservation.name,
+            new Date(selectedDateLocal).toLocaleDateString('fr-FR'),
+            newReservation.time,
+            parseInt(newReservation.guests)
+          );
+          const formattedPhone = formatPhoneNumber(newReservation.phone);
+          await sendSMS(formattedPhone, smsMessage);
+          console.log('SMS de confirmation envoyé au client');
+        } catch (smsError) {
+          console.warn('Erreur lors de l\'envoi du SMS de confirmation:', smsError);
+        }
+        
+        // Réinitialiser le formulaire
+        setNewReservation({
+          name: '',
+          email: '',
+          phone: '',
+          time: '',
+          guests: '',
+          message: ''
+        });
+        setShowNewReservationModal(false);
+        setSelectedTableForReservation(null);
+        
+        // Rafraîchir les réservations
+        const { getAllReservations } = await import('../../lib/supabase');
+        const allReservations = await getAllReservations();
+        setSupabaseReservations(allReservations);
+        
+        addActivity(`Nouvelle réservation créée pour ${newReservation.name} - Table ${selectedTableForReservation}`);
+      } catch (error) {
+        console.error('Erreur lors de l\'ajout de la réservation:', error);
+        alert('Erreur lors de l\'ajout de la réservation. Veuillez réessayer.');
+      }
+    }
+  };
+
+  // Filtrer les réservations du jour et du service
+  const getTodayReservations = () => {
+    return supabaseReservations.filter(reservation => {
+      const reservationDate = reservation.date_reservation;
+      const reservationService = getServiceFromTime(reservation.heure_reservation);
+      const isActiveStatus = ['nouvelle', 'en_attente', 'assignee', 'arrivee'].includes(reservation.statut);
+      
+      return reservationDate === selectedDateLocal && 
+             reservationService === currentService && 
+             isActiveStatus;
+    }).sort((a, b) => {
+      // Trier par heure
+      const [hourA, minA] = a.heure_reservation.split(':').map(Number);
+      const [hourB, minB] = b.heure_reservation.split(':').map(Number);
+      return (hourA * 60 + minA) - (hourB * 60 + minB);
+    });
+  };
+
+  const getStatusColor = (statut: string) => {
+    switch (statut) {
+      case 'nouvelle': return 'text-blue-600 bg-blue-100';
+      case 'en_attente': return 'text-pink-600 bg-pink-100';
+      case 'assignee': return 'text-orange-600 bg-orange-100';
+      case 'arrivee': return 'text-purple-600 bg-purple-100';
+      default: return 'text-gray-600 bg-gray-100';
+    }
+  };
+
+  const getStatusLabel = (statut: string) => {
+    switch (statut) {
+      case 'nouvelle': return 'Nouvelle';
+      case 'en_attente': return 'En attente';
+      case 'assignee': return 'Assignée';
+      case 'arrivee': return 'Arrivée';
+      default: return statut;
+    }
+  };
   const handleDragEnd = () => {
     setDraggedReservation(null);
     setDragOverTable(null);
@@ -321,7 +451,9 @@ const SalleTab: React.FC<SalleTabProps> = ({
 
   return (
     <>
-      <div className="space-y-4 sm:space-y-8">
+      <div className="flex flex-col lg:flex-row gap-4 sm:gap-8">
+        {/* Plan de salle - Colonne principale */}
+        <div className="flex-1 space-y-4 sm:space-y-8">
         <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">
           Plan de salle – Service du {currentService === 'midi' ? 'Midi' : 'Soir'} – {formatSelectedDate(selectedDateLocal)}
         </h1>
@@ -629,6 +761,138 @@ const SalleTab: React.FC<SalleTabProps> = ({
           </div>
         </div>
       </div>
+      
+        {/* Sidebar - Liste des réservations */}
+        <div className="lg:w-80 space-y-4">
+          <div className="bg-white rounded-lg shadow-md p-4">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+              <Calendar className="mr-2" size={20} />
+              Réservations du jour
+            </h3>
+            
+            <div className="space-y-3 max-h-96 overflow-y-auto">
+              {getTodayReservations().map((reservation) => (
+                <div key={reservation.id} className="border border-gray-200 rounded-lg p-3 hover:bg-gray-50 transition-colors">
+                  <div className="flex justify-between items-start mb-2">
+                    <div className="text-sm font-medium text-gray-900">
+                      {reservation.nom_client}
+                    </div>
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(reservation.statut)}`}>
+                      {getStatusLabel(reservation.statut)}
+                    </span>
+                  </div>
+                  
+                  <div className="text-xs text-gray-600 space-y-1">
+                    <div className="flex items-center">
+                      <Clock className="mr-1" size={12} />
+                      {reservation.heure_reservation}
+                    </div>
+                    <div className="flex items-center">
+                      <Users className="mr-1" size={12} />
+                      {reservation.nombre_personnes} pers.
+                    </div>
+                    {reservation.table_assignee && (
+                      <div className="flex items-center">
+                        <MapPin className="mr-1" size={12} />
+                        Table {reservation.table_assignee}
+                        {reservation.commentaire && reservation.commentaire.includes('[Tables:') && (
+                          (() => {
+                            const match = reservation.commentaire.match(/\[Tables: ([^\]]+)\]/);
+                            return match ? ` (${match[1]})` : '';
+                          })()
+                        )}
+                      </div>
+                    )}
+                    {reservation.telephone_client && (
+                      <div className="flex items-center">
+                        <Phone className="mr-1" size={12} />
+                        <span className="truncate">{reservation.telephone_client}</span>
+                      </div>
+                    )}
+                  </div>
+                  
+                  {reservation.commentaire && !reservation.commentaire.includes('[Tables:') && (
+                    <div className="mt-2 text-xs text-gray-500 italic">
+                      "{reservation.commentaire}"
+                    </div>
+                  )}
+                  
+                  {/* Actions rapides */}
+                  <div className="mt-2 flex space-x-2">
+                    {reservation.statut === 'en_attente' && (
+                      <button
+                        onClick={() => {
+                          setSelectedReservation(reservation);
+                        }}
+                        className="text-xs bg-pink-500 hover:bg-pink-600 text-white px-2 py-1 rounded"
+                      >
+                        Assigner
+                      </button>
+                    )}
+                    {reservation.statut === 'assignee' && (
+                      <button
+                        onClick={async () => {
+                          try {
+                            const { updateReservationStatus } = await import('../../lib/supabase');
+                            await updateReservationStatus(reservation.id, 'arrivee');
+                            const { getAllReservations } = await import('../../lib/supabase');
+                            const allReservations = await getAllReservations();
+                            setSupabaseReservations(allReservations);
+                            addActivity(`Client ${reservation.nom_client} marqué comme arrivé`);
+                          } catch (error) {
+                            console.error('Erreur:', error);
+                          }
+                        }}
+                        className="text-xs bg-orange-500 hover:bg-orange-600 text-white px-2 py-1 rounded"
+                      >
+                        Arrivé
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+              
+              {getTodayReservations().length === 0 && (
+                <div className="text-center py-8 text-gray-500">
+                  <Calendar className="mx-auto mb-2" size={32} />
+                  <p className="text-sm">Aucune réservation pour ce service</p>
+                </div>
+              )}
+            </div>
+          </div>
+          
+          {/* Statistiques rapides */}
+          <div className="bg-white rounded-lg shadow-md p-4">
+            <h4 className="text-sm font-semibold text-gray-900 mb-3">Statistiques</h4>
+            <div className="space-y-2 text-sm">
+              <div className="flex justify-between">
+                <span className="text-gray-600">Total réservations:</span>
+                <span className="font-medium">{getTodayReservations().length}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">Tables occupées:</span>
+                <span className="font-medium">
+                  {supabaseReservations.filter(r => 
+                    r.date_reservation === selectedDateLocal && 
+                    getServiceFromTime(r.heure_reservation) === currentService &&
+                    ['assignee', 'arrivee'].includes(r.statut)
+                  ).length} / 25
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">Clients présents:</span>
+                <span className="font-medium">
+                  {supabaseReservations.filter(r => 
+                    r.date_reservation === selectedDateLocal && 
+                    getServiceFromTime(r.heure_reservation) === currentService &&
+                    r.statut === 'arrivee'
+                  ).reduce((sum, r) => sum + r.nombre_personnes, 0)}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* Modal détail table */}
       {showTableModal && selectedTable && (
@@ -791,6 +1055,18 @@ const SalleTab: React.FC<SalleTabProps> = ({
                   </p>
                 </div>
                 
+                <div className="mt-4 space-y-2">
+                  <button
+                    onClick={() => {
+                      setSelectedTableForReservation(selectedTable.number);
+                      setShowTableModal(false);
+                      setShowNewReservationModal(true);
+                    }}
+                    className="w-full bg-green-600 hover:bg-green-700 text-white px-3 sm:px-4 py-2 rounded-md transition-colors text-sm"
+                  >
+                    Créer une nouvelle réservation
+                  </button>
+                  
                 {selectedReservation && (
                   <button
                     onClick={() => {
@@ -809,11 +1085,12 @@ const SalleTab: React.FC<SalleTabProps> = ({
                       setSelectedReservation(null);
                       setShowTableModal(false);
                     }}
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white px-3 sm:px-4 py-2 rounded-md transition-colors text-sm mt-4"
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white px-3 sm:px-4 py-2 rounded-md transition-colors text-sm"
                   >
                     Assigner {selectedReservation.nom_client || selectedReservation.name} à cette table
                   </button>
                 )}
+                </div>
               </>
             )}
             
@@ -823,6 +1100,127 @@ const SalleTab: React.FC<SalleTabProps> = ({
                 className="px-3 sm:px-4 py-2 text-sm text-gray-600 hover:text-gray-800 transition-colors"
               >
                 Fermer
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal nouvelle réservation */}
+      {showNewReservationModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              Nouvelle réservation - Table {selectedTableForReservation}
+            </h3>
+            
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Nom</label>
+                  <input
+                    type="text"
+                    value={newReservation.name}
+                    onChange={(e) => setNewReservation({...newReservation, name: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Nom du client"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                  <input
+                    type="email"
+                    value={newReservation.email}
+                    onChange={(e) => setNewReservation({...newReservation, email: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="email@exemple.com"
+                  />
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Téléphone</label>
+                  <input
+                    type="tel"
+                    value={newReservation.phone}
+                    onChange={(e) => setNewReservation({...newReservation, phone: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="+41 xx xxx xx xx"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Heure</label>
+                  <select
+                    value={newReservation.time}
+                    onChange={(e) => setNewReservation({...newReservation, time: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="">Choisir</option>
+                    {currentService === 'midi' ? 
+                      ['12:00', '12:15', '12:30', '12:45', '13:00', '13:15', '13:30', '13:45'].map(time => (
+                        <option key={time} value={time}>{time}</option>
+                      )) :
+                      ['18:00', '18:15', '18:30', '18:45', '19:00', '19:15', '19:30', '19:45', '20:00', '20:15', '20:30', '20:45', '21:00', '21:15', '21:30', '21:45'].map(time => (
+                        <option key={time} value={time}>{time}</option>
+                      ))
+                    }
+                  </select>
+                </div>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Nombre de personnes</label>
+                <select
+                  value={newReservation.guests}
+                  onChange={(e) => setNewReservation({...newReservation, guests: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="">Choisir</option>
+                  {Array.from({length: 12}, (_, i) => i + 1).map(num => (
+                    <option key={num} value={num}>{num}</option>
+                  ))}
+                </select>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Messages ou demandes spéciales</label>
+                <textarea
+                  value={newReservation.message}
+                  onChange={(e) => setNewReservation({...newReservation, message: e.target.value})}
+                  rows={3}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Allergies, demandes spéciales, occasion particulière..."
+                />
+              </div>
+            </div>
+            
+            <div className="flex justify-end space-x-3 mt-6">
+              <button
+                onClick={() => {
+                  setShowNewReservationModal(false);
+                  setSelectedTableForReservation(null);
+                  setNewReservation({
+                    name: '',
+                    email: '',
+                    phone: '',
+                    time: '',
+                    guests: '',
+                    message: ''
+                  });
+                }}
+                className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+              >
+                Annuler
+              </button>
+              <button
+                onClick={handleCreateReservation}
+                disabled={!newReservation.name || !newReservation.email || !newReservation.phone || !newReservation.time || !newReservation.guests}
+                className="px-4 py-2 bg-primary hover:bg-primary/90 disabled:bg-gray-300 text-white rounded-md transition-colors"
+              >
+                Créer la réservation
               </button>
             </div>
           </div>
