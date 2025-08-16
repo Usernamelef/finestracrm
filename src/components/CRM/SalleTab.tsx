@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Users, MapPin, Clock, Plus, X, Edit, Trash2, Phone, Mail, User, ChevronDown, Check, Ban, Calendar } from 'lucide-react';
+import { Users, MapPin, Clock, Plus, X, Edit, Trash2, Phone, Mail, User, ChevronDown, Check, Ban, Calendar, Save } from 'lucide-react';
 interface Table {
   number: number;
   capacity: number;
@@ -66,6 +66,13 @@ const SalleTab: React.FC<SalleTabProps> = ({
   const [dragOverTable, setDragOverTable] = useState<number | null>(null);
   const [showNewReservationModal, setShowNewReservationModal] = useState(false);
   const [selectedTableForReservation, setSelectedTableForReservation] = useState<number | null>(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editingReservation, setEditingReservation] = useState<any | null>(null);
+  const [editForm, setEditForm] = useState({
+    heure_reservation: '',
+    nombre_personnes: '',
+    table_assignee: ''
+  });
   const [newReservation, setNewReservation] = useState({
     name: '',
     email: '',
@@ -326,6 +333,54 @@ const SalleTab: React.FC<SalleTabProps> = ({
     setDraggedReservation(null);
   };
 
+  const handleEditReservation = (reservation: any) => {
+    setEditingReservation(reservation);
+    setEditForm({
+      heure_reservation: reservation.heure_reservation,
+      nombre_personnes: reservation.nombre_personnes.toString(),
+      table_assignee: reservation.table_assignee?.toString() || ''
+    });
+    setShowEditModal(true);
+  };
+
+  const handleSaveEdit = async () => {
+    if (!editingReservation) return;
+
+    try {
+      // Mettre à jour la réservation dans Supabase
+      const updateData: any = {
+        heure_reservation: editForm.heure_reservation,
+        nombre_personnes: parseInt(editForm.nombre_personnes),
+      };
+
+      if (editForm.table_assignee) {
+        updateData.table_assignee = parseInt(editForm.table_assignee);
+      }
+
+      const { updateReservationStatus } = await import('../../lib/supabase');
+      await updateReservationStatus(
+        editingReservation.id, 
+        editingReservation.statut, 
+        updateData.table_assignee,
+        updateData.table_assignee ? [updateData.table_assignee] : undefined
+      );
+
+      // Rafraîchir les données
+      const { getAllReservations } = await import('../../lib/supabase');
+      const allReservations = await getAllReservations();
+      setSupabaseReservations(allReservations);
+      
+      // Fermer le modal
+      setShowEditModal(false);
+      setEditingReservation(null);
+      
+      addActivity(`Réservation de ${editingReservation.nom_client} modifiée`);
+    } catch (error) {
+      console.error('Erreur lors de la modification:', error);
+      alert('Erreur lors de la modification de la réservation');
+    }
+  };
+
   // Fonction pour créer une nouvelle réservation
   const handleCreateReservation = async () => {
     if (newReservation.name && newReservation.email && newReservation.phone && newReservation.time && newReservation.guests) {
@@ -444,6 +499,27 @@ const SalleTab: React.FC<SalleTabProps> = ({
       default: return statut;
     }
   };
+
+  // Obtenir les horaires disponibles selon le service
+  const getAvailableTimeSlots = () => {
+    const baseTimeSlots = [
+      ...(currentService === 'midi' ? 
+        ['12:00', '12:15', '12:30', '12:45', '13:00', '13:15', '13:30', '13:45'] :
+        ['18:00', '18:15', '18:30', '18:45', '19:00', '19:15', '19:30', '19:45', '20:00', '20:15', '20:30', '20:45', '21:00', '21:15', '21:30', '21:45']
+      )
+    ];
+    return baseTimeSlots;
+  };
+
+  // Obtenir les tables disponibles
+  const getAvailableTables = () => {
+    const allTableNumbers = Array.from({length: 31}, (_, i) => i + 1);
+    return allTableNumbers.filter(tableNum => {
+      const tableStatus = getTableStatus(tableNum);
+      return tableStatus.status === 'available';
+    });
+  };
+
   const handleDragEnd = () => {
     setDraggedReservation(null);
     setDragOverTable(null);
@@ -772,7 +848,11 @@ const SalleTab: React.FC<SalleTabProps> = ({
             
             <div className="space-y-3 max-h-96 overflow-y-auto">
               {getTodayReservations().map((reservation) => (
-                <div key={reservation.id} className="border border-gray-200 rounded-lg p-3 hover:bg-gray-50 transition-colors">
+                <div 
+                  key={reservation.id}
+                  className="border border-gray-200 rounded-lg p-3 hover:bg-gray-50 transition-colors cursor-pointer"
+                  onClick={() => handleEditReservation(reservation)}
+                >
                   <div className="flex justify-between items-start mb-2">
                     <div className="text-sm font-medium text-gray-900">
                       {reservation.nom_client}
@@ -1221,6 +1301,122 @@ const SalleTab: React.FC<SalleTabProps> = ({
                 className="px-4 py-2 bg-primary hover:bg-primary/90 disabled:bg-gray-300 text-white rounded-md transition-colors"
               >
                 Créer la réservation
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de modification de réservation */}
+      {showEditModal && editingReservation && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-lg font-bold text-primary">
+                Modifier la réservation
+              </h3>
+              <button
+                onClick={() => setShowEditModal(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <X size={24} />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              {/* Informations client (lecture seule) */}
+              <div className="bg-gray-50 p-3 rounded-lg">
+                <h4 className="font-semibold text-gray-900 mb-2">Client</h4>
+                <p className="text-sm text-gray-700">{editingReservation.nom_client}</p>
+                <p className="text-sm text-gray-600">{editingReservation.email_client}</p>
+                <p className="text-sm text-gray-600">{editingReservation.telephone_client}</p>
+                <p className="text-sm text-gray-600">
+                  {new Date(editingReservation.date_reservation).toLocaleDateString('fr-FR')}
+                </p>
+              </div>
+
+              {/* Heure */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Heure de réservation
+                </label>
+                <select
+                  value={editForm.heure_reservation}
+                  onChange={(e) => setEditForm({...editForm, heure_reservation: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                >
+                  {getAvailableTimeSlots().map((time) => (
+                    <option key={time} value={time}>{time}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Nombre de personnes */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Nombre de personnes
+                </label>
+                <select
+                  value={editForm.nombre_personnes}
+                  onChange={(e) => setEditForm({...editForm, nombre_personnes: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                >
+                  {Array.from({length: 12}, (_, i) => i + 1).map(num => (
+                    <option key={num} value={num}>{num} personne{num > 1 ? 's' : ''}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Table assignée */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Table assignée
+                </label>
+                <select
+                  value={editForm.table_assignee}
+                  onChange={(e) => setEditForm({...editForm, table_assignee: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                >
+                  <option value="">Aucune table assignée</option>
+                  {getAvailableTables().map(tableNum => (
+                    <option key={tableNum} value={tableNum}>Table {tableNum}</option>
+                  ))}
+                  {/* Inclure la table actuelle même si elle n'est pas disponible */}
+                  {editingReservation.table_assignee && 
+                   !getAvailableTables().includes(editingReservation.table_assignee) && (
+                    <option value={editingReservation.table_assignee}>
+                      Table {editingReservation.table_assignee} (actuelle)
+                    </option>
+                  )}
+                </select>
+              </div>
+
+              {/* Statut actuel */}
+              <div className="bg-blue-50 p-3 rounded-lg">
+                <p className="text-sm text-blue-800">
+                  <strong>Statut actuel :</strong> {
+                    editingReservation.statut === 'assignee' ? 'Assignée' :
+                    editingReservation.statut === 'arrivee' ? 'Arrivée' :
+                    editingReservation.statut === 'en_attente' ? 'En attente' :
+                    editingReservation.statut
+                  }
+                </p>
+              </div>
+            </div>
+
+            <div className="flex justify-end space-x-3 mt-6">
+              <button
+                onClick={() => setShowEditModal(false)}
+                className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+              >
+                Annuler
+              </button>
+              <button
+                onClick={handleSaveEdit}
+                className="flex items-center space-x-2 bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg transition-colors"
+              >
+                <Save size={16} />
+                <span>Sauvegarder</span>
               </button>
             </div>
           </div>
