@@ -387,7 +387,7 @@ const CRM = () => {
   };
 
   const handleAddReservation = async () => {
-    if (newReservation.name && newReservation.email && newReservation.phone && newReservation.date && newReservation.time && newReservation.guests) {
+    if (newReservation.name && newReservation.phone && newReservation.date && newReservation.time && newReservation.guests) {
       // Déterminer le service basé sur l'heure
       const hour = parseInt(newReservation.time.split(':')[0]);
       const minute = parseInt(newReservation.time.split(':')[1]);
@@ -400,7 +400,7 @@ const CRM = () => {
         // Préparer les données pour Supabase
         const reservationData = {
           nom_client: newReservation.name,
-          email_client: newReservation.email,
+          email_client: newReservation.email || 'N/A',
           telephone_client: newReservation.phone,
           date_reservation: newReservation.date,
           heure_reservation: newReservation.time,
@@ -412,20 +412,22 @@ const CRM = () => {
         // Créer la réservation dans Supabase
         await createReservation(reservationData);
         
-        // Envoyer l'email de confirmation au client
-        try {
-          const { sendEmail, getConfirmationEmailTemplate } = await import('../lib/supabase');
-          const emailHtml = getConfirmationEmailTemplate(
-            newReservation.name,
-            new Date(newReservation.date).toLocaleDateString('fr-FR'),
-            newReservation.time,
-            parseInt(newReservation.guests)
-          );
-          await sendEmail(newReservation.email, 'Confirmation de votre réservation à La Finestra', emailHtml);
-          console.log('Email de confirmation envoyé au client');
-        } catch (emailError) {
-          console.warn('Erreur lors de l\'envoi de l\'email de confirmation:', emailError);
-          // Ne pas faire échouer la création de réservation si l'email échoue
+        // Envoyer l'email de confirmation au client seulement si email fourni
+        if (newReservation.email && newReservation.email.trim()) {
+          try {
+            const { sendEmail, getConfirmationEmailTemplate } = await import('../lib/supabase');
+            const emailHtml = getConfirmationEmailTemplate(
+              newReservation.name,
+              new Date(newReservation.date).toLocaleDateString('fr-FR'),
+              newReservation.time,
+              parseInt(newReservation.guests)
+            );
+            await sendEmail(newReservation.email, 'Confirmation de votre réservation à La Finestra', emailHtml);
+            console.log('Email de confirmation envoyé au client');
+          } catch (emailError) {
+            console.warn('Erreur lors de l\'envoi de l\'email de confirmation:', emailError);
+            // Ne pas faire échouer la création de réservation si l'email échoue
+          }
         }
         
         // Envoyer le SMS de confirmation si possible
@@ -463,6 +465,10 @@ const CRM = () => {
         }
         
         addActivity(`Réservation ajoutée pour ${newReservation.name} (${newReservation.guests} pers.) – Email de confirmation envoyé`);
+        const confirmationMessage = newReservation.email ? 
+          `Réservation ajoutée pour ${newReservation.name} (${newReservation.guests} pers.) – Email de confirmation envoyé` :
+          `Réservation ajoutée pour ${newReservation.name} (${newReservation.guests} pers.) – Pas d'email fourni`;
+        addActivity(confirmationMessage);
       } catch (error) {
         console.error('Erreur lors de l\'ajout de la réservation:', error);
         alert('Erreur lors de l\'ajout de la réservation. Veuillez réessayer.');
@@ -1012,7 +1018,7 @@ const CRM = () => {
                   value={newReservation.email}
                   onChange={(e) => setNewReservation({...newReservation, email: e.target.value})}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="email@exemple.com"
+                  placeholder="email@exemple.com (optionnel)"
                 />
               </div>
               
@@ -1090,7 +1096,7 @@ const CRM = () => {
               </button>
               <button
                 onClick={handleAddReservation}
-                disabled={!newReservation.name || !newReservation.email || !newReservation.phone || !newReservation.date || !newReservation.time || !newReservation.guests}
+                disabled={!newReservation.name || !newReservation.phone || !newReservation.date || !newReservation.time || !newReservation.guests}
                 className="px-4 py-2 bg-primary hover:bg-primary/90 disabled:bg-gray-300 text-white rounded-md transition-colors"
               >
                 Ajouter
