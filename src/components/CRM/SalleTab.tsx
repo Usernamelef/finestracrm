@@ -540,10 +540,10 @@ const SalleTab: React.FC<SalleTabProps> = ({
             <h3 className="text-base sm:text-lg font-semibold text-gray-900">Sélectionner la date et le service</h3>
             <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
               {/* Sélecteur de service */}
-              <div className="flex bg-gray-100 rounded-lg p-1">
+              <div className="bg-gray-100 rounded-full p-1 flex min-w-[140px]">
                 <button
                   onClick={() => setCurrentService('midi')}
-                  className={`px-3 sm:px-4 py-2 rounded-md text-xs sm:text-sm font-medium transition-all ${
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all flex-1 text-center ${
                     currentService === 'midi'
                       ? 'bg-primary text-white shadow-md'
                       : 'text-gray-600 hover:bg-gray-200'
@@ -553,7 +553,7 @@ const SalleTab: React.FC<SalleTabProps> = ({
                 </button>
                 <button
                   onClick={() => setCurrentService('soir')}
-                  className={`px-3 sm:px-4 py-2 rounded-md text-xs sm:text-sm font-medium transition-all ${
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all flex-1 text-center ${
                     currentService === 'soir'
                       ? 'bg-primary text-white shadow-md'
                       : 'text-gray-600 hover:bg-gray-200'
@@ -1208,7 +1208,9 @@ const SalleTab: React.FC<SalleTabProps> = ({
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Email <span className="text-gray-500 font-normal">(optionnel)</span>
+                  </label>
                   <input
                     type="email"
                     value={newReservation.email}
