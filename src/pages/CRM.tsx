@@ -168,7 +168,7 @@ const CRM = () => {
   const getServiceFromTime = (heure: string) => {
     const [hour, minute] = heure.split(':').map(Number);
     const totalMinutes = hour * 60 + minute;
-    // 00:01 à 16:00 = midi, 16:01 à 00:00 = soir
+    // 00:01 à 16:00 = midi, 19:00 à 21:45 = soir
     return totalMinutes <= 16 * 60 ? 'midi' : 'soir';
   };
 
