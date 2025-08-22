@@ -1247,7 +1247,6 @@ const SalleTab: React.FC<SalleTabProps> = ({
                       !newReservation.date || 
                       !newReservation.time || 
                       !newReservation.guests
-                    }
                   </select>
                 </div>
               </div>
