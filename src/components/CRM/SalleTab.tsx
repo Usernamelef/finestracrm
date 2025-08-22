@@ -1242,12 +1242,11 @@ const SalleTab: React.FC<SalleTabProps> = ({
                   >
                     <option value="">Choisir</option>
                     {currentService === 'midi' ? 
-                      ['12:00', '12:15', '12:30', '12:45', '13:00', '13:15', '13:30', '13:45'].map(time => (
-                        <option key={time} value={time}>{time}</option>
-                      )) :
-                      ['18:00', '18:15', '18:30', '18:45', '19:00', '19:15', '19:30', '19:45', '20:00', '20:15', '20:30', '20:45', '21:00', '21:15', '21:30', '21:45'].map(time => (
-                        <option key={time} value={time}>{time}</option>
-                      ))
+                      !newReservation.name.trim() || 
+                      !newReservation.phone.trim() || 
+                      !newReservation.date || 
+                      !newReservation.time || 
+                      !newReservation.guests
                     }
                   </select>
                 </div>
