@@ -538,31 +538,7 @@ const SalleTab: React.FC<SalleTabProps> = ({
         <div className="bg-white rounded-lg shadow-md p-3 sm:p-4">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-3 sm:space-y-0">
             <h3 className="text-base sm:text-lg font-semibold text-gray-900">Sélectionner la date et le service</h3>
-            <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
-              {/* Sélecteur de service */}
-              <div className="bg-gray-100 rounded-full p-1 flex min-w-[140px]">
-                <button
-                  onClick={() => setCurrentService('midi')}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all flex-1 text-center ${
-                    currentService === 'midi'
-                      ? 'bg-primary text-white shadow-md'
-                      : 'text-gray-600 hover:bg-gray-200'
-                  }`}
-                >
-                  Midi
-                </button>
-                <button
-                  onClick={() => setCurrentService('soir')}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all flex-1 text-center ${
-                    currentService === 'soir'
-                      ? 'bg-primary text-white shadow-md'
-                      : 'text-gray-600 hover:bg-gray-200'
-                  }`}
-                >
-                  Soir
-                </button>
-              </div>
-              
+            <div className="flex items-center space-x-4">
               {/* Sélecteur de date */}
               <input
                 type="date"
