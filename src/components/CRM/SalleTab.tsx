@@ -1241,12 +1241,9 @@ const SalleTab: React.FC<SalleTabProps> = ({
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="">Choisir</option>
-                    {currentService === 'midi' ? 
-                      !newReservation.name.trim() || 
-                      !newReservation.phone.trim() || 
-                      !newReservation.date || 
-                      !newReservation.time || 
-                      !newReservation.guests
+                    {getAvailableTimeSlots().map((time) => (
+                      <option key={time} value={time}>{time}</option>
+                    ))}
                   </select>
                 </div>
               </div>
@@ -1297,7 +1294,12 @@ const SalleTab: React.FC<SalleTabProps> = ({
               </button>
               <button
                 onClick={handleCreateReservation}
-                disabled={!newReservation.name || !newReservation.email || !newReservation.phone || !newReservation.time || !newReservation.guests}
+                disabled={
+                  !newReservation.name.trim() || 
+                  !newReservation.phone.trim() || 
+                  !newReservation.time || 
+                  !newReservation.guests
+                }
                 className="px-4 py-2 bg-primary hover:bg-primary/90 disabled:bg-gray-300 text-white rounded-md transition-colors"
               >
                 Créer la réservation
