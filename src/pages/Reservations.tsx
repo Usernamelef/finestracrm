@@ -14,6 +14,7 @@ const Reservations = () => {
     message: ''
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setFormData({
@@ -24,6 +25,14 @@ const Reservations = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Empêcher les soumissions multiples
+    if (isSubmitting) {
+      console.log('Soumission déjà en cours, ignorée');
+      return;
+    }
+    
+    setIsSubmitting(true);
     
     try {
       console.log('Début de la soumission du formulaire...')
@@ -134,6 +143,7 @@ const Reservations = () => {
       
       setTimeout(() => {
         setIsSubmitted(false);
+        setIsSubmitting(false);
         setFormData({ 
           type: 'table',
           date: '',
@@ -147,6 +157,8 @@ const Reservations = () => {
       }, 5000);
     } catch (error) {
       console.error('Erreur lors de la soumission:', error);
+      
+      setIsSubmitting(false);
       
       alert(`Une erreur est survenue lors de l'envoi: ${error.message}\n\nVeuillez réessayer ou nous contacter directement au +41(0)22 312 23 22.`);
       
@@ -205,7 +217,7 @@ const Reservations = () => {
   }, [formData.date]);
 
   // Vérifier si le formulaire peut être soumis
-  const canSubmit = !isDateInPast && formData.date && formData.time && formData.guests && formData.name && formData.email && formData.phone;
+  const canSubmit = !isDateInPast && !isSubmitting && formData.date && formData.time && formData.guests && formData.name && formData.email && formData.phone;
 
   if (isSubmitted) {
     return (
@@ -456,18 +468,23 @@ const Reservations = () => {
               <div className="text-center animate-fade-in-up" style={{animationDelay: '0.5s'}}>
                 <button
                   type="submit"
-                  disabled={!canSubmit}
+                  disabled={!canSubmit || isSubmitting}
                   className={`px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 transform ${
-                    canSubmit
+                    canSubmit && !isSubmitting
                       ? 'bg-accent hover:bg-accent/90 text-white hover:scale-105'
                       : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                   }`}
                 >
-                  Envoyer la demande
+                  {isSubmitting ? 'Envoi en cours...' : 'Envoyer la demande'}
                 </button>
-                {!canSubmit && formData.date && formData.time && (
+                {!canSubmit && formData.date && formData.time && !isSubmitting && (
                   <p className="text-gray-500 text-sm mt-2">
                     Veuillez remplir tous les champs obligatoires
+                  </p>
+                )}
+                {isSubmitting && (
+                  <p className="text-blue-600 text-sm mt-2">
+                    Envoi de votre demande en cours, veuillez patienter...
                   </p>
                 )}
               </div>
