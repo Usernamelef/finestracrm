@@ -146,7 +146,7 @@ const CRM = () => {
   ]);
 
   const [tables, setTables] = useState<Table[]>([
-    // Tables 1-25 selon la disposition de l'image
+    // Tables 1-25 selon la disposition exacte de l'image
     ...Array.from({ length: 25 }, (_, i) => ({
       number: i + 1,
       capacity: 2,

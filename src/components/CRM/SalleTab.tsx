@@ -339,169 +339,179 @@ const SalleTab: React.FC<SalleTabProps> = ({
               </div>
               
               {/* Grille des tables avec noms des clients */}
-              {/* Plan de salle avec disposition exacte */}
               {/* Plan de salle avec disposition exacte selon l'image */}
               <div className="bg-gray-50 p-8 rounded-lg">
-                <div className="grid grid-cols-5 gap-4 max-w-2xl mx-auto">
-                  {/* Première rangée : Tables 1-5 */}
-                  {[1, 2, 3, 4, 5].map((tableNum) => {
-                    const table = tables.find(t => t.number === tableNum);
-                    const reservation = table?.reservations[0];
-                    return (
-                      <div
-                        key={tableNum}
-                        onClick={() => table && handleTableClick(table)}
-                        className={`
-                          relative border-2 rounded-lg p-3 w-20 h-20 flex flex-col items-center justify-center
-                          transition-all duration-200 cursor-pointer transform hover:scale-105
-                          ${table ? getTableColor(table) : 'bg-gray-100 border-gray-300'}
-                          ${selectedReservation && table?.status === 'available' ? 'ring-2 ring-blue-300' : ''}
-                        `}
-                      >
-                        <div className="text-center">
-                          <div className="font-bold text-sm">{tableNum}</div>
-                          {reservation && (
-                            <div className="mt-1">
-                              <div className="text-xs font-medium truncate max-w-[60px]" title={reservation.nom_client}>
-                                {reservation.nom_client.split(' ')[0]}
+                {/* Layout personnalisé selon l'image */}
+                <div className="relative max-w-4xl mx-auto" style={{ minHeight: '500px' }}>
+                  {/* Première rangée : Tables 1, 6, 11, 16, 21 */}
+                  <div className="absolute top-0 left-0 flex space-x-16">
+                    {[1, 6, 11, 16, 21].map((tableNum) => {
+                      const table = tables.find(t => t.number === tableNum);
+                      const reservation = table?.reservations[0];
+                      return (
+                        <div
+                          key={tableNum}
+                          onClick={() => table && handleTableClick(table)}
+                          className={`
+                            relative border-2 rounded-lg p-3 w-20 h-20 flex flex-col items-center justify-center
+                            transition-all duration-200 cursor-pointer transform hover:scale-105
+                            ${table ? getTableColor(table) : 'bg-gray-100 border-gray-300'}
+                            ${selectedReservation && table?.status === 'available' ? 'ring-2 ring-blue-300' : ''}
+                          `}
+                        >
+                          <div className="text-center">
+                            <div className="font-bold text-sm">{tableNum}</div>
+                            {reservation && (
+                              <div className="mt-1">
+                                <div className="text-xs font-medium truncate max-w-[60px]" title={reservation.nom_client}>
+                                  {reservation.nom_client.split(' ')[0]}
+                                </div>
+                                <div className="text-xs opacity-75">
+                                  {reservation.heure_reservation}
+                                </div>
                               </div>
-                              <div className="text-xs opacity-75">
-                                {reservation.heure_reservation}
-                              </div>
-                            </div>
-                          )}
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    );
-                  })}
-                  
-                  {/* Deuxième rangée : Tables 6-10 */}
-                  {[6, 7, 8, 9, 10].map((tableNum) => {
-                    const table = tables.find(t => t.number === tableNum);
-                    const reservation = table?.reservations[0];
-                    return (
-                      <div
-                        key={tableNum}
-                        onClick={() => table && handleTableClick(table)}
-                        className={`
-                          relative border-2 rounded-lg p-3 w-20 h-20 flex flex-col items-center justify-center
-                          transition-all duration-200 cursor-pointer transform hover:scale-105
-                          ${table ? getTableColor(table) : 'bg-gray-100 border-gray-300'}
-                          ${selectedReservation && table?.status === 'available' ? 'ring-2 ring-blue-300' : ''}
-                        `}
-                      >
-                        <div className="text-center">
-                          <div className="font-bold text-sm">{tableNum}</div>
-                          {reservation && (
-                            <div className="mt-1">
-                              <div className="text-xs font-medium truncate max-w-[60px]" title={reservation.nom_client}>
-                                {reservation.nom_client.split(' ')[0]}
+                      );
+                    })}
+                  </div>
+
+                  {/* Deuxième rangée : Tables 7, 2, 12, 17, 22 */}
+                  <div className="absolute top-24 left-16 flex space-x-16">
+                    {[7, 2, 12, 17, 22].map((tableNum) => {
+                      const table = tables.find(t => t.number === tableNum);
+                      const reservation = table?.reservations[0];
+                      return (
+                        <div
+                          key={tableNum}
+                          onClick={() => table && handleTableClick(table)}
+                          className={`
+                            relative border-2 rounded-lg p-3 w-20 h-20 flex flex-col items-center justify-center
+                            transition-all duration-200 cursor-pointer transform hover:scale-105
+                            ${table ? getTableColor(table) : 'bg-gray-100 border-gray-300'}
+                            ${selectedReservation && table?.status === 'available' ? 'ring-2 ring-blue-300' : ''}
+                          `}
+                        >
+                          <div className="text-center">
+                            <div className="font-bold text-sm">{tableNum}</div>
+                            {reservation && (
+                              <div className="mt-1">
+                                <div className="text-xs font-medium truncate max-w-[60px]" title={reservation.nom_client}>
+                                  {reservation.nom_client.split(' ')[0]}
+                                </div>
+                                <div className="text-xs opacity-75">
+                                  {reservation.heure_reservation}
+                                </div>
                               </div>
-                              <div className="text-xs opacity-75">
-                                {reservation.heure_reservation}
-                              </div>
-                            </div>
-                          )}
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    );
-                  })}
-                  
-                  {/* Troisième rangée : Tables 11-15 */}
-                  {[11, 12, 13, 14, 15].map((tableNum) => {
-                    const table = tables.find(t => t.number === tableNum);
-                    const reservation = table?.reservations[0];
-                    return (
-                      <div
-                        key={tableNum}
-                        onClick={() => table && handleTableClick(table)}
-                        className={`
-                          relative border-2 rounded-lg p-3 w-20 h-20 flex flex-col items-center justify-center
-                          transition-all duration-200 cursor-pointer transform hover:scale-105
-                          ${table ? getTableColor(table) : 'bg-gray-100 border-gray-300'}
-                          ${selectedReservation && table?.status === 'available' ? 'ring-2 ring-blue-300' : ''}
-                        `}
-                      >
-                        <div className="text-center">
-                          <div className="font-bold text-sm">{tableNum}</div>
-                          {reservation && (
-                            <div className="mt-1">
-                              <div className="text-xs font-medium truncate max-w-[60px]" title={reservation.nom_client}>
-                                {reservation.nom_client.split(' ')[0]}
+                      );
+                    })}
+                  </div>
+
+                  {/* Troisième rangée : Tables 9, 8, 13, 18, 23 */}
+                  <div className="absolute top-48 left-32 flex space-x-16">
+                    {[9, 8, 13, 18, 23].map((tableNum) => {
+                      const table = tables.find(t => t.number === tableNum);
+                      const reservation = table?.reservations[0];
+                      return (
+                        <div
+                          key={tableNum}
+                          onClick={() => table && handleTableClick(table)}
+                          className={`
+                            relative border-2 rounded-lg p-3 w-20 h-20 flex flex-col items-center justify-center
+                            transition-all duration-200 cursor-pointer transform hover:scale-105
+                            ${table ? getTableColor(table) : 'bg-gray-100 border-gray-300'}
+                            ${selectedReservation && table?.status === 'available' ? 'ring-2 ring-blue-300' : ''}
+                          `}
+                        >
+                          <div className="text-center">
+                            <div className="font-bold text-sm">{tableNum}</div>
+                            {reservation && (
+                              <div className="mt-1">
+                                <div className="text-xs font-medium truncate max-w-[60px]" title={reservation.nom_client}>
+                                  {reservation.nom_client.split(' ')[0]}
+                                </div>
+                                <div className="text-xs opacity-75">
+                                  {reservation.heure_reservation}
+                                </div>
                               </div>
-                              <div className="text-xs opacity-75">
-                                {reservation.heure_reservation}
-                              </div>
-                            </div>
-                          )}
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    );
-                  })}
-                  
-                  {/* Quatrième rangée : Tables 16-20 */}
-                  {[16, 17, 18, 19, 20].map((tableNum) => {
-                    const table = tables.find(t => t.number === tableNum);
-                    const reservation = table?.reservations[0];
-                    return (
-                      <div
-                        key={tableNum}
-                        onClick={() => table && handleTableClick(table)}
-                        className={`
-                          relative border-2 rounded-lg p-3 w-20 h-20 flex flex-col items-center justify-center
-                          transition-all duration-200 cursor-pointer transform hover:scale-105
-                          ${table ? getTableColor(table) : 'bg-gray-100 border-gray-300'}
-                          ${selectedReservation && table?.status === 'available' ? 'ring-2 ring-blue-300' : ''}
-                        `}
-                      >
-                        <div className="text-center">
-                          <div className="font-bold text-sm">{tableNum}</div>
-                          {reservation && (
-                            <div className="mt-1">
-                              <div className="text-xs font-medium truncate max-w-[60px]" title={reservation.nom_client}>
-                                {reservation.nom_client.split(' ')[0]}
+                      );
+                    })}
+                  </div>
+
+                  {/* Quatrième rangée : Tables 4, 3, 14, 19, 24 */}
+                  <div className="absolute top-72 left-48 flex space-x-16">
+                    {[4, 3, 14, 19, 24].map((tableNum) => {
+                      const table = tables.find(t => t.number === tableNum);
+                      const reservation = table?.reservations[0];
+                      return (
+                        <div
+                          key={tableNum}
+                          onClick={() => table && handleTableClick(table)}
+                          className={`
+                            relative border-2 rounded-lg p-3 w-20 h-20 flex flex-col items-center justify-center
+                            transition-all duration-200 cursor-pointer transform hover:scale-105
+                            ${table ? getTableColor(table) : 'bg-gray-100 border-gray-300'}
+                            ${selectedReservation && table?.status === 'available' ? 'ring-2 ring-blue-300' : ''}
+                          `}
+                        >
+                          <div className="text-center">
+                            <div className="font-bold text-sm">{tableNum}</div>
+                            {reservation && (
+                              <div className="mt-1">
+                                <div className="text-xs font-medium truncate max-w-[60px]" title={reservation.nom_client}>
+                                  {reservation.nom_client.split(' ')[0]}
+                                </div>
+                                <div className="text-xs opacity-75">
+                                  {reservation.heure_reservation}
+                                </div>
                               </div>
-                              <div className="text-xs opacity-75">
-                                {reservation.heure_reservation}
-                              </div>
-                            </div>
-                          )}
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    );
-                  })}
-                  
-                  {/* Cinquième rangée : Tables 21-25 */}
-                  {[21, 22, 23, 24, 25].map((tableNum) => {
-                    const table = tables.find(t => t.number === tableNum);
-                    const reservation = table?.reservations[0];
-                    return (
-                      <div
-                        key={tableNum}
-                        onClick={() => table && handleTableClick(table)}
-                        className={`
-                          relative border-2 rounded-lg p-3 w-20 h-20 flex flex-col items-center justify-center
-                          transition-all duration-200 cursor-pointer transform hover:scale-105
-                          ${table ? getTableColor(table) : 'bg-gray-100 border-gray-300'}
-                          ${selectedReservation && table?.status === 'available' ? 'ring-2 ring-blue-300' : ''}
-                        `}
-                      >
-                        <div className="text-center">
-                          <div className="font-bold text-sm">{tableNum}</div>
-                          {reservation && (
-                            <div className="mt-1">
-                              <div className="text-xs font-medium truncate max-w-[60px]" title={reservation.nom_client}>
-                                {reservation.nom_client.split(' ')[0]}
+                      );
+                    })}
+                  </div>
+
+                  {/* Cinquième rangée : Tables 5, 10, 15, 20, 25 */}
+                  <div className="absolute top-96 left-64 flex space-x-16">
+                    {[5, 10, 15, 20, 25].map((tableNum) => {
+                      const table = tables.find(t => t.number === tableNum);
+                      const reservation = table?.reservations[0];
+                      return (
+                        <div
+                          key={tableNum}
+                          onClick={() => table && handleTableClick(table)}
+                          className={`
+                            relative border-2 rounded-lg p-3 w-20 h-20 flex flex-col items-center justify-center
+                            transition-all duration-200 cursor-pointer transform hover:scale-105
+                            ${table ? getTableColor(table) : 'bg-gray-100 border-gray-300'}
+                            ${selectedReservation && table?.status === 'available' ? 'ring-2 ring-blue-300' : ''}
+                          `}
+                        >
+                          <div className="text-center">
+                            <div className="font-bold text-sm">{tableNum}</div>
+                            {reservation && (
+                              <div className="mt-1">
+                                <div className="text-xs font-medium truncate max-w-[60px]" title={reservation.nom_client}>
+                                  {reservation.nom_client.split(' ')[0]}
+                                </div>
+                                <div className="text-xs opacity-75">
+                                  {reservation.heure_reservation}
+                                </div>
                               </div>
-                              <div className="text-xs opacity-75">
-                                {reservation.heure_reservation}
-                              </div>
-                            </div>
-                          )}
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
               
