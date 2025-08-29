@@ -198,24 +198,24 @@ const SalleTab: React.FC<SalleTabProps> = ({
     return (
       <div
         key={tableNumber}
-        className={`absolute w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 border-2 rounded-lg flex flex-col items-center justify-center text-xs font-medium transition-all ${getTableColor(table)}`}
+        className={`absolute w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 border-2 rounded-lg flex flex-col items-center justify-center text-xs font-medium transition-all ${getTableColor(table)}`}
         style={{ top: position.top, left: position.left }}
         onClick={() => handleTableClick(table)}
       >
         {reservation ? (
           <>
-            <div className="text-xs font-bold mb-1">{tableNumber}</div>
-            <div className="text-xs text-center leading-tight px-1 font-semibold">
+            <div className="text-xs font-bold">{tableNumber}</div>
+            <div className="text-xs text-center leading-tight px-1 font-semibold truncate w-full">
               {reservation.nom_client}
             </div>
-            <div className="text-xs text-center mt-1">
+            <div className="text-xs text-center">
               {reservation.heure_reservation}
             </div>
           </>
         ) : (
           <>
-            <div className="text-xs mb-1">Table</div>
-            <div className="font-bold text-sm">{tableNumber}</div>
+            <div className="text-xs">Table</div>
+            <div className="font-bold text-xs">{tableNumber}</div>
           </>
         )}
       </div>
@@ -352,7 +352,7 @@ const SalleTab: React.FC<SalleTabProps> = ({
             </div>
 
             {/* Plan des tables - Disposition exacte selon l'image */}
-            <div className="relative bg-gray-50 rounded-lg border-2 border-gray-200 h-[500px] sm:h-[600px] lg:h-[700px] overflow-hidden">
+            <div className="relative bg-gray-50 rounded-lg border-2 border-gray-200 h-[400px] sm:h-[500px] lg:h-[600px] overflow-hidden">
               {/* Rendu de toutes les tables selon les positions définies */}
               {Object.entries(tablePositions).map(([tableNumber, position]) => 
                 renderTable(parseInt(tableNumber), position)
