@@ -172,46 +172,6 @@ const SalleTab: React.FC<SalleTabProps> = ({
     setSelectedReservation(null);
   };
 
-  const handleAddReservation = async () => {
-    if (newReservation.name && newReservation.phone && newReservation.time && newReservation.guests) {
-      try {
-        const { createReservation } = await import('../../lib/supabase');
-        
-        const reservationData = {
-          nom_client: newReservation.name,
-          email_client: newReservation.email || 'N/A',
-          telephone_client: newReservation.phone,
-          date_reservation: selectedDate,
-          heure_reservation: newReservation.time,
-          nombre_personnes: parseInt(newReservation.guests),
-          commentaire: newReservation.message || null,
-          statut: 'en_attente'
-        };
-
-        await createReservation(reservationData);
-        
-        // Recharger les réservations
-        const allReservations = await getAllReservations();
-        setReservations(allReservations);
-        
-        setNewReservation({
-          name: '',
-          email: '',
-          phone: '',
-          time: '',
-          guests: '',
-          message: ''
-        });
-        setShowNewReservationModal(false);
-        
-        addActivity(`Réservation ajoutée pour ${newReservation.name} (${newReservation.guests} pers.)`);
-      } catch (error) {
-        console.error('Erreur lors de l\'ajout de la réservation:', error);
-        alert('Erreur lors de l\'ajout de la réservation. Veuillez réessayer.');
-      }
-    }
-  };
-
   const getTableColor = (table: Table) => {
     if (selectedReservation && selectedTables.includes(table.number)) {
       return 'bg-blue-500 text-white border-blue-600';
@@ -241,6 +201,15 @@ const SalleTab: React.FC<SalleTabProps> = ({
     return new Date(dateString).toLocaleString('fr-FR');
   };
 
+  // Obtenir les réservations pour la date et le service sélectionnés
+  const getTodayReservations = () => {
+    return reservations.filter(reservation => {
+      const reservationDate = reservation.date_reservation;
+      const reservationService = getServiceFromTime(reservation.heure_reservation);
+      return reservationDate === selectedDate && reservationService === currentService;
+    });
+  };
+
   if (loading) {
     return (
       <div className="space-y-6">
@@ -263,65 +232,59 @@ const SalleTab: React.FC<SalleTabProps> = ({
     );
   }
 
+  const todayReservations = getTodayReservations();
+
   return (
     <>
-      <div className="space-y-4 sm:space-y-6">
+      <div className="space-y-6">
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center space-y-4 lg:space-y-0">
           <div>
-            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">Plan de salle</h1>
-            <p className="text-sm sm:text-base text-gray-600">
+            <h1 className="text-3xl font-bold text-gray-900">Plan de salle</h1>
+            <p className="text-gray-600">
               Service du {currentService} - {formatSelectedDate(selectedDate)}
             </p>
           </div>
           
-          <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 w-full lg:w-auto">
+          <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
             <div className="flex items-center space-x-2">
               <Calendar className="text-gray-600" size={20} />
               <input
                 type="date"
                 value={selectedDate}
                 onChange={(e) => handleDateChange(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm"
+                className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
             
-            <button
-              onClick={() => setShowNewReservationModal(true)}
-              className="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg flex items-center justify-center space-x-2 transition-colors text-sm"
-            >
-              <Plus size={20} />
-              <span>Nouvelle réservation</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Légende */}
-        <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6">
-          <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">Légende</h3>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <div className="flex items-center space-x-2">
-              <div className="w-4 h-4 bg-green-100 border border-green-300 rounded"></div>
-              <span className="text-sm text-gray-700">Disponible</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-4 h-4 bg-orange-100 border border-orange-300 rounded"></div>
-              <span className="text-sm text-gray-700">Réservée</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-4 h-4 bg-red-100 border border-red-300 rounded"></div>
-              <span className="text-sm text-gray-700">Occupée</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-4 h-4 bg-blue-500 border border-blue-600 rounded"></div>
-              <span className="text-sm text-gray-700">Sélectionnée</span>
+            <div className="bg-white/10 backdrop-blur-sm rounded-full p-1 flex">
+              <button
+                onClick={() => setCurrentService('midi')}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                  currentService === 'midi'
+                    ? 'bg-primary text-white shadow-md'
+                    : 'text-gray-600 hover:bg-gray-100'
+                }`}
+              >
+                Midi
+              </button>
+              <button
+                onClick={() => setCurrentService('soir')}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                  currentService === 'soir'
+                    ? 'bg-primary text-white shadow-md'
+                    : 'text-gray-600 hover:bg-gray-100'
+                }`}
+              >
+                Soir
+              </button>
             </div>
           </div>
         </div>
 
         {/* Mode assignation */}
         {selectedReservation && (
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 sm:p-6">
-            <h3 className="text-base sm:text-lg font-semibold text-blue-900 mb-4">
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+            <h3 className="text-lg font-semibold text-blue-900 mb-4">
               Mode assignation - {selectedReservation.nom_client || selectedReservation.name}
             </h3>
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-3 sm:space-y-0">
@@ -335,17 +298,17 @@ const SalleTab: React.FC<SalleTabProps> = ({
                   </p>
                 )}
               </div>
-              <div className="flex space-x-2 w-full sm:w-auto">
+              <div className="flex space-x-2">
                 <button
                   onClick={handleConfirmAssignment}
                   disabled={selectedTables.length === 0}
-                  className="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 text-white px-4 py-2 rounded-lg transition-colors text-sm"
+                  className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 text-white px-4 py-2 rounded-lg transition-colors"
                 >
                   Confirmer l'assignation
                 </button>
                 <button
                   onClick={handleCancelAssignment}
-                  className="flex-1 sm:flex-none bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors text-sm"
+                  className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors"
                 >
                   Annuler
                 </button>
@@ -354,54 +317,214 @@ const SalleTab: React.FC<SalleTabProps> = ({
           </div>
         )}
 
-        {/* Plan de salle */}
-        <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6">
-          <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-6">
-            Tables du restaurant (25 tables)
-          </h3>
-          
-          {/* Grille des tables */}
-          <div className="grid grid-cols-5 sm:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-2 sm:gap-3">
-            {tables.map((table) => (
-              <div
-                key={table.number}
-                onClick={() => handleTableClick(table)}
-                className={`
-                  relative aspect-square border-2 rounded-lg flex flex-col items-center justify-center
-                  transition-all duration-200 text-xs sm:text-sm font-medium
-                  ${getTableColor(table)}
-                  ${selectedReservation && table.status === 'available' ? 'transform hover:scale-105' : ''}
-                  ${!selectedReservation && table.status !== 'available' ? 'transform hover:scale-105' : ''}
-                `}
-              >
-                <div className="text-center">
-                  <div className="font-bold">{table.number}</div>
-                  <div className="text-xs opacity-75">{table.capacity}p</div>
+        <div className="flex flex-col lg:flex-row gap-6">
+          {/* Plan de salle principal */}
+          <div className="lg:w-2/3">
+            <div className="bg-white rounded-lg shadow-lg p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-6">
+                Tables du restaurant (25 tables)
+              </h3>
+              
+              {/* Légende */}
+              <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+                <h4 className="text-sm font-medium text-gray-900 mb-3">Légende</h4>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-4 h-4 bg-green-100 border border-green-300 rounded"></div>
+                    <span className="text-sm text-gray-700">Disponible</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-4 h-4 bg-orange-100 border border-orange-300 rounded"></div>
+                    <span className="text-sm text-gray-700">Réservée</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-4 h-4 bg-red-100 border border-red-300 rounded"></div>
+                    <span className="text-sm text-gray-700">Occupée</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-4 h-4 bg-blue-500 border border-blue-600 rounded"></div>
+                    <span className="text-sm text-gray-700">Sélectionnée</span>
+                  </div>
                 </div>
+              </div>
+              
+              {/* Grille des tables avec noms des clients */}
+              <div className="grid grid-cols-5 gap-4">
+                {tables.map((table) => {
+                  const reservation = table.reservations[0];
+                  return (
+                    <div
+                      key={table.number}
+                      onClick={() => handleTableClick(table)}
+                      className={`
+                        relative border-2 rounded-lg p-3 min-h-[80px] flex flex-col items-center justify-center
+                        transition-all duration-200 cursor-pointer transform hover:scale-105
+                        ${getTableColor(table)}
+                        ${selectedReservation && table.status === 'available' ? 'ring-2 ring-blue-300' : ''}
+                      `}
+                    >
+                      <div className="text-center">
+                        <div className="font-bold text-lg">{table.number}</div>
+                        <div className="text-xs opacity-75">{table.capacity}p</div>
+                        
+                        {reservation && (
+                          <div className="mt-1">
+                            <div className="text-xs font-medium truncate max-w-[60px]" title={reservation.nom_client}>
+                              {reservation.nom_client.split(' ')[0]}
+                            </div>
+                            <div className="text-xs opacity-75">
+                              {reservation.heure_reservation}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                      
+                      {table.reservations.length > 0 && (
+                        <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+              
+              {/* Instructions */}
+              <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+                <h4 className="text-sm font-medium text-gray-900 mb-2">Instructions</h4>
+                <div className="text-sm text-gray-600 space-y-1">
+                  {selectedReservation ? (
+                    <>
+                      <p>• Cliquez sur une ou plusieurs tables vertes pour les sélectionner</p>
+                      <p>• Cliquez sur "Confirmer l'assignation" pour valider</p>
+                      <p>• Cliquez sur "Annuler" pour quitter le mode assignation</p>
+                    </>
+                  ) : (
+                    <>
+                      <p>• Cliquez sur une table réservée (orange) ou occupée (rouge) pour voir les détails</p>
+                      <p>• Les noms des clients et heures sont affichés sur les tables occupées</p>
+                      <p>• Utilisez l'onglet "Réservations" pour assigner des tables aux clients en attente</p>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Sidebar avec liste des réservations */}
+          <div className="lg:w-1/3">
+            <div className="bg-white rounded-lg shadow-lg p-6 sticky top-24">
+              <h3 className="text-lg font-semibold text-gray-900 mb-6">
+                Réservations du {currentService}
+              </h3>
+              
+              {/* Statistiques rapides */}
+              <div className="grid grid-cols-2 gap-3 mb-6">
+                <div className="bg-gray-50 p-3 rounded-lg text-center">
+                  <div className="text-2xl font-bold text-gray-900">{todayReservations.length}</div>
+                  <div className="text-xs text-gray-600">Total</div>
+                </div>
+                <div className="bg-gray-50 p-3 rounded-lg text-center">
+                  <div className="text-2xl font-bold text-green-600">
+                    {tables.filter(t => t.status === 'available').length}
+                  </div>
+                  <div className="text-xs text-gray-600">Libres</div>
+                </div>
+              </div>
+              
+              {/* Liste des réservations */}
+              <div className="space-y-3 max-h-96 overflow-y-auto">
+                {todayReservations
+                  .sort((a, b) => {
+                    // Tri par heure
+                    const [hourA, minA] = a.heure_reservation.split(':').map(Number);
+                    const [hourB, minB] = b.heure_reservation.split(':').map(Number);
+                    return (hourA * 60 + minA) - (hourB * 60 + minB);
+                  })
+                  .map((reservation) => (
+                  <div 
+                    key={reservation.id}
+                    className={`p-3 rounded-lg border cursor-pointer transition-all hover:shadow-md ${
+                      reservation.statut === 'nouvelle' ? 'bg-blue-50 border-blue-200' :
+                      reservation.statut === 'en_attente' ? 'bg-pink-50 border-pink-200' :
+                      reservation.statut === 'assignee' ? 'bg-orange-50 border-orange-200' :
+                      reservation.statut === 'arrivee' ? 'bg-red-50 border-red-200' :
+                      'bg-gray-50 border-gray-200'
+                    }`}
+                    onClick={() => {
+                      if (reservation.statut === 'assignee' || reservation.statut === 'arrivee') {
+                        // Trouver la table assignée et ouvrir le modal
+                        const assignedTable = tables.find(t => 
+                          t.number === reservation.table_assignee ||
+                          (reservation.commentaire && reservation.commentaire.includes(`[Tables: `) && 
+                           reservation.commentaire.includes(`${t.number}`))
+                        );
+                        if (assignedTable) {
+                          setSelectedTable(assignedTable);
+                          setShowTableModal(true);
+                        }
+                      }
+                    }}
+                  >
+                    <div className="flex justify-between items-start mb-2">
+                      <h4 className="font-semibold text-gray-900 text-sm">{reservation.nom_client}</h4>
+                      <span className="text-xs text-gray-600">{reservation.heure_reservation}</span>
+                    </div>
+                    
+                    <div className="text-xs text-gray-600 space-y-1">
+                      <div>{reservation.nombre_personnes} personne{reservation.nombre_personnes > 1 ? 's' : ''}</div>
+                      {reservation.table_assignee && (
+                        <div className="font-medium text-gray-800">
+                          {(() => {
+                            // Extraire les tables multiples du commentaire si présent
+                            if (reservation.commentaire && reservation.commentaire.includes('[Tables:')) {
+                              const match = reservation.commentaire.match(/\[Tables: ([^\]]+)\]/);
+                              if (match) {
+                                return `Tables: ${match[1]}`;
+                              }
+                            }
+                            return `Table: ${reservation.table_assignee}`;
+                          })()}
+                        </div>
+                      )}
+                      <div className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
+                        reservation.statut === 'nouvelle' ? 'bg-blue-100 text-blue-800' :
+                        reservation.statut === 'en_attente' ? 'bg-pink-100 text-pink-800' :
+                        reservation.statut === 'assignee' ? 'bg-orange-100 text-orange-800' :
+                        reservation.statut === 'arrivee' ? 'bg-red-100 text-red-800' :
+                        'bg-gray-100 text-gray-800'
+                      }`}>
+                        {reservation.statut === 'nouvelle' ? 'Nouvelle' :
+                         reservation.statut === 'en_attente' ? 'En attente' :
+                         reservation.statut === 'assignee' ? 'Assignée' :
+                         reservation.statut === 'arrivee' ? 'Arrivée' : reservation.statut}
+                      </div>
+                    </div>
+                    
+                    {reservation.commentaire && !reservation.commentaire.includes('[Tables:') && (
+                      <div className="text-xs text-gray-500 mt-2 italic truncate">
+                        "{reservation.commentaire}"
+                      </div>
+                    )}
+                  </div>
+                ))}
                 
-                {table.reservations.length > 0 && (
-                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></div>
+                {todayReservations.length === 0 && (
+                  <div className="text-center py-8 text-gray-500">
+                    <Calendar className="mx-auto mb-2" size={32} />
+                    <p>Aucune réservation pour ce service</p>
+                  </div>
                 )}
               </div>
-            ))}
-          </div>
-          
-          {/* Instructions */}
-          <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-            <h4 className="text-sm font-medium text-gray-900 mb-2">Instructions</h4>
-            <div className="text-xs sm:text-sm text-gray-600 space-y-1">
-              {selectedReservation ? (
-                <>
-                  <p>• Cliquez sur une ou plusieurs tables vertes pour les sélectionner</p>
-                  <p>• Cliquez sur "Confirmer l'assignation" pour valider</p>
-                  <p>• Cliquez sur "Annuler" pour quitter le mode assignation</p>
-                </>
-              ) : (
-                <>
-                  <p>• Cliquez sur une table réservée (orange) ou occupée (rouge) pour voir les détails</p>
-                  <p>• Utilisez l'onglet "Réservations" pour assigner des tables aux clients en attente</p>
-                </>
-              )}
+              
+              {/* Actions rapides */}
+              <div className="mt-6 pt-4 border-t border-gray-200">
+                <button
+                  onClick={() => setShowNewReservationModal(true)}
+                  className="w-full bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg flex items-center justify-center space-x-2 transition-colors"
+                >
+                  <Plus size={20} />
+                  <span>Nouvelle réservation</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -458,7 +581,15 @@ const SalleTab: React.FC<SalleTabProps> = ({
                         <span className="text-sm text-gray-600">Personnes:</span>
                         <span>{reservation.nombre_personnes}</span>
                       </div>
-                      {reservation.commentaire && (
+                      <div className="flex justify-between">
+                        <span className="text-sm text-gray-600">Email:</span>
+                        <span className="text-sm break-all">{reservation.email_client}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-sm text-gray-600">Téléphone:</span>
+                        <span className="text-sm">{reservation.telephone_client}</span>
+                      </div>
+                      {reservation.commentaire && !reservation.commentaire.includes('[Tables:') && (
                         <div className="mt-2">
                           <span className="text-sm text-gray-600">Note:</span>
                           <p className="text-sm mt-1 p-2 bg-gray-50 rounded">{reservation.commentaire}</p>
@@ -481,16 +612,25 @@ const SalleTab: React.FC<SalleTabProps> = ({
                                 alert("Erreur lors du marquage comme arrivé.");
                               }
                             }}
-                            className="w-full bg-green-500 hover:bg-green-600 text-white px-3 py-2 rounded text-sm transition-colors"
+                            className="w-full bg-green-500 hover:bg-green-600 text-white px-3 py-2 rounded text-sm transition-colors flex items-center justify-center space-x-2"
                           >
-                            Marquer comme arrivé
+                            <Check size={16} />
+                            <span>Marquer comme arrivé</span>
                           </button>
                         )}
                         
                         <button
-                          onClick={() => {
-                            handleUnassignReservation(reservation.id);
-                            setShowTableModal(false);
+                          onClick={async () => {
+                            try {
+                              await updateReservationStatus(reservation.id, 'en_attente', null);
+                              const allReservations = await getAllReservations();
+                              setReservations(allReservations);
+                              addActivity(`Réservation de ${reservation.nom_client} désassignée - remise en attente`);
+                              setShowTableModal(false);
+                            } catch (error) {
+                              console.error('Erreur lors de la désassignation:', error);
+                              alert('Erreur lors de la désassignation de la réservation');
+                            }
                           }}
                           className="w-full bg-orange-500 hover:bg-orange-600 text-white px-3 py-2 rounded text-sm transition-colors flex items-center justify-center space-x-2"
                         >
@@ -512,9 +652,10 @@ const SalleTab: React.FC<SalleTabProps> = ({
                                 alert("Erreur lors de la finalisation.");
                               }
                             }}
-                            className="w-full bg-purple-500 hover:bg-purple-600 text-white px-3 py-2 rounded text-sm transition-colors"
+                            className="w-full bg-purple-500 hover:bg-purple-600 text-white px-3 py-2 rounded text-sm transition-colors flex items-center justify-center space-x-2"
                           >
-                            Terminer
+                            <Check size={16} />
+                            <span>Terminer</span>
                           </button>
                         )}
                       </div>
@@ -617,7 +758,45 @@ const SalleTab: React.FC<SalleTabProps> = ({
                 Annuler
               </button>
               <button
-                onClick={handleAddReservation}
+                onClick={async () => {
+                  if (newReservation.name && newReservation.phone && newReservation.time && newReservation.guests) {
+                    try {
+                      const { createReservation } = await import('../../lib/supabase');
+                      
+                      const reservationData = {
+                        nom_client: newReservation.name,
+                        email_client: newReservation.email || 'N/A',
+                        telephone_client: newReservation.phone,
+                        date_reservation: selectedDate,
+                        heure_reservation: newReservation.time,
+                        nombre_personnes: parseInt(newReservation.guests),
+                        commentaire: newReservation.message || null,
+                        statut: 'en_attente'
+                      };
+
+                      await createReservation(reservationData);
+                      
+                      // Recharger les réservations
+                      const allReservations = await getAllReservations();
+                      setReservations(allReservations);
+                      
+                      setNewReservation({
+                        name: '',
+                        email: '',
+                        phone: '',
+                        time: '',
+                        guests: '',
+                        message: ''
+                      });
+                      setShowNewReservationModal(false);
+                      
+                      addActivity(`Réservation ajoutée pour ${newReservation.name} (${newReservation.guests} pers.)`);
+                    } catch (error) {
+                      console.error('Erreur lors de l\'ajout de la réservation:', error);
+                      alert('Erreur lors de l\'ajout de la réservation. Veuillez réessayer.');
+                    }
+                  }
+                }}
                 disabled={!newReservation.name || !newReservation.phone || !newReservation.time || !newReservation.guests}
                 className="px-4 py-2 bg-primary hover:bg-primary/90 disabled:bg-gray-300 text-white rounded-md transition-colors"
               >
