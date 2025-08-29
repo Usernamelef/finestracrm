@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Calendar, Users, MapPin, Clock, Plus, X, Edit, Trash2, Phone, Mail, User, Search, Filter, Download, ChevronDown, Check, Ban, History, MessageSquare, Menu } from 'lucide-react';
+import { Calendar, Users, MapPin, Clock, Plus, X, Edit, Trash2, Phone, Mail, User, Search, Filter, Download, ChevronDown, Check, Ban, History, MessageSquare, Menu, Bell, CheckCircle } from 'lucide-react';
 import { createClient } from '@supabase/supabase-js';
 import DashboardTab from '../components/CRM/DashboardTab';
 import ReservationsTab from '../components/CRM/ReservationsTab';
@@ -45,6 +45,8 @@ const CRM = () => {
   const [showTableModal, setShowTableModal] = useState(false);
   const [newReservationCount, setNewReservationCount] = useState(0);
   const [reservationToAssign, setReservationToAssign] = useState<any>(null);
+  const [showNotificationPopup, setShowNotificationPopup] = useState(false);
+  const [notificationDetails, setNotificationDetails] = useState<any>(null);
   const refreshReservationsRef = useRef<(() => void) | null>(null);
   
   // Mock data avec exemples fictifs variés
@@ -330,6 +332,27 @@ const CRM = () => {
 
   const handleNewReservation = () => {
     setNewReservationCount(prev => prev + 1);
+  };
+
+  // Fonction pour gérer les nouvelles réservations détectées via Realtime
+  const handleNewReservationDetected = (reservation: any) => {
+    console.log('🔔 Nouvelle réservation détectée:', reservation);
+    
+    // Afficher le pop-up de notification
+    setNewReservationPopupDetails(reservation);
+    setShowNewReservationPopup(true);
+    
+    // Incrémenter le compteur
+    setNewReservationCount(prev => prev + 1);
+    
+    // Ajouter à l'activité
+    addActivity(`🔔 NOUVELLE RÉSERVATION: ${reservation.nom_client} (${reservation.nombre_personnes}p) - ${new Date(reservation.date_reservation).toLocaleDateString('fr-FR')} à ${reservation.heure_reservation}`);
+    
+    // Masquer automatiquement après 8 secondes
+    setTimeout(() => {
+      setShowNewReservationPopup(false);
+      setNewReservationPopupDetails(null);
+    }, 8000);
   };
 
   const resetNewReservationCount = () => {
@@ -922,6 +945,7 @@ const CRM = () => {
             getReservationsByStatusLocal={getReservationsByStatus}
             onNewReservation={handleNewReservation}
             onRefreshNeeded={(refreshFn) => { refreshReservationsRef.current = refreshFn; }}
+            onNewReservationDetected={handleNewReservationDetected}
           />
         )}
 
