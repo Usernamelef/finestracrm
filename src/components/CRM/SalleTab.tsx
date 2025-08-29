@@ -223,21 +223,36 @@ const SalleTab: React.FC<SalleTabProps> = ({
   };
 
   const tablePositions = {
-    25: { top: '5%', left: '5%' }, // Table 25 en haut à gauche
-    31: { top: '5%', left: '70%' }, // Table 31 en haut à droite
-    30: { top: '5%', left: '85%' }, // Table 30 en haut à droite
-    22: { top: '25%', left: '22%' }, // Table 22
-    7: { top: '25%', left: '39%' }, // Table 7
-    9: { top: '25%', left: '56%' }, // Table 9
-    10: { top: '25%', left: '70%' }, // Table 10
-    13: { top: '25%', left: '85%' }, // Table 13
-    6: { top: '45%', left: '22%' }, // Table 6
-    1: { top: '45%', left: '56%' }, // Table 1
-    4: { top: '45%', left: '70%' }, // Table 4
-    2: { top: '45%', left: '85%' }, // Table 2
-    24: { top: '65%', left: '5%' },
-    23: { top: '72%', left: '5%' },
-    8: { top: '75%', left: '70%' } // Table 8
+    // Ligne 1 - Haut
+    25: { top: '8%', left: '8%' },
+    31: { top: '8%', left: '65%' },
+    30: { top: '8%', left: '80%' },
+    
+    // Ligne 2 - Milieu haut
+    22: { top: '25%', left: '25%' },
+    7: { top: '25%', left: '40%' },
+    9: { top: '25%', left: '55%' },
+    10: { top: '25%', left: '70%' },
+    13: { top: '25%', left: '85%' },
+    
+    // Ligne 3 - Milieu
+    6: { top: '42%', left: '25%' },
+    1: { top: '42%', left: '55%' },
+    4: { top: '42%', left: '70%' },
+    2: { top: '42%', left: '85%' },
+    
+    // Colonne gauche verticale
+    24: { top: '60%', left: '8%' },
+    23: { top: '70%', left: '8%' },
+    21: { top: '80%', left: '8%' },
+    20: { top: '90%', left: '8%' },
+    
+    // Ligne du bas
+    11: { top: '75%', left: '25%' },
+    12: { top: '75%', left: '40%' },
+    8: { top: '75%', left: '55%' },
+    3: { top: '75%', left: '70%' },
+    5: { top: '75%', left: '85%' }
   };
 
   return (
@@ -338,45 +353,10 @@ const SalleTab: React.FC<SalleTabProps> = ({
 
             {/* Plan des tables - Disposition exacte selon l'image */}
             <div className="relative bg-gray-50 rounded-lg border-2 border-gray-200 h-[500px] sm:h-[600px] lg:h-[700px] overflow-hidden">
-              {/* Section en haut à gauche */}
-              {renderTable(25, { top: '8%', left: '8%' })}
-              
-              {/* Section gauche (colonne verticale) */}
-              {renderTable(25, { top: '30%', left: '3%' })}
-              {renderTable(22, { top: '30%', left: '15%' })}
-              
-              {/* Section centre-gauche */}
-              {renderTable(7, { top: '30%', left: '30%' })}
-              {renderTable(9, { top: '30%', left: '45%' })}
-              
-              {/* Section centre */}
-              {renderTable(6, { top: '50%', left: '15%' })}
-              {renderTable(1, { top: '50%', left: '45%' })}
-              
-              {/* Section centre-droite */}
-              {renderTable(10, { top: '30%', left: '65%' })}
-              {renderTable(13, { top: '30%', left: '80%' })}
-              {renderTable(4, { top: '50%', left: '65%' })}
-              {renderTable(2, { top: '50%', left: '80%' })}
-              
-              {/* Section en haut à droite */}
-              {renderTable(31, { top: '8%', left: '65%' })}
-              {renderTable(30, { top: '8%', left: '80%' })}
-              
-              {/* Section du bas (colonne gauche verticale) */}
-              {renderTable(24, { top: '70%', left: '3%' })}
-              {renderTable(23, { top: '75%', left: '3%' })}
-              {renderTable(22, { top: '80%', left: '3%' })}
-              {renderTable(21, { top: '85%', left: '3%' })}
-              {renderTable(20, { top: '90%', left: '3%' })}
-              {renderTable(10, { top: '95%', left: '3%' })}
-              
-              {/* Section du bas (ligne horizontale) */}
-              {renderTable(9, { top: '75%', left: '30%' })}
-              {renderTable(4, { top: '75%', left: '40%' })}
-              {renderTable(8, { top: '75%', left: '50%' })}
-              {renderTable(2, { top: '75%', left: '65%' })}
-              {renderTable(2, { top: '75%', left: '75%' })} {/* Deuxième table 2 */}
+              {/* Rendu de toutes les tables selon les positions définies */}
+              {Object.entries(tablePositions).map(([tableNumber, position]) => 
+                renderTable(parseInt(tableNumber), position)
+              )}
             </div>
           </div>
         </div>
