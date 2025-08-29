@@ -340,194 +340,168 @@ const SalleTab: React.FC<SalleTabProps> = ({
               
               {/* Grille des tables avec noms des clients */}
               {/* Plan de salle avec disposition exacte */}
-              <div className="relative bg-gray-50 p-8 rounded-lg" style={{ minHeight: '600px' }}>
-                {/* Section principale du restaurant */}
-                <div className="relative w-full h-full">
+              {/* Plan de salle avec disposition exacte selon l'image */}
+              <div className="bg-gray-50 p-8 rounded-lg">
+                <div className="grid grid-cols-5 gap-4 max-w-2xl mx-auto">
+                  {/* Première rangée : Tables 1-5 */}
+                  {[1, 2, 3, 4, 5].map((tableNum) => {
+                    const table = tables.find(t => t.number === tableNum);
+                    const reservation = table?.reservations[0];
+                    return (
+                      <div
+                        key={tableNum}
+                        onClick={() => table && handleTableClick(table)}
+                        className={`
+                          relative border-2 rounded-lg p-3 w-20 h-20 flex flex-col items-center justify-center
+                          transition-all duration-200 cursor-pointer transform hover:scale-105
+                          ${table ? getTableColor(table) : 'bg-gray-100 border-gray-300'}
+                          ${selectedReservation && table?.status === 'available' ? 'ring-2 ring-blue-300' : ''}
+                        `}
+                      >
+                        <div className="text-center">
+                          <div className="font-bold text-sm">{tableNum}</div>
+                          {reservation && (
+                            <div className="mt-1">
+                              <div className="text-xs font-medium truncate max-w-[60px]" title={reservation.nom_client}>
+                                {reservation.nom_client.split(' ')[0]}
+                              </div>
+                              <div className="text-xs opacity-75">
+                                {reservation.heure_reservation}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
                   
-                  {/* Tables 1-13 - Section principale */}
-                  <div className="absolute" style={{ top: '50px', left: '50px' }}>
-                    {/* Rangée du haut */}
-                    <div className="flex space-x-4 mb-6">
-                      {[1, 2, 3, 4, 5].map((tableNum) => {
-                        const table = tables.find(t => t.number === tableNum);
-                        const reservation = table?.reservations[0];
-                        return (
-                          <div
-                            key={tableNum}
-                            onClick={() => table && handleTableClick(table)}
-                            className={`
-                              relative border-2 rounded-lg p-3 w-20 h-20 flex flex-col items-center justify-center
-                              transition-all duration-200 cursor-pointer transform hover:scale-105
-                              ${table ? getTableColor(table) : 'bg-gray-100 border-gray-300'}
-                              ${selectedReservation && table?.status === 'available' ? 'ring-2 ring-blue-300' : ''}
-                            `}
-                          >
-                            <div className="text-center">
-                              <div className="font-bold text-sm">{tableNum}</div>
-                              {reservation && (
-                                <div className="mt-1">
-                                  <div className="text-xs font-medium truncate max-w-[60px]" title={reservation.nom_client}>
-                                    {reservation.nom_client.split(' ')[0]}
-                                  </div>
-                                  <div className="text-xs opacity-75">
-                                    {reservation.heure_reservation}
-                                  </div>
-                                </div>
-                              )}
+                  {/* Deuxième rangée : Tables 6-10 */}
+                  {[6, 7, 8, 9, 10].map((tableNum) => {
+                    const table = tables.find(t => t.number === tableNum);
+                    const reservation = table?.reservations[0];
+                    return (
+                      <div
+                        key={tableNum}
+                        onClick={() => table && handleTableClick(table)}
+                        className={`
+                          relative border-2 rounded-lg p-3 w-20 h-20 flex flex-col items-center justify-center
+                          transition-all duration-200 cursor-pointer transform hover:scale-105
+                          ${table ? getTableColor(table) : 'bg-gray-100 border-gray-300'}
+                          ${selectedReservation && table?.status === 'available' ? 'ring-2 ring-blue-300' : ''}
+                        `}
+                      >
+                        <div className="text-center">
+                          <div className="font-bold text-sm">{tableNum}</div>
+                          {reservation && (
+                            <div className="mt-1">
+                              <div className="text-xs font-medium truncate max-w-[60px]" title={reservation.nom_client}>
+                                {reservation.nom_client.split(' ')[0]}
+                              </div>
+                              <div className="text-xs opacity-75">
+                                {reservation.heure_reservation}
+                              </div>
                             </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                    
-                    {/* Rangée du milieu */}
-                    <div className="flex space-x-4 mb-6">
-                      {[6, 7, 8, 9, 10].map((tableNum) => {
-                        const table = tables.find(t => t.number === tableNum);
-                        const reservation = table?.reservations[0];
-                        return (
-                          <div
-                            key={tableNum}
-                            onClick={() => table && handleTableClick(table)}
-                            className={`
-                              relative border-2 rounded-lg p-3 w-20 h-20 flex flex-col items-center justify-center
-                              transition-all duration-200 cursor-pointer transform hover:scale-105
-                              ${table ? getTableColor(table) : 'bg-gray-100 border-gray-300'}
-                              ${selectedReservation && table?.status === 'available' ? 'ring-2 ring-blue-300' : ''}
-                            `}
-                          >
-                            <div className="text-center">
-                              <div className="font-bold text-sm">{tableNum}</div>
-                              {reservation && (
-                                <div className="mt-1">
-                                  <div className="text-xs font-medium truncate max-w-[60px]" title={reservation.nom_client}>
-                                    {reservation.nom_client.split(' ')[0]}
-                                  </div>
-                                  <div className="text-xs opacity-75">
-                                    {reservation.heure_reservation}
-                                  </div>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                    
-                    {/* Rangée du bas */}
-                    <div className="flex space-x-4">
-                      {[11, 12, 13].map((tableNum) => {
-                        const table = tables.find(t => t.number === tableNum);
-                        const reservation = table?.reservations[0];
-                        return (
-                          <div
-                            key={tableNum}
-                            onClick={() => table && handleTableClick(table)}
-                            className={`
-                              relative border-2 rounded-lg p-3 w-20 h-20 flex flex-col items-center justify-center
-                              transition-all duration-200 cursor-pointer transform hover:scale-105
-                              ${table ? getTableColor(table) : 'bg-gray-100 border-gray-300'}
-                              ${selectedReservation && table?.status === 'available' ? 'ring-2 ring-blue-300' : ''}
-                            `}
-                          >
-                            <div className="text-center">
-                              <div className="font-bold text-sm">{tableNum}</div>
-                              {reservation && (
-                                <div className="mt-1">
-                                  <div className="text-xs font-medium truncate max-w-[60px]" title={reservation.nom_client}>
-                                    {reservation.nom_client.split(' ')[0]}
-                                  </div>
-                                  <div className="text-xs opacity-75">
-                                    {reservation.heure_reservation}
-                                  </div>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
                   
-                  {/* Tables 20-31 - Section terrasse/annexe */}
-                  <div className="absolute" style={{ top: '50px', right: '50px' }}>
-                    {/* Rangée du haut terrasse */}
-                    <div className="flex space-x-4 mb-6">
-                      {[20, 21, 22, 23, 24, 25].map((tableNum) => {
-                        const table = tables.find(t => t.number === tableNum);
-                        const reservation = table?.reservations[0];
-                        return (
-                          <div
-                            key={tableNum}
-                            onClick={() => table && handleTableClick(table)}
-                            className={`
-                              relative border-2 rounded-lg p-3 w-20 h-20 flex flex-col items-center justify-center
-                              transition-all duration-200 cursor-pointer transform hover:scale-105
-                              ${table ? getTableColor(table) : 'bg-gray-100 border-gray-300'}
-                              ${selectedReservation && table?.status === 'available' ? 'ring-2 ring-blue-300' : ''}
-                            `}
-                          >
-                            <div className="text-center">
-                              <div className="font-bold text-sm">{tableNum}</div>
-                              {reservation && (
-                                <div className="mt-1">
-                                  <div className="text-xs font-medium truncate max-w-[60px]" title={reservation.nom_client}>
-                                    {reservation.nom_client.split(' ')[0]}
-                                  </div>
-                                  <div className="text-xs opacity-75">
-                                    {reservation.heure_reservation}
-                                  </div>
-                                </div>
-                              )}
+                  {/* Troisième rangée : Tables 11-15 */}
+                  {[11, 12, 13, 14, 15].map((tableNum) => {
+                    const table = tables.find(t => t.number === tableNum);
+                    const reservation = table?.reservations[0];
+                    return (
+                      <div
+                        key={tableNum}
+                        onClick={() => table && handleTableClick(table)}
+                        className={`
+                          relative border-2 rounded-lg p-3 w-20 h-20 flex flex-col items-center justify-center
+                          transition-all duration-200 cursor-pointer transform hover:scale-105
+                          ${table ? getTableColor(table) : 'bg-gray-100 border-gray-300'}
+                          ${selectedReservation && table?.status === 'available' ? 'ring-2 ring-blue-300' : ''}
+                        `}
+                      >
+                        <div className="text-center">
+                          <div className="font-bold text-sm">{tableNum}</div>
+                          {reservation && (
+                            <div className="mt-1">
+                              <div className="text-xs font-medium truncate max-w-[60px]" title={reservation.nom_client}>
+                                {reservation.nom_client.split(' ')[0]}
+                              </div>
+                              <div className="text-xs opacity-75">
+                                {reservation.heure_reservation}
+                              </div>
                             </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                    
-                    {/* Rangée du bas terrasse */}
-                    <div className="flex space-x-4">
-                      {[26, 27, 28, 29, 30, 31].map((tableNum) => {
-                        const table = tables.find(t => t.number === tableNum);
-                        const reservation = table?.reservations[0];
-                        return (
-                          <div
-                            key={tableNum}
-                            onClick={() => table && handleTableClick(table)}
-                            className={`
-                              relative border-2 rounded-lg p-3 w-20 h-20 flex flex-col items-center justify-center
-                              transition-all duration-200 cursor-pointer transform hover:scale-105
-                              ${table ? getTableColor(table) : 'bg-gray-100 border-gray-300'}
-                              ${selectedReservation && table?.status === 'available' ? 'ring-2 ring-blue-300' : ''}
-                            `}
-                          >
-                            <div className="text-center">
-                              <div className="font-bold text-sm">{tableNum}</div>
-                              {reservation && (
-                                <div className="mt-1">
-                                  <div className="text-xs font-medium truncate max-w-[60px]" title={reservation.nom_client}>
-                                    {reservation.nom_client.split(' ')[0]}
-                                  </div>
-                                  <div className="text-xs opacity-75">
-                                    {reservation.heure_reservation}
-                                  </div>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
                   
-                  {/* Labels des sections */}
-                  <div className="absolute top-4 left-16 text-sm font-medium text-gray-600">
-                    Salle principale (Tables 1-13)
-                  </div>
-                  <div className="absolute top-4 right-16 text-sm font-medium text-gray-600">
-                    Terrasse (Tables 20-31)
-                  </div>
-                </div>
+                  {/* Quatrième rangée : Tables 16-20 */}
+                  {[16, 17, 18, 19, 20].map((tableNum) => {
+                    const table = tables.find(t => t.number === tableNum);
+                    const reservation = table?.reservations[0];
+                    return (
+                      <div
+                        key={tableNum}
+                        onClick={() => table && handleTableClick(table)}
+                        className={`
+                          relative border-2 rounded-lg p-3 w-20 h-20 flex flex-col items-center justify-center
+                          transition-all duration-200 cursor-pointer transform hover:scale-105
+                          ${table ? getTableColor(table) : 'bg-gray-100 border-gray-300'}
+                          ${selectedReservation && table?.status === 'available' ? 'ring-2 ring-blue-300' : ''}
+                        `}
+                      >
+                        <div className="text-center">
+                          <div className="font-bold text-sm">{tableNum}</div>
+                          {reservation && (
+                            <div className="mt-1">
+                              <div className="text-xs font-medium truncate max-w-[60px]" title={reservation.nom_client}>
+                                {reservation.nom_client.split(' ')[0]}
+                              </div>
+                              <div className="text-xs opacity-75">
+                                {reservation.heure_reservation}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                  
+                  {/* Cinquième rangée : Tables 21-25 */}
+                  {[21, 22, 23, 24, 25].map((tableNum) => {
+                    const table = tables.find(t => t.number === tableNum);
+                    const reservation = table?.reservations[0];
+                    return (
+                      <div
+                        key={tableNum}
+                        onClick={() => table && handleTableClick(table)}
+                        className={`
+                          relative border-2 rounded-lg p-3 w-20 h-20 flex flex-col items-center justify-center
+                          transition-all duration-200 cursor-pointer transform hover:scale-105
+                          ${table ? getTableColor(table) : 'bg-gray-100 border-gray-300'}
+                          ${selectedReservation && table?.status === 'available' ? 'ring-2 ring-blue-300' : ''}
+                        `}
+                      >
+                        <div className="text-center">
+                          <div className="font-bold text-sm">{tableNum}</div>
+                          {reservation && (
+                            <div className="mt-1">
+                              <div className="text-xs font-medium truncate max-w-[60px]" title={reservation.nom_client}>
+                                {reservation.nom_client.split(' ')[0]}
+                              </div>
+                              <div className="text-xs opacity-75">
+                                {reservation.heure_reservation}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
               </div>
               
               {/* Instructions */}

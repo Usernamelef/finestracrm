@@ -146,17 +146,9 @@ const CRM = () => {
   ]);
 
   const [tables, setTables] = useState<Table[]>([
-    // Toutes les tables (1-13 + 20-31)
-    ...Array.from({ length: 13 }, (_, i) => ({
+    // Tables 1-25 selon la disposition de l'image
+    ...Array.from({ length: 25 }, (_, i) => ({
       number: i + 1,
-      capacity: 2,
-      status: 'available' as const,
-      reservations: [],
-      section: 'main' as const
-    })),
-    // Tables 20-31
-    ...Array.from({ length: 12 }, (_, i) => ({
-      number: i + 20,
       capacity: 2,
       status: 'available' as const,
       reservations: [],
