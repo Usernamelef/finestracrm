@@ -188,60 +188,78 @@ const SalleTab: React.FC<SalleTabProps> = ({
     }
   };
 
-  // Disposition exacte selon l'image
-  const tablePositions = {
-    // Section gauche (colonne verticale)
-    25: { top: '5%', left: '2%' },
-    25: { top: '25%', left: '2%' }, // Table 25 à gauche (milieu)
-    22: { top: '25%', left: '12%' },
-    6: { top: '45%', left: '12%' },
-    
-    // Section centre-gauche
-    7: { top: '25%', left: '25%' },
-    9: { top: '25%', left: '40%' },
-    1: { top: '45%', left: '40%' },
-    
-    // Section centre-droite
-    10: { top: '25%', left: '60%' },
-    13: { top: '25%', left: '75%' },
-    4: { top: '45%', left: '60%' },
-    2: { top: '45%', left: '75%' },
-    
-    // Section en haut à droite
-    31: { top: '5%', left: '60%' },
-    30: { top: '5%', left: '75%' },
-    
-    // Section en haut à gauche
-    25: { top: '5%', left: '12%' }, // Table 25 en haut
-    
-    // Section du bas (ligne horizontale)
-    24: { top: '70%', left: '2%' },
-    23: { top: '75%', left: '2%' },
-    22: { top: '80%', left: '2%' },
-    20: { top: '90%', left: '2%' },
-    10: { top: '95%', left: '2%' },
-    9: { top: '70%', left: '25%' },
-    4: { top: '70%', left: '40%' },
-  };
-
   const renderTable = (tableNumber: number, position: { top: string; left: string }) => {
     const table = tables.find(t => t.number === tableNumber);
     if (!table) return null;
 
+    // Trouver la réservation pour cette table
+    const reservation = table.reservations[0];
+
     return (
       <div
         key={tableNumber}
-        className={`absolute w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 border-2 rounded-lg flex flex-col items-center justify-center text-xs font-medium transition-all ${getTableColor(table)}`}
+        className={`absolute w-16 h-16 sm:w-18 sm:h-18 lg:w-20 lg:h-20 border-2 rounded-lg flex flex-col items-center justify-center text-xs font-medium transition-all ${getTableColor(table)}`}
         style={{ top: position.top, left: position.left }}
         onClick={() => handleTableClick(table)}
       >
-        <div className="text-xs">Table</div>
-        <div className="font-bold">{tableNumber}</div>
+        {reservation ? (
+          <>
+            <div className="text-xs font-bold">{tableNumber}</div>
+            <div className="text-xs text-center leading-tight px-1">
+              {reservation.nom_client}
+            </div>
+            <div className="text-xs text-center">
+              {reservation.heure_reservation}
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="text-xs">Table</div>
+            <div className="font-bold">{tableNumber}</div>
+          </>
+        )}
         {table.reservations.length > 0 && (
           <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></div>
         )}
       </div>
     );
+  };
+
+  // Positions exactes selon l'image avec espacement correct
+  const tablePositions: { [key: number]: { top: string; left: string } } = {
+    // Ligne du haut
+    25: { top: '8%', left: '8%' },
+    31: { top: '8%', left: '72%' },
+    30: { top: '8%', left: '87%' },
+    
+    // Deuxième ligne
+    25: { top: '28%', left: '8%' }, // Table 25 à gauche (deuxième)
+    22: { top: '28%', left: '23%' },
+    7: { top: '28%', left: '38%' },
+    9: { top: '28%', left: '53%' },
+    10: { top: '28%', left: '72%' },
+    13: { top: '28%', left: '87%' },
+    
+    // Troisième ligne
+    6: { top: '48%', left: '23%' },
+    1: { top: '48%', left: '53%' },
+    4: { top: '48%', left: '72%' },
+    2: { top: '48%', left: '87%' },
+    
+    // Colonne gauche (verticale)
+    24: { top: '68%', left: '8%' },
+    23: { top: '73%', left: '8%' },
+    22: { top: '78%', left: '8%' },
+    21: { top: '83%', left: '8%' },
+    20: { top: '88%', left: '8%' },
+    10: { top: '93%', left: '8%' },
+    
+    // Ligne du bas
+    9: { top: '78%', left: '38%' },
+    4: { top: '78%', left: '53%' },
+    8: { top: '78%', left: '63%' },
+    2: { top: '78%', left: '78%' },
+    2: { top: '78%', left: '88%' } // Deuxième table 2
   };
 
   return (
