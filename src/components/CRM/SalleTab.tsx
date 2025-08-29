@@ -218,40 +218,28 @@ const SalleTab: React.FC<SalleTabProps> = ({
     24: { top: '70%', left: '2%' },
     23: { top: '75%', left: '2%' },
     22: { top: '80%', left: '2%' },
-        {renderTable(25, { top: '8%', left: '8%' })}
     20: { top: '90%', left: '2%' },
     10: { top: '95%', left: '2%' },
-        {renderTable(31, { top: '8%', left: '68%' })}
-        {renderTable(30, { top: '8%', left: '82%' })}
     9: { top: '70%', left: '25%' },
     4: { top: '70%', left: '40%' },
-        {renderTable(25, { top: '28%', left: '8%' })}
-        {renderTable(22, { top: '28%', left: '22%' })}
-        {renderTable(7, { top: '28%', left: '36%' })}
-        {renderTable(9, { top: '28%', left: '50%' })}
-        {renderTable(10, { top: '28%', left: '68%' })}
-        {renderTable(13, { top: '28%', left: '82%' })}
+  };
+
   const renderTable = (tableNumber: number, position: { top: string; left: string }) => {
     const table = tables.find(t => t.number === tableNumber);
-        {renderTable(6, { top: '48%', left: '22%' })}
-        {renderTable(1, { top: '48%', left: '50%' })}
-        {renderTable(4, { top: '48%', left: '68%' })}
-        {renderTable(2, { top: '48%', left: '82%' })}
+    if (!table) return null;
+
     return (
       <div
-        {renderTable(24, { top: '68%', left: '8%' })}
-        {renderTable(23, { top: '73%', left: '8%' })}
-        {renderTable(22, { top: '78%', left: '8%' })}
-        {renderTable(21, { top: '83%', left: '8%' })}
-        {renderTable(20, { top: '88%', left: '8%' })}
-        {renderTable(10, { top: '93%', left: '8%' })}
+        key={tableNumber}
+        className={`absolute w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 border-2 rounded-lg flex flex-col items-center justify-center text-xs font-medium transition-all ${getTableColor(table)}`}
+        style={{ top: position.top, left: position.left }}
+        onClick={() => handleTableClick(table)}
+      >
         <div className="text-xs">Table</div>
-        {reservation && (
-        {renderTable(9, { top: '78%', left: '36%' })}
-        {renderTable(4, { top: '78%', left: '46%' })}
-        {renderTable(8, { top: '78%', left: '56%' })}
-        {renderTable(2, { top: '78%', left: '68%' })}
-        {renderTable(2, { top: '78%', left: '82%' })}
+        <div className="font-bold">{tableNumber}</div>
+        {table.reservations.length > 0 && (
+          <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></div>
+        )}
       </div>
     );
   };
