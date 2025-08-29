@@ -102,6 +102,16 @@ const SalleTab: React.FC<SalleTabProps> = ({
 
   // Mettre à jour l'état des tables basé sur les réservations Supabase
   useEffect(() => {
+    // Rafraîchir les données toutes les 5 secondes pour le temps réel
+    const interval = setInterval(async () => {
+      try {
+        const allReservations = await getAllReservations();
+        setReservations(allReservations);
+      } catch (error) {
+        console.error('Erreur lors du rafraîchissement:', error);
+      }
+    }, 5000);
+
     const updatedTables = tables.map(table => {
       // Réinitialiser la table
       const resetTable = {
@@ -138,6 +148,8 @@ const SalleTab: React.FC<SalleTabProps> = ({
     });
 
     setTables(updatedTables);
+    
+    return () => clearInterval(interval);
   }, [reservations, selectedDate, currentService]);
 
   const handleTableClick = (table: Table) => {
@@ -256,28 +268,6 @@ const SalleTab: React.FC<SalleTabProps> = ({
               />
             </div>
             
-            <div className="bg-white/10 backdrop-blur-sm rounded-full p-1 flex">
-              <button
-                onClick={() => setCurrentService('midi')}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                  currentService === 'midi'
-                    ? 'bg-primary text-white shadow-md'
-                    : 'text-gray-600 hover:bg-gray-100'
-                }`}
-              >
-                Midi
-              </button>
-              <button
-                onClick={() => setCurrentService('soir')}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                  currentService === 'soir'
-                    ? 'bg-primary text-white shadow-md'
-                    : 'text-gray-600 hover:bg-gray-100'
-                }`}
-              >
-                Soir
-              </button>
-            </div>
           </div>
         </div>
 
