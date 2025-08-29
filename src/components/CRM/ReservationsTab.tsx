@@ -94,32 +94,74 @@ const ReservationsTab: React.FC<ReservationsTabProps> = ({
     // Passer la fonction de rafraîchissement au parent
     onRefreshNeeded(fetchAllReservations);
     
-    // Polling pour vérifier les nouvelles réservations toutes les 30 secondes
-    const interval = setInterval(async () => {
+    // Configuration Supabase Realtime pour les nouvelles réservations
+    let realtimeSubscription: any = null;
+    
+    const setupRealtime = async () => {
+      try {
+        const { supabase } = await import('../../lib/supabase');
+        
+        if (supabase) {
+          console.log('🔄 Configuration Supabase Realtime...');
+          
+          realtimeSubscription = supabase
+            .channel('reservations-changes')
+            .on('postgres_changes', 
+              { 
+                event: 'INSERT', 
+                schema: 'public', 
+                table: 'reservations' 
+              }, 
+              (payload) => {
+                console.log('🔔 Nouvelle réservation reçue via Realtime:', payload.new);
+                
+                // Notifier le parent pour afficher le pop-up
+                if (onNewReservationDetected) {
+                  onNewReservationDetected(payload.new);
+                }
+                
+                // Rafraîchir les réservations
+                fetchAllReservations();
+              }
+            )
+            .subscribe((status) => {
+              console.log('📡 Statut Realtime:', status);
+            });
+        } else {
+          console.warn('⚠️ Supabase non configuré - Realtime désactivé');
+        }
+      } catch (error) {
+        console.error('❌ Erreur configuration Realtime:', error);
+      }
+    };
+    
+    setupRealtime();
+    
+    // Polling de secours (réduit à 60 secondes) au cas où Realtime échoue
+    const fallbackInterval = setInterval(async () => {
       try {
         const nouvelles = await getReservationsByStatus('nouvelle');
         const currentCount = reservations.nouvelles.length;
         
         if (nouvelles.length > currentCount) {
-          // Il y a de nouvelles réservations
+          console.log('📊 Nouvelles réservations détectées via polling de secours');
           if (onNewReservation) {
             onNewReservation();
           }
           fetchAllReservations();
         }
       } catch (error) {
-        console.error("Erreur lors de la vérification des nouvelles réservations:", error);
+        console.error("❌ Erreur polling de secours:", error);
       }
-    }, 30000);
+    }, 60000); // Réduit à 60 secondes
 
     return () => {
-      clearInterval(fallbackInterval);
       if (realtimeSubscription) {
-        console.log('🔌 Déconnexion Supabase Realtime');
         realtimeSubscription.unsubscribe();
       }
+      clearInterval(fallbackInterval);
     };
-  }, [reservations.nouvelles.length, onNewReservation, onRefreshNeeded, onNewReservationDetected]);</parameter>
+  }, []);
 
   // Fonction pour rafraîchir manuellement
   const refreshReservations = () => {
