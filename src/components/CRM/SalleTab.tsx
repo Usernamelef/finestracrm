@@ -1014,6 +1014,12 @@ const SalleTab: React.FC<SalleTabProps> = ({
                       >
                         Marquer comme arrivé
                       </button>
+                      <button
+                        onClick={() => handleUnassignReservation(reservation.id)}
+                        className="w-full bg-orange-500 hover:bg-orange-600 text-white px-3 py-2 rounded text-sm transition-colors"
+                      >
+                        Désassigner
+                      </button>
                     )}
                     
                     {selectedTable.currentReservation.status === 'arrivee' && (

@@ -582,6 +582,31 @@ const CRM = () => {
     }
   };
 
+  const handleUnassignReservation = async (reservationId: string) => {
+    try {
+      // Mettre à jour le statut dans Supabase
+      const { updateReservationStatus } = await import('./lib/supabase');
+      await updateReservationStatus(reservationId, 'en_attente', null);
+      
+      // Rafraîchir les réservations
+      if (refreshReservationsRef.current) {
+        refreshReservationsRef.current();
+      }
+      
+      // Trigger a re-render of CRM to update tables state
+      setRefreshReservationsTrigger(prev => prev + 1);
+      
+      // Trouver la réservation pour l'activité
+      const reservation = reservationsData.find(r => r.id === reservationId);
+      if (reservation) {
+        addActivity(`Réservation de ${reservation.name || 'Client'} désassignée - remise en attente`);
+      }
+    } catch (error) {
+      console.error('Erreur lors de la désassignation:', error);
+      alert('Erreur lors de la désassignation de la réservation');
+    }
+  };
+
   const handleFreeTable = (tableNumber: number) => {
     const reservation = reservationsData.find(res => 
       (res.tableNumber === tableNumber || res.tableNumbers?.includes(tableNumber)) &&
@@ -928,6 +953,7 @@ const CRM = () => {
             getAvailableAdjacentTables={getAvailableAdjacentTables}
             reservationsData={reservationsData}
             formatSelectedDate={formatSelectedDate}
+            handleUnassignReservation={handleUnassignReservation}
           />
         )}
 
