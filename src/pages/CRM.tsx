@@ -585,7 +585,7 @@ const CRM = () => {
   const handleUnassignReservation = async (reservationId: string) => {
     try {
       // Mettre à jour le statut dans Supabase
-      const { updateReservationStatus } = await import('./lib/supabase');
+      const { updateReservationStatus } = await import('../lib/supabase');
       await updateReservationStatus(reservationId, 'en_attente', null);
       
       // Rafraîchir les réservations
