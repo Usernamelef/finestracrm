@@ -198,49 +198,46 @@ const SalleTab: React.FC<SalleTabProps> = ({
     return (
       <div
         key={tableNumber}
-        className={`absolute w-16 h-16 sm:w-18 sm:h-18 lg:w-20 lg:h-20 border-2 rounded-lg flex flex-col items-center justify-center text-xs font-medium transition-all ${getTableColor(table)}`}
+        className={`absolute w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 border-2 rounded-lg flex flex-col items-center justify-center text-xs font-medium transition-all ${getTableColor(table)}`}
         style={{ top: position.top, left: position.left }}
         onClick={() => handleTableClick(table)}
       >
         {reservation ? (
           <>
-            <div className="text-xs font-bold">{tableNumber}</div>
-            <div className="text-xs text-center leading-tight px-1">
+            <div className="text-xs font-bold mb-1">{tableNumber}</div>
+            <div className="text-xs text-center leading-tight px-1 font-semibold">
               {reservation.nom_client}
             </div>
-            <div className="text-xs text-center">
+            <div className="text-xs text-center mt-1">
               {reservation.heure_reservation}
             </div>
           </>
         ) : (
           <>
-            <div className="text-xs">Table</div>
-            <div className="font-bold">{tableNumber}</div>
+            <div className="text-xs mb-1">Table</div>
+            <div className="font-bold text-sm">{tableNumber}</div>
           </>
-        )}
-        {table.reservations.length > 0 && (
-          <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></div>
         )}
       </div>
     );
-  };
-
-  // Positions exactes selon l'image avec espacement correct
-  const tablePositions: { [key: number]: { top: string; left: string } } = {
-    // Ligne du haut
-    25: { top: '8%', left: '8%' },
     31: { top: '8%', left: '72%' },
     30: { top: '8%', left: '87%' },
-    
-    // Deuxième ligne
-    25: { top: '28%', left: '8%' }, // Table 25 à gauche (deuxième)
+  // Positions exactes selon l'image avec espacement correct
+  const tablePositions: { [key: number]: { top: string; left: string } } = {
+    25: { top: '28%', left: '8%' }, // Deuxième table 25 (section gauche)
     22: { top: '28%', left: '23%' },
+    31: { top: '8%', left: '72%' },
+    30: { top: '8%', left: '87%' },
     7: { top: '28%', left: '38%' },
     9: { top: '28%', left: '53%' },
+    25: { top: '28%', left: '8%' }, // Table 25 à gauche (deuxième)
+    22: { top: '28%', left: '23%' },
     10: { top: '28%', left: '72%' },
     13: { top: '28%', left: '87%' },
-    
-    // Troisième ligne
+    10: { top: '28%', left: '72%' },
+    13: { top: '28%', left: '87%' },
+    6: { top: '48%', left: '23%' },
+    1: { top: '48%', left: '53%' },
     6: { top: '48%', left: '23%' },
     1: { top: '48%', left: '53%' },
     4: { top: '48%', left: '72%' },
@@ -256,10 +253,10 @@ const SalleTab: React.FC<SalleTabProps> = ({
     
     // Ligne du bas
     9: { top: '78%', left: '38%' },
-    4: { top: '78%', left: '53%' },
-    8: { top: '78%', left: '63%' },
-    2: { top: '78%', left: '78%' },
-    2: { top: '78%', left: '88%' } // Deuxième table 2
+    4: { top: '78%', left: '48%' },
+    8: { top: '78%', left: '58%' },
+    2: { top: '78%', left: '68%' },
+    2: { top: '78%', left: '78%' } // Deuxième table 2
   };
 
   return (
@@ -359,7 +356,7 @@ const SalleTab: React.FC<SalleTabProps> = ({
             </div>
 
             {/* Plan des tables - Disposition exacte selon l'image */}
-            <div className="relative bg-gray-50 rounded-lg border-2 border-gray-200 h-96 sm:h-[500px] lg:h-[600px] overflow-hidden">
+            <div className="relative bg-gray-50 rounded-lg border-2 border-gray-200 h-[500px] sm:h-[600px] lg:h-[700px] overflow-hidden">
               {/* Section en haut à gauche */}
               {renderTable(25, { top: '8%', left: '8%' })}
               
