@@ -220,8 +220,8 @@ const SalleTab: React.FC<SalleTabProps> = ({
         )}
       </div>
     );
-    31: { top: '8%', left: '72%' },
-    30: { top: '8%', left: '87%' },
+  };
+
   // Positions exactes selon l'image avec espacement correct
   const tablePositions: { [key: number]: { top: string; left: string } } = {
     25: { top: '28%', left: '8%' }, // Deuxième table 25 (section gauche)
@@ -230,14 +230,8 @@ const SalleTab: React.FC<SalleTabProps> = ({
     30: { top: '8%', left: '87%' },
     7: { top: '28%', left: '38%' },
     9: { top: '28%', left: '53%' },
-    25: { top: '28%', left: '8%' }, // Table 25 à gauche (deuxième)
-    22: { top: '28%', left: '23%' },
     10: { top: '28%', left: '72%' },
     13: { top: '28%', left: '87%' },
-    10: { top: '28%', left: '72%' },
-    13: { top: '28%', left: '87%' },
-    6: { top: '48%', left: '23%' },
-    1: { top: '48%', left: '53%' },
     6: { top: '48%', left: '23%' },
     1: { top: '48%', left: '53%' },
     4: { top: '48%', left: '72%' },
@@ -246,17 +240,11 @@ const SalleTab: React.FC<SalleTabProps> = ({
     // Colonne gauche (verticale)
     24: { top: '68%', left: '8%' },
     23: { top: '73%', left: '8%' },
-    22: { top: '78%', left: '8%' },
     21: { top: '83%', left: '8%' },
     20: { top: '88%', left: '8%' },
-    10: { top: '93%', left: '8%' },
     
     // Ligne du bas
-    9: { top: '78%', left: '38%' },
-    4: { top: '78%', left: '48%' },
-    8: { top: '78%', left: '58%' },
-    2: { top: '78%', left: '68%' },
-    2: { top: '78%', left: '78%' } // Deuxième table 2
+    8: { top: '78%', left: '58%' }
   };
 
   return (
