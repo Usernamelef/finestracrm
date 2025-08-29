@@ -112,8 +112,14 @@ const ReservationsTab: React.FC<ReservationsTabProps> = ({
       }
     }, 30000);
 
-    return () => clearInterval(interval);
-  }, [reservations.nouvelles.length, onNewReservation, onRefreshNeeded]);
+    return () => {
+      clearInterval(fallbackInterval);
+      if (realtimeSubscription) {
+        console.log('🔌 Déconnexion Supabase Realtime');
+        realtimeSubscription.unsubscribe();
+      }
+    };
+  }, [reservations.nouvelles.length, onNewReservation, onRefreshNeeded, onNewReservationDetected]);</parameter>
 
   // Fonction pour rafraîchir manuellement
   const refreshReservations = () => {

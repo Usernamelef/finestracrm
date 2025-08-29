@@ -47,6 +47,8 @@ const CRM = () => {
   const [reservationToAssign, setReservationToAssign] = useState<any>(null);
   const [showNotificationPopup, setShowNotificationPopup] = useState(false);
   const [notificationDetails, setNotificationDetails] = useState<any>(null);
+  const [showNewReservationPopup, setShowNewReservationPopup] = useState(false);
+  const [newReservationPopupDetails, setNewReservationPopupDetails] = useState<any>(null);
   const refreshReservationsRef = useRef<(() => void) | null>(null);
   
   // Mock data avec exemples fictifs variés
@@ -1142,6 +1144,71 @@ const CRM = () => {
                 className="px-4 py-2 bg-primary hover:bg-primary/90 disabled:bg-gray-300 text-white rounded-md transition-colors"
               >
                 Ajouter
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Pop-up de notification pour nouvelle réservation */}
+      {showNewReservationPopup && newReservationPopupDetails && (
+        <div className="fixed top-4 right-4 z-[60] animate-slide-in-right">
+          <div className="bg-white border-l-4 border-green-500 rounded-lg shadow-xl p-4 max-w-sm">
+            <div className="flex items-start">
+              <div className="flex-shrink-0">
+                <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                  <span className="text-white text-sm">🔔</span>
+                </div>
+              </div>
+              <div className="ml-3 flex-1">
+                <h3 className="text-sm font-medium text-gray-900">
+                  Nouvelle réservation !
+                </h3>
+                <div className="mt-1 text-sm text-gray-700">
+                  <p className="font-semibold">{newReservationPopupDetails.nom_client}</p>
+                  <p className="text-xs">
+                    {new Date(newReservationPopupDetails.date_reservation).toLocaleDateString('fr-FR')} à {newReservationPopupDetails.heure_reservation}
+                  </p>
+                  <p className="text-xs">
+                    {newReservationPopupDetails.nombre_personnes} personne{newReservationPopupDetails.nombre_personnes > 1 ? 's' : ''}
+                  </p>
+                </div>
+              </div>
+              <div className="ml-4 flex-shrink-0">
+                <button
+                  onClick={() => {
+                    setShowNewReservationPopup(false);
+                    setNewReservationPopupDetails(null);
+                  }}
+                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+            </div>
+            
+            <div className="mt-3 flex space-x-2">
+              <button
+                onClick={() => {
+                  setActiveTab('reservations');
+                  setShowNewReservationPopup(false);
+                  setNewReservationPopupDetails(null);
+                  resetNewReservationCount();
+                }}
+                className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-xs transition-colors"
+              >
+                Voir les réservations
+              </button>
+              <button
+                onClick={() => {
+                  setSelectedReservation(newReservationPopupDetails);
+                  setActiveTab('salle');
+                  setShowNewReservationPopup(false);
+                  setNewReservationPopupDetails(null);
+                }}
+                className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-xs transition-colors"
+              >
+                Assigner table
               </button>
             </div>
           </div>
