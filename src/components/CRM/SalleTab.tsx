@@ -502,6 +502,7 @@ const SalleTab: React.FC<SalleTabProps> = ({
                       </div>
                     );
                   })}
+                </div>
               </div>
               
               {/* Instructions */}
