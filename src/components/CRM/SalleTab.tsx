@@ -217,32 +217,27 @@ const SalleTab: React.FC<SalleTabProps> = ({
             <div className="text-xs mb-1">Table</div>
             <div className="font-bold text-sm">{tableNumber}</div>
           </>
+        )}
+      </div>
+    );
+  };
+
+  const tablePositions = {
     25: { top: '5%', left: '5%' }, // Table 25 en haut à gauche
     31: { top: '5%', left: '70%' }, // Table 31 en haut à droite
     30: { top: '5%', left: '85%' }, // Table 30 en haut à droite
-  };
-
-    25: { top: '25%', left: '5%' }, // Deuxième table 25 (gauche)
     22: { top: '25%', left: '22%' }, // Table 22
     7: { top: '25%', left: '39%' }, // Table 7
     9: { top: '25%', left: '56%' }, // Table 9
     10: { top: '25%', left: '70%' }, // Table 10
     13: { top: '25%', left: '85%' }, // Table 13
-    7: { top: '28%', left: '38%' },
-    9: { top: '28%', left: '53%' },
     6: { top: '45%', left: '22%' }, // Table 6
     1: { top: '45%', left: '56%' }, // Table 1
     4: { top: '45%', left: '70%' }, // Table 4
     2: { top: '45%', left: '85%' }, // Table 2
-    4: { top: '48%', left: '72%' },
-    2: { top: '48%', left: '87%' },
     24: { top: '65%', left: '5%' },
     23: { top: '72%', left: '5%' },
-    22: { top: '79%', left: '5%' }, // Table 22 du bas (différente de celle du haut)
-    9: { top: '75%', left: '39%' }, // Table 9 du bas
-    4: { top: '75%', left: '56%' }, // Table 4 du bas
-    8: { top: '75%', left: '70%' }, // Table 8
-    2: { top: '75%', left: '85%' } // Table 2 du bas
+    8: { top: '75%', left: '70%' } // Table 8
   };
 
   return (
