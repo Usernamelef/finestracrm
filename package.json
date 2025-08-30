@@ -4,6 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "sanitize": "node scripts/sanitize-paths.mjs",
+    "check:filenames": "node scripts/sanitize-paths.mjs --check",
+    "prebuild": "npm run sanitize",
     "dev": "vite",
     "build": "vite build",
     "build:production": "NODE_ENV=production vite build",
