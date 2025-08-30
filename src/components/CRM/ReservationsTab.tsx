@@ -27,7 +27,7 @@ interface ReservationsTabProps {
   getFilteredReservations: () => any[];
   onNewReservation?: () => void;
   onRefreshNeeded: (refreshFn: () => void) => void;
-  onNewReservationDetected?: (reservation: any) => void;
+  onNewReservationDetected: (reservation: any) => void;
 }
 
 const ReservationsTab: React.FC<ReservationsTabProps> = ({
@@ -116,9 +116,7 @@ const ReservationsTab: React.FC<ReservationsTabProps> = ({
                 console.log('🔔 Nouvelle réservation reçue via Realtime:', payload.new);
                 
                 // Notifier le parent pour afficher le pop-up
-                if (onNewReservationDetected) {
-                  onNewReservationDetected(payload.new);
-                }
+                onNewReservationDetected(payload.new);
                 
                 // Rafraîchir les réservations
                 fetchAllReservations();
@@ -145,9 +143,7 @@ const ReservationsTab: React.FC<ReservationsTabProps> = ({
         
         if (nouvelles.length > currentCount) {
           console.log('📊 Nouvelles réservations détectées via polling de secours');
-          if (onNewReservation) {
-            onNewReservation();
-          }
+          onNewReservation?.();
           fetchAllReservations();
         }
       } catch (error) {
