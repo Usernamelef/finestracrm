@@ -198,24 +198,24 @@ const SalleTab: React.FC<SalleTabProps> = ({
     return (
       <div
         key={tableNumber}
-        className={`absolute w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 border-2 rounded-lg flex flex-col items-center justify-center text-xs font-medium transition-all ${getTableColor(table)}`}
+        className={`absolute w-14 h-14 sm:w-16 sm:h-16 lg:w-18 lg:h-18 border-2 rounded-lg flex flex-col items-center justify-center text-xs font-medium transition-all ${getTableColor(table)}`}
         style={{ top: position.top, left: position.left }}
         onClick={() => handleTableClick(table)}
       >
         {reservation ? (
           <>
-            <div className="text-xs font-bold">{tableNumber}</div>
-            <div className="text-xs text-center leading-tight px-1 font-semibold truncate w-full">
+            <div className="text-xs font-bold mb-0.5">{tableNumber}</div>
+            <div className="text-xs text-center leading-tight px-1 font-semibold truncate w-full max-w-full">
               {reservation.nom_client}
             </div>
-            <div className="text-xs text-center">
+            <div className="text-xs text-center mt-0.5">
               {reservation.heure_reservation}
             </div>
           </>
         ) : (
           <>
-            <div className="text-xs">Table</div>
-            <div className="font-bold text-xs">{tableNumber}</div>
+            <div className="text-xs font-bold">{tableNumber}</div>
+            <div className="text-xs text-gray-500">2p</div>
           </>
         )}
       </div>
@@ -223,36 +223,45 @@ const SalleTab: React.FC<SalleTabProps> = ({
   };
 
   const tablePositions = {
-    // Ligne 1 - Haut
-    25: { top: '8%', left: '8%' },
-    31: { top: '8%', left: '65%' },
-    30: { top: '8%', left: '80%' },
+    // REPRODUCTION EXACTE DE L'IMAGE
+    // Ligne 1 - Tout en haut
+    28: { top: '5%', left: '5%' },
+    29: { top: '5%', left: '15%' },
+    31: { top: '5%', left: '75%' },
+    30: { top: '5%', left: '85%' },
     
-    // Ligne 2 - Milieu haut
-    22: { top: '25%', left: '25%' },
-    7: { top: '25%', left: '40%' },
-    9: { top: '25%', left: '55%' },
-    10: { top: '25%', left: '70%' },
-    13: { top: '25%', left: '85%' },
+    // Ligne 2 - Deuxième rangée
+    26: { top: '20%', left: '5%' },
+    27: { top: '20%', left: '15%' },
+    7: { top: '20%', left: '35%' },
+    8: { top: '20%', left: '50%' },
+    10: { top: '20%', left: '70%' },
+    12: { top: '20%', left: '85%' },
     
-    // Ligne 3 - Milieu
-    6: { top: '42%', left: '25%' },
-    1: { top: '42%', left: '55%' },
-    4: { top: '42%', left: '70%' },
-    2: { top: '42%', left: '85%' },
+    // Ligne 3 - Troisième rangée
+    6: { top: '35%', left: '25%' },
+    9: { top: '35%', left: '45%' },
+    11: { top: '35%', left: '70%' },
+    13: { top: '35%', left: '85%' },
+    
+    // Table isolée à gauche
+    25: { top: '50%', left: '5%' },
     
     // Colonne gauche verticale
-    24: { top: '60%', left: '8%' },
-    23: { top: '70%', left: '8%' },
-    21: { top: '80%', left: '8%' },
-    20: { top: '90%', left: '8%' },
+    24: { top: '65%', left: '5%' },
+    23: { top: '75%', left: '5%' },
+    22: { top: '85%', left: '5%' },
     
-    // Ligne du bas
-    11: { top: '75%', left: '25%' },
-    12: { top: '75%', left: '40%' },
-    8: { top: '75%', left: '55%' },
-    3: { top: '75%', left: '70%' },
-    5: { top: '75%', left: '85%' }
+    // Ligne du bas - Tables centrales
+    5: { top: '85%', left: '35%' },
+    4: { top: '85%', left: '50%' },
+    3: { top: '85%', left: '60%' },
+    2: { top: '85%', left: '70%' },
+    1: { top: '85%', left: '85%' },
+    
+    // Ligne tout en bas
+    21: { top: '95%', left: '5%' },
+    20: { top: '95%', left: '15%' }
   };
 
   return (
@@ -352,7 +361,7 @@ const SalleTab: React.FC<SalleTabProps> = ({
             </div>
 
             {/* Plan des tables - Disposition exacte selon l'image */}
-            <div className="relative bg-gray-50 rounded-lg border-2 border-gray-200 h-[400px] sm:h-[500px] lg:h-[600px] overflow-hidden">
+            <div className="relative bg-gray-50 rounded-lg border-2 border-gray-200 h-[500px] sm:h-[600px] lg:h-[700px] overflow-hidden">
               {/* Rendu de toutes les tables selon les positions définies */}
               {Object.entries(tablePositions).map(([tableNumber, position]) => 
                 renderTable(parseInt(tableNumber), position)
