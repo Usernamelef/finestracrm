@@ -204,18 +204,18 @@ const SalleTab: React.FC<SalleTabProps> = ({
       >
         {reservation ? (
           <>
-            <div className="text-xs font-bold mb-0.5">{tableNumber}</div>
-            <div className="text-xs text-center leading-tight px-1 font-semibold truncate w-full max-w-full">
+            <div className="text-[10px] font-bold mb-0.5">{tableNumber}</div>
+            <div className="text-[9px] text-center leading-tight px-1 font-semibold truncate w-full max-w-full">
               {reservation.nom_client}
             </div>
-            <div className="text-xs text-center mt-0.5">
+            <div className="text-[9px] text-center mt-0.5">
               {reservation.heure_reservation}
             </div>
           </>
         ) : (
           <>
-            <div className="text-xs font-bold">{tableNumber}</div>
-            <div className="text-xs text-gray-500">2p</div>
+            <div className="text-[10px] font-bold">{tableNumber}</div>
+            <div className="text-[9px] text-gray-500">2p</div>
           </>
         )}
       </div>

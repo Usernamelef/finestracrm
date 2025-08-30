@@ -28,6 +28,7 @@ interface ReservationsTabProps {
   getReservationsByStatusLocal: (status: string) => any[];
   onNewReservation?: () => void;
   onRefreshNeeded: (refreshFn: () => void) => void;
+  onNewReservationDetected?: (reservation: any) => void;
 }
 
 const ReservationsTab: React.FC<ReservationsTabProps> = ({
@@ -44,7 +45,8 @@ const ReservationsTab: React.FC<ReservationsTabProps> = ({
   getFilteredReservations,
   getReservationsByStatusLocal,
   onNewReservation,
-  onRefreshNeeded
+  onRefreshNeeded,
+  onNewReservationDetected
 }) => {
   const [reservations, setReservations] = useState<{
     nouvelles: Reservation[];
