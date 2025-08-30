@@ -153,8 +153,8 @@ const SalleTab: React.FC<SalleTabProps> = ({
       }
     } else if (table.status === 'available') {
       // Vérifier si le restaurant est ouvert pour ce service/date
-      const selectedDate = new Date(selectedDate);
-      const dayOfWeek = selectedDate.getDay();
+      const currentDateObj = new Date(selectedDate);
+      const dayOfWeek = currentDateObj.getDay();
       
       // Bloquer samedi midi
       if (dayOfWeek === 6 && currentService === 'midi') {
