@@ -64,6 +64,14 @@ const ReservationsTab: React.FC<ReservationsTabProps> = ({
 
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [reservationToCancel, setReservationToCancel] = useState<Reservation | null>(null);
+  const [notifications, setNotifications] = useState<Array<{
+    id: string;
+    type: 'new_reservation' | 'confirmation' | 'cancellation';
+    title: string;
+    message: string;
+    timestamp: Date;
+    reservation?: Reservation;
+  }>>([]);
 
   // Charger les réservations depuis Supabase
   const fetchAllReservations = async () => {
@@ -114,6 +122,23 @@ const ReservationsTab: React.FC<ReservationsTabProps> = ({
               }, 
               (payload) => {
                 console.log('🔔 Nouvelle réservation reçue via Realtime:', payload.new);
+                
+                // Ajouter une notification
+                const newNotification = {
+                  id: Date.now().toString(),
+                  type: 'new_reservation' as const,
+                  title: '🔔 Nouvelle réservation !',
+                  message: `${payload.new.nom_client} - ${new Date(payload.new.date_reservation).toLocaleDateString('fr-FR')} à ${payload.new.heure_reservation} (${payload.new.nombre_personnes}p)`,
+                  timestamp: new Date(),
+                  reservation: payload.new
+                };
+                
+                setNotifications(prev => [newNotification, ...prev.slice(0, 4)]);
+                
+                // Auto-supprimer après 8 secondes
+                setTimeout(() => {
+                  setNotifications(prev => prev.filter(n => n.id !== newNotification.id));
+                }, 8000);
                 
                 // Notifier le parent pour afficher le pop-up
                 onNewReservationDetected(payload.new);
@@ -230,6 +255,20 @@ const ReservationsTab: React.FC<ReservationsTabProps> = ({
     try {
       await updateReservationStatus(reservation.id, 'en_attente');
       
+      // Ajouter notification de confirmation
+      const confirmNotification = {
+        id: Date.now().toString(),
+        type: 'confirmation' as const,
+        title: '✅ Réservation confirmée',
+        message: `${reservation.nom_client} - ${new Date(reservation.date_reservation).toLocaleDateString('fr-FR')} à ${reservation.heure_reservation}`,
+        timestamp: new Date(),
+        reservation
+      };
+      setNotifications(prev => [confirmNotification, ...prev.slice(0, 4)]);
+      setTimeout(() => {
+        setNotifications(prev => prev.filter(n => n.id !== confirmNotification.id));
+      }, 5000);
+      
       // Envoyer l'email de confirmation
       const emailHtml = getConfirmationEmailTemplate(
         reservation.nom_client,
@@ -274,6 +313,20 @@ const ReservationsTab: React.FC<ReservationsTabProps> = ({
   const cancelReservation = async (reservation: Reservation) => {
     try {
       await updateReservationStatus(reservation.id, 'annulee');
+      
+      // Ajouter notification d'annulation
+      const cancelNotification = {
+        id: Date.now().toString(),
+        type: 'cancellation' as const,
+        title: '❌ Réservation annulée',
+        message: `${reservation.nom_client} - ${new Date(reservation.date_reservation).toLocaleDateString('fr-FR')} à ${reservation.heure_reservation}`,
+        timestamp: new Date(),
+        reservation
+      };
+      setNotifications(prev => [cancelNotification, ...prev.slice(0, 4)]);
+      setTimeout(() => {
+        setNotifications(prev => prev.filter(n => n.id !== cancelNotification.id));
+      }, 5000);
       
       // Envoyer l'email d'annulation
       const emailHtml = getCancellationEmailTemplate(
@@ -635,6 +688,84 @@ const ReservationsTab: React.FC<ReservationsTabProps> = ({
           </div>
 
         </div>
+      </div>
+
+      {/* Notifications flottantes */}
+      <div className="fixed top-4 right-4 z-50 space-y-2">
+        {notifications.map((notification) => (
+          <div
+            key={notification.id}
+            className={`max-w-sm w-full bg-white shadow-lg rounded-lg pointer-events-auto ring-1 ring-black ring-opacity-5 overflow-hidden animate-slide-in-right ${
+              notification.type === 'new_reservation' ? 'border-l-4 border-blue-500' :
+              notification.type === 'confirmation' ? 'border-l-4 border-green-500' :
+              'border-l-4 border-red-500'
+            }`}
+          >
+            <div className="p-4">
+              <div className="flex items-start">
+                <div className="flex-shrink-0">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                    notification.type === 'new_reservation' ? 'bg-blue-500' :
+                    notification.type === 'confirmation' ? 'bg-green-500' :
+                    'bg-red-500'
+                  }`}>
+                    <span className="text-white text-sm">
+                      {notification.type === 'new_reservation' ? '🔔' :
+                       notification.type === 'confirmation' ? '✅' : '❌'}
+                    </span>
+                  </div>
+                </div>
+                <div className="ml-3 w-0 flex-1">
+                  <p className="text-sm font-medium text-gray-900">
+                    {notification.title}
+                  </p>
+                  <p className="mt-1 text-sm text-gray-500">
+                    {notification.message}
+                  </p>
+                  <p className="mt-1 text-xs text-gray-400">
+                    {notification.timestamp.toLocaleTimeString('fr-FR')}
+                  </p>
+                </div>
+                <div className="ml-4 flex-shrink-0 flex">
+                  <button
+                    onClick={() => setNotifications(prev => prev.filter(n => n.id !== notification.id))}
+                    className="bg-white rounded-md inline-flex text-gray-400 hover:text-gray-500 focus:outline-none"
+                  >
+                    <span className="sr-only">Fermer</span>
+                    <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              
+              {/* Actions rapides pour nouvelles réservations */}
+              {notification.type === 'new_reservation' && notification.reservation && (
+                <div className="mt-3 flex space-x-2">
+                  <button
+                    onClick={() => {
+                      confirmReservation(notification.reservation!);
+                      setNotifications(prev => prev.filter(n => n.id !== notification.id));
+                    }}
+                    className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-xs transition-colors"
+                  >
+                    Confirmer
+                  </button>
+                  <button
+                    onClick={() => {
+                      setReservationToCancel(notification.reservation!);
+                      setShowCancelModal(true);
+                      setNotifications(prev => prev.filter(n => n.id !== notification.id));
+                    }}
+                    className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs transition-colors"
+                  >
+                    Annuler
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
       </div>
 
       {/* Modal de confirmation d'annulation */}
