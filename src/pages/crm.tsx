@@ -48,6 +48,7 @@ const CRM = () => {
   const [showNotificationPopup, setShowNotificationPopup] = useState(false);
   const [notificationDetails, setNotificationDetails] = useState<any>(null);
   const [showNewReservationPopup, setShowNewReservationPopup] = useState(false);
+  const audioRef = useRef<HTMLAudioElement>(null);
   const [newReservationPopupDetails, setNewReservationPopupDetails] = useState<any>(null);
   const refreshReservationsRef = useRef<(() => void) | null>(null);
   
@@ -342,6 +343,14 @@ const CRM = () => {
     
     // Afficher le pop-up de notification
     setNewReservationPopupDetails(reservation);
+
+    // Jouer le son de notification
+    if (audioRef.current) {
+      audioRef.current.volume = 0.5; // Volume à 50%
+      audioRef.current.play().catch(error => {
+        console.warn('Erreur lors de la lecture du son de notification:', error);
+      });
+    }
     setShowNewReservationPopup(true);
     
     // Incrémenter le compteur
@@ -1234,6 +1243,7 @@ const CRM = () => {
       )}
 
       {/* Modal détail table */}
+      <audio ref={audioRef} src="/notification_chime.mp3" preload="auto" />
     </div>
   );
 };
