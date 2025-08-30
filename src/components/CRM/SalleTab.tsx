@@ -57,6 +57,16 @@ const SalleTab: React.FC<SalleTabProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [selectedTables, setSelectedTables] = useState<number[]>([]);
   const [isAssigning, setIsAssigning] = useState(false);
+  const [showNewReservationModal, setShowNewReservationModal] = useState(false);
+  const [selectedTableForReservation, setSelectedTableForReservation] = useState<number | null>(null);
+  const [newReservation, setNewReservation] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    time: '',
+    guests: '',
+    message: ''
+  });
 
   // Fonction pour déterminer le service basé sur l'heure
   const getServiceFromTime = (heure: string) => {
@@ -141,6 +151,18 @@ const SalleTab: React.FC<SalleTabProps> = ({
       } else {
         setSelectedTables([...selectedTables, table.number]);
       }
+    } else if (table.status === 'available') {
+      // Table vide - proposer de créer une réservation
+      setSelectedTableForReservation(table.number);
+      setNewReservation({
+        name: '',
+        email: '',
+        phone: '',
+        time: currentService === 'midi' ? '12:00' : '19:00',
+        guests: '2',
+        message: ''
+      });
+      setShowNewReservationModal(true);
     } else {
       // Mode consultation
       setSelectedTable(table);
@@ -185,6 +207,81 @@ const SalleTab: React.FC<SalleTabProps> = ({
         return 'bg-red-100 text-red-800 border-red-300 hover:bg-red-200 cursor-pointer';
       default:
         return 'bg-gray-100 text-gray-600 border-gray-300';
+    }
+  };
+
+  const handleCreateReservation = async () => {
+    if (!newReservation.name || !newReservation.phone || !newReservation.time || !newReservation.guests) {
+      alert('Veuillez remplir tous les champs obligatoires');
+      return;
+    }
+
+    try {
+      const { createReservation } = await import('../../lib/supabase');
+      
+      // Créer la réservation dans Supabase
+      const reservationData = {
+        nom_client: newReservation.name,
+        email_client: newReservation.email || 'N/A',
+        telephone_client: newReservation.phone,
+        date_reservation: selectedDate,
+        heure_reservation: newReservation.time,
+        nombre_personnes: parseInt(newReservation.guests),
+        commentaire: newReservation.message || null,
+        statut: 'assignee', // Directement assignée à la table sélectionnée
+        table_assignee: selectedTableForReservation
+      };
+
+      const createdReservation = await createReservation(reservationData);
+      
+      // Assigner immédiatement la table
+      if (selectedTableForReservation) {
+        const { updateReservationStatus } = await import('../../lib/supabase');
+        await updateReservationStatus(createdReservation.id, 'assignee', selectedTableForReservation);
+      }
+      
+      // Envoyer les confirmations
+      if (newReservation.email && newReservation.email.trim()) {
+        try {
+          const { sendEmail, getConfirmationEmailTemplate } = await import('../../lib/supabase');
+          const emailHtml = getConfirmationEmailTemplate(
+            newReservation.name,
+            new Date(selectedDate).toLocaleDateString('fr-FR'),
+            newReservation.time,
+            parseInt(newReservation.guests)
+          );
+          await sendEmail(newReservation.email, 'Confirmation de votre réservation à La Finestra', emailHtml);
+        } catch (emailError) {
+          console.warn('Erreur email:', emailError);
+        }
+      }
+      
+      try {
+        const { sendSMS, getConfirmationSMSTemplate, formatPhoneNumber } = await import('../../lib/supabase');
+        const smsMessage = getConfirmationSMSTemplate(
+          newReservation.name,
+          new Date(selectedDate).toLocaleDateString('fr-FR'),
+          newReservation.time,
+          parseInt(newReservation.guests)
+        );
+        const formattedPhone = formatPhoneNumber(newReservation.phone);
+        await sendSMS(formattedPhone, smsMessage);
+      } catch (smsError) {
+        console.warn('Erreur SMS:', smsError);
+      }
+      
+      // Rafraîchir les données
+      await fetchReservations();
+      
+      // Fermer le modal
+      setShowNewReservationModal(false);
+      setSelectedTableForReservation(null);
+      
+      addActivity(`Réservation créée pour ${newReservation.name} et assignée à la table ${selectedTableForReservation}`);
+      
+    } catch (error) {
+      console.error('Erreur lors de la création:', error);
+      alert('Erreur lors de la création de la réservation');
     }
   };
 
@@ -513,6 +610,145 @@ const SalleTab: React.FC<SalleTabProps> = ({
                   ))}
                 </div>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal création réservation directe */}
+      {showNewReservationModal && selectedTableForReservation && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-lg mx-4">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-bold text-primary">
+                Nouvelle réservation - Table {selectedTableForReservation}
+              </h3>
+              <button
+                onClick={() => {
+                  setShowNewReservationModal(false);
+                  setSelectedTableForReservation(null);
+                }}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <X size={24} />
+              </button>
+            </div>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Nom du client *</label>
+                <input
+                  type="text"
+                  value={newReservation.name}
+                  onChange={(e) => setNewReservation({...newReservation, name: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  placeholder="Nom complet"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <input
+                  type="email"
+                  value={newReservation.email}
+                  onChange={(e) => setNewReservation({...newReservation, email: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  placeholder="email@exemple.com (optionnel)"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Téléphone *</label>
+                <input
+                  type="tel"
+                  value={newReservation.phone}
+                  onChange={(e) => setNewReservation({...newReservation, phone: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  placeholder="+41 xx xxx xx xx"
+                />
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Heure *</label>
+                  <select
+                    value={newReservation.time}
+                    onChange={(e) => setNewReservation({...newReservation, time: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  >
+                    {currentService === 'midi' ? (
+                      <>
+                        <option value="12:00">12:00</option>
+                        <option value="12:15">12:15</option>
+                        <option value="12:30">12:30</option>
+                        <option value="12:45">12:45</option>
+                        <option value="13:00">13:00</option>
+                        <option value="13:15">13:15</option>
+                        <option value="13:30">13:30</option>
+                        <option value="13:45">13:45</option>
+                      </>
+                    ) : (
+                      <>
+                        <option value="19:00">19:00</option>
+                        <option value="19:15">19:15</option>
+                        <option value="19:30">19:30</option>
+                        <option value="19:45">19:45</option>
+                        <option value="20:00">20:00</option>
+                        <option value="20:15">20:15</option>
+                        <option value="20:30">20:30</option>
+                        <option value="20:45">20:45</option>
+                        <option value="21:00">21:00</option>
+                        <option value="21:15">21:15</option>
+                        <option value="21:30">21:30</option>
+                        <option value="21:45">21:45</option>
+                      </>
+                    )}
+                  </select>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Personnes *</label>
+                  <select
+                    value={newReservation.guests}
+                    onChange={(e) => setNewReservation({...newReservation, guests: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  >
+                    {Array.from({length: 12}, (_, i) => i + 1).map(num => (
+                      <option key={num} value={num}>{num}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Message</label>
+                <textarea
+                  value={newReservation.message}
+                  onChange={(e) => setNewReservation({...newReservation, message: e.target.value})}
+                  rows={3}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  placeholder="Demandes spéciales, allergies..."
+                />
+              </div>
+            </div>
+            
+            <div className="flex justify-end space-x-3 mt-6">
+              <button
+                onClick={() => {
+                  setShowNewReservationModal(false);
+                  setSelectedTableForReservation(null);
+                }}
+                className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+              >
+                Annuler
+              </button>
+              <button
+                onClick={handleCreateReservation}
+                disabled={!newReservation.name || !newReservation.phone || !newReservation.time || !newReservation.guests}
+                className="px-4 py-2 bg-primary hover:bg-primary/90 disabled:bg-gray-300 text-white rounded-md transition-colors"
+              >
+                Créer et assigner
+              </button>
             </div>
           </div>
         </div>
