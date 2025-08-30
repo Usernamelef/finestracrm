@@ -152,7 +152,7 @@ const SalleTab: React.FC<SalleTabProps> = ({
         setSelectedTables([...selectedTables, table.number]);
       }
     } else if (table.status === 'available') {
-      // Table vide - proposer de créer une réservation
+      // Table vide - créer une réservation directement
       setSelectedTableForReservation(table.number);
       setNewReservation({
         name: '',
@@ -621,7 +621,7 @@ const SalleTab: React.FC<SalleTabProps> = ({
           <div className="bg-white rounded-lg p-6 w-full max-w-lg mx-4">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-bold text-primary">
-                Nouvelle réservation - Table {selectedTableForReservation}
+                Créer une réservation - Table {selectedTableForReservation}
               </h3>
               <button
                 onClick={() => {
@@ -634,20 +634,33 @@ const SalleTab: React.FC<SalleTabProps> = ({
               </button>
             </div>
             
+            <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+              <p className="text-sm text-blue-800">
+                📅 <strong>Date :</strong> {new Date(selectedDate).toLocaleDateString('fr-FR')} <br/>
+                🕐 <strong>Service :</strong> {currentService === 'midi' ? 'Midi (12h00-14h30)' : 'Soir (19h00-22h30)'} <br/>
+                🪑 <strong>Table :</strong> {selectedTableForReservation} (2 personnes)
+              </p>
+            </div>
+            
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Nom du client *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  👤 Nom du client *
+                </label>
                 <input
                   type="text"
                   value={newReservation.name}
                   onChange={(e) => setNewReservation({...newReservation, name: e.target.value})}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                   placeholder="Nom complet"
+                  autoFocus
                 />
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  📧 Email
+                </label>
                 <input
                   type="email"
                   value={newReservation.email}
@@ -658,7 +671,9 @@ const SalleTab: React.FC<SalleTabProps> = ({
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Téléphone *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  📞 Téléphone *
+                </label>
                 <input
                   type="tel"
                   value={newReservation.phone}
@@ -670,7 +685,9 @@ const SalleTab: React.FC<SalleTabProps> = ({
               
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Heure *</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    🕐 Heure *
+                  </label>
                   <select
                     value={newReservation.time}
                     onChange={(e) => setNewReservation({...newReservation, time: e.target.value})}
@@ -707,7 +724,9 @@ const SalleTab: React.FC<SalleTabProps> = ({
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Personnes *</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    👥 Personnes *
+                  </label>
                   <select
                     value={newReservation.guests}
                     onChange={(e) => setNewReservation({...newReservation, guests: e.target.value})}
@@ -721,7 +740,9 @@ const SalleTab: React.FC<SalleTabProps> = ({
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Message</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  💬 Demandes spéciales
+                </label>
                 <textarea
                   value={newReservation.message}
                   onChange={(e) => setNewReservation({...newReservation, message: e.target.value})}
@@ -738,16 +759,16 @@ const SalleTab: React.FC<SalleTabProps> = ({
                   setShowNewReservationModal(false);
                   setSelectedTableForReservation(null);
                 }}
-                className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+                className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-md transition-colors"
               >
                 Annuler
               </button>
               <button
                 onClick={handleCreateReservation}
                 disabled={!newReservation.name || !newReservation.phone || !newReservation.time || !newReservation.guests}
-                className="px-4 py-2 bg-primary hover:bg-primary/90 disabled:bg-gray-300 text-white rounded-md transition-colors"
+                className="px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-300 text-white rounded-md transition-colors font-semibold"
               >
-                Créer et assigner
+                ✅ Créer et assigner à la table {selectedTableForReservation}
               </button>
             </div>
           </div>
