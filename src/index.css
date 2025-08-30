@@ -2,15 +2,28 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Critical CSS inline pour le chargement initial */
+.critical-loading {
+  font-family: system-ui, -apple-system, sans-serif;
+  background-color: #F6F3E6;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 /* Optimisations de performance */
 * {
   box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* Optimisation des fonts */
 @layer base {
   html {
     font-display: swap;
+    text-rendering: optimizeSpeed;
   }
 }
 
@@ -18,6 +31,25 @@
 img {
   max-width: 100%;
   height: auto;
+  loading: lazy;
+  decoding: async;
+}
+
+/* Images critiques */
+img[loading="eager"] {
+  loading: eager;
+}
+
+/* Optimisation du rendu */
+.animate-fade-in,
+.animate-fade-in-up,
+.animate-slide-in-right {
+  will-change: transform, opacity;
+}
+
+/* Optimisation des transitions pour les performances */
+.transition-all {
+  will-change: auto;
 }
 
 /* Optimisation des animations */
@@ -28,12 +60,14 @@ img {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+    will-change: auto !important;
   }
 }
 
 /* Optimisation du scroll */
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
 /* Optimisation des transitions */
@@ -43,13 +77,29 @@ html {
   transition-duration: 300ms;
 }
 
+/* Optimisation des hover states */
+@media (hover: hover) {
+  .hover\:scale-105:hover {
+    transform: scale(1.05);
+  }
+}
+
 /* Cache des polices */
 @font-face {
   font-family: 'Playfair Display';
   font-display: swap;
+  font-weight: 400 700;
 }
 
 @font-face {
   font-family: 'Inter';
   font-display: swap;
+  font-weight: 300 600;
+}
+
+/* Optimisation du rendu des listes */
+.space-y-3 > * + *,
+.space-y-4 > * + *,
+.space-y-6 > * + * {
+  contain: layout;
 }

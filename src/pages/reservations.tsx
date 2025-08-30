@@ -168,16 +168,25 @@ const Reservations = () => {
 
   // Horaires de base (suppression de 11:30)
   const baseTimeSlots = [
-    '12:00', '12:15', '12:30', '12:45', '13:00', '13:15', '13:30', '13:45',
-    '19:00', '19:15', '19:30', '19:45', '20:00', '20:15', '20:30', '20:45', '21:00', '21:15', '21:30', '21:45'
+    // Service du midi
+    '12:00', '12:15', '12:30', '12:45', 
+    '13:00', '13:15', '13:30', '13:45',
+    // Service du soir  
+    '19:00', '19:15', '19:30', '19:45', 
+    '20:00', '20:15', '20:30', '20:45', 
+    '21:00', '21:15', '21:30', '21:45'
   ];
 
   // Fonction pour filtrer les horaires disponibles
   const availableTimeSlots = useMemo(() => {
+    console.log('🕐 Calcul des créneaux disponibles pour la date:', formData.date);
+    
     if (!formData.date) return baseTimeSlots;
 
     const selectedDate = new Date(formData.date);
     const dayOfWeek = selectedDate.getDay(); // 0 = dimanche, 6 = samedi
+    
+    console.log('📅 Jour de la semaine:', dayOfWeek, '(0=dimanche, 6=samedi)');
     
     // Bloquer samedi midi (jour 6)
     if (dayOfWeek === 6) {
@@ -186,6 +195,8 @@ const Reservations = () => {
         const hour = parseInt(slot.split(':')[0]);
         return hour >= 19; // Seulement à partir de 19h
       });
+      
+      console.log('🌅 Samedi détecté - Créneaux du soir uniquement:', eveningSlots);
       
       const today = new Date();
       const selectedDateString = selectedDate.toDateString();
@@ -196,11 +207,14 @@ const Reservations = () => {
         const currentMinutes = today.getMinutes();
         const currentTimeInMinutes = currentHour * 60 + currentMinutes;
         
-        return eveningSlots.filter(timeSlot => {
+        const filteredSlots = eveningSlots.filter(timeSlot => {
           const [hours, minutes] = timeSlot.split(':').map(Number);
           const slotTimeInMinutes = hours * 60 + minutes;
           return slotTimeInMinutes > currentTimeInMinutes;
         });
+        
+        console.log('⏰ Samedi aujourd\'hui - Créneaux après', currentHour + ':' + currentMinutes, ':', filteredSlots);
+        return filteredSlots;
       }
       
       return eveningSlots;
@@ -208,6 +222,7 @@ const Reservations = () => {
     
     // Bloquer dimanche (jour 0)
     if (dayOfWeek === 0) {
+      console.log('🚫 Dimanche détecté - Restaurant fermé');
       return []; // Aucun créneau le dimanche
     }
 
@@ -223,16 +238,20 @@ const Reservations = () => {
       const currentMinutes = today.getMinutes();
       const currentTimeInMinutes = currentHour * 60 + currentMinutes;
 
-      return baseTimeSlots.filter(timeSlot => {
+      const availableSlots = baseTimeSlots.filter(timeSlot => {
         const [hours, minutes] = timeSlot.split(':').map(Number);
         const slotTimeInMinutes = hours * 60 + minutes;
         
         // Retourner seulement les créneaux qui sont après l'heure actuelle
         return slotTimeInMinutes > currentTimeInMinutes;
       });
+      
+      console.log('📍 Aujourd\'hui - Créneaux disponibles après', currentHour + ':' + currentMinutes, ':', availableSlots);
+      return availableSlots;
     }
 
     // Pour les dates futures, retourner tous les créneaux
+    console.log('🔮 Date future - Tous les créneaux disponibles:', baseTimeSlots);
     return baseTimeSlots;
   }, [formData.date]);
 
@@ -421,7 +440,14 @@ const Reservations = () => {
                   >
                     <option value="">Choisir une heure</option>
                     {availableTimeSlots.map((time) => (
-                      <option key={time} value={time}>{time}</option>
+                      <option key={time} value={time}>
+                        {time} {(() => {
+                          const hour = parseInt(time.split(':')[0]);
+                          if (hour >= 12 && hour <= 14) return '(Midi)';
+                          if (hour >= 19 && hour <= 22) return '(Soir)';
+                          return '';
+                        })()}
+                      </option>
                     ))}
                   </select>
                   {formData.date && availableTimeSlots.length === 0 && (
@@ -438,6 +464,11 @@ const Reservations = () => {
                           return "Aucun créneau disponible pour aujourd'hui. Veuillez choisir une date future.";
                         }
                       })()}
+                    </p>
+                  )}
+                  {formData.date && availableTimeSlots.length > 0 && (
+                    <p className="text-xs text-gray-500 mt-1">
+                      {availableTimeSlots.length} créneau{availableTimeSlots.length > 1 ? 'x' : ''} disponible{availableTimeSlots.length > 1 ? 's' : ''}
                     </p>
                   )}
                 </div>

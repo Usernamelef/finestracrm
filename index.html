@@ -9,16 +9,72 @@
     <title>Restaurant italien traditionnel à Genève – La Finestra</title>
     <meta name="description" content="Découvrez La Finestra, une adresse incontournable à Genève depuis 2006 pour savourer l'authenticité de la cuisine italienne, dans un cadre chaleureux avec salle d'événement privée." />
     <meta name="keywords" content="restaurant italien, cuisine italienne Genève, restaurant traditionnel, salle privatisable Genève, événements privés" />
+    
+    <!-- Optimisations de performance -->
+    <meta name="theme-color" content="#440F1E">
+    <meta name="color-scheme" content="light">
+    
+    <!-- Préconnexions DNS critiques -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="dns-prefetch" href="https://fonts.googleapis.com">
     <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+    <link rel="dns-prefetch" href="https://formspree.io">
+    
+    <!-- Préchargement des ressources critiques -->
     <link rel="preload" href="/assets/lafinestra-geneve-logo-blanc.png" as="image">
     <link rel="preload" href="/lafinestra-geneve-restaurant-devanture-bois.jpg" as="image">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    
+    <!-- Fallback pour les polices -->
+    <noscript>
+      <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    </noscript>
+    
+    <!-- Chargement asynchrone des polices -->
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Optimisation du rendu -->
+    <style>
+      /* CSS critique inline pour éviter le FOUC */
+      body { 
+        font-family: system-ui, -apple-system, sans-serif; 
+        background-color: #F6F3E6;
+        margin: 0;
+        padding: 0;
+      }
+      #root { 
+        min-height: 100vh; 
+      }
+      .loading-fallback {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        background-color: #F6F3E6;
+        color: #440F1E;
+        font-weight: 500;
+      }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Fallback de chargement -->
+      <div class="loading-fallback">
+        <div style="text-align: center;">
+          <div style="width: 40px; height: 40px; border: 3px solid #440F1E; border-top: 3px solid transparent; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 16px;"></div>
+          <p>Chargement de La Finestra...</p>
+        </div>
+      </div>
+    </div>
+    
+    <style>
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+    </style>
+    
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
