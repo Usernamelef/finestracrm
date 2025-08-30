@@ -944,7 +944,6 @@ const CRM = () => {
             handleMarkArrived={handleMarkArrived}
             handleCompleteReservation={handleCompleteReservation}
             getFilteredReservations={getFilteredReservations}
-            getReservationsByStatusLocal={getReservationsByStatus}
             onNewReservation={handleNewReservation}
             onRefreshNeeded={(refreshFn) => { refreshReservationsRef.current = refreshFn; }}
             onNewReservationDetected={handleNewReservationDetected}

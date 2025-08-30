@@ -32,13 +32,6 @@ interface DashboardTabProps {
   setNewNote: React.Dispatch<React.SetStateAction<{ author: string; content: string }>>;
   handleAddNote: () => void;
   handleDeleteNote: (noteId: string) => void;
-  getStats: () => {
-    totalReservations: number;
-    occupiedTables: number;
-    totalGuests: number;
-    pendingReservations: number;
-  };
-  getReservationsByStatus: (status: string) => any[];
 }
 
 const DashboardTab: React.FC<DashboardTabProps> = ({

@@ -25,7 +25,6 @@ interface ReservationsTabProps {
   handleMarkArrived: (reservationId: string) => void;
   handleCompleteReservation: (reservationId: string) => void;
   getFilteredReservations: () => any[];
-  getReservationsByStatusLocal: (status: string) => any[];
   onNewReservation?: () => void;
   onRefreshNeeded: (refreshFn: () => void) => void;
   onNewReservationDetected?: (reservation: any) => void;
@@ -43,7 +42,6 @@ const ReservationsTab: React.FC<ReservationsTabProps> = ({
   handleMarkArrived,
   handleCompleteReservation,
   getFilteredReservations,
-  getReservationsByStatusLocal,
   onNewReservation,
   onRefreshNeeded,
   onNewReservationDetected
