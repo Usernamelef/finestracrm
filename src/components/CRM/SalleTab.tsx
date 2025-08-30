@@ -198,7 +198,7 @@ const SalleTab: React.FC<SalleTabProps> = ({
     return (
       <div
         key={tableNumber}
-        className={`absolute w-14 h-14 sm:w-16 sm:h-16 lg:w-18 lg:h-18 border-2 rounded-lg flex flex-col items-center justify-center text-xs font-medium transition-all ${getTableColor(table)}`}
+        className={`absolute w-14 h-14 sm:w-16 sm:h-16 lg:w-18 lg:h-18 border-2 rounded-lg flex flex-col items-center justify-center text-xs font-medium transition-all cursor-pointer ${getTableColor(table)}`}
         style={{ top: position.top, left: position.left }}
         onClick={() => handleTableClick(table)}
       >
