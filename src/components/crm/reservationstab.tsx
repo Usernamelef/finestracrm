@@ -110,7 +110,7 @@ const ReservationsTab: React.FC<ReservationsTabProps> = ({
         const { supabase } = await import('../../lib/supabase');
         
         if (supabase) {
-          console.log('🔄 Configuration Supabase Realtime...');
+          console.log('🔄 Configuration Supabase Realtime pour notifications automatiques...');
           
           realtimeSubscription = supabase
             .channel('reservations-changes')
@@ -121,35 +121,62 @@ const ReservationsTab: React.FC<ReservationsTabProps> = ({
                 table: 'reservations' 
               }, 
               (payload) => {
-                console.log('🔔 Nouvelle réservation reçue via Realtime:', payload.new);
+                console.log('🔔 NOUVELLE RÉSERVATION DÉTECTÉE EN TEMPS RÉEL:', payload.new);
+                console.log('📅 Date:', payload.new.date_reservation);
+                console.log('🕐 Heure:', payload.new.heure_reservation);
+                console.log('👤 Client:', payload.new.nom_client);
+                console.log('📞 Téléphone:', payload.new.telephone_client);
                 
                 // Ajouter une notification
                 const newNotification = {
                   id: Date.now().toString(),
                   type: 'new_reservation' as const,
-                  title: '🔔 Nouvelle réservation !',
-                  message: `${payload.new.nom_client} - ${new Date(payload.new.date_reservation).toLocaleDateString('fr-FR')} à ${payload.new.heure_reservation} (${payload.new.nombre_personnes}p)`,
+                  title: '🔔 NOUVELLE RÉSERVATION !',
+                  message: `${payload.new.nom_client} - ${new Date(payload.new.date_reservation).toLocaleDateString('fr-FR')} à ${payload.new.heure_reservation} pour ${payload.new.nombre_personnes} personne${payload.new.nombre_personnes > 1 ? 's' : ''}`,
                   timestamp: new Date(),
                   reservation: payload.new
                 };
                 
                 setNotifications(prev => [newNotification, ...prev.slice(0, 4)]);
                 
-                // Auto-supprimer après 8 secondes
+                // Auto-supprimer après 10 secondes pour laisser le temps de voir
                 setTimeout(() => {
                   setNotifications(prev => prev.filter(n => n.id !== newNotification.id));
-                }, 8000);
+                }, 10000);
                 
                 // Notifier le parent pour afficher le pop-up ET incrémenter le compteur
                 onNewReservationDetected(payload.new);
                 onNewReservation?.();
                 
-                // Rafraîchir les réservations
-                fetchAllReservations();
+                // Rafraîchir les réservations IMMÉDIATEMENT
+                console.log('🔄 Rafraîchissement automatique des réservations...');
+                setTimeout(() => {
+                  fetchAllReservations();
+                }, 500); // Petit délai pour s'assurer que la DB est à jour
+              }
+            )
+            .on('postgres_changes',
+              {
+                event: 'UPDATE',
+                schema: 'public',
+                table: 'reservations'
+              },
+              (payload) => {
+                console.log('🔄 Réservation mise à jour via Realtime:', payload.new);
+                // Rafraîchir automatiquement quand une réservation est modifiée
+                setTimeout(() => {
+                  fetchAllReservations();
+                }, 500);
               }
             )
             .subscribe((status) => {
-              console.log('📡 Statut Realtime:', status);
+              if (status === 'SUBSCRIBED') {
+                console.log('✅ Realtime connecté - Notifications automatiques activées !');
+              } else if (status === 'CHANNEL_ERROR') {
+                console.error('❌ Erreur Realtime - Basculement sur polling');
+              } else {
+                console.log('📡 Statut Realtime:', status);
+              }
             });
         } else {
           console.warn('⚠️ Supabase non configuré - Realtime désactivé');
@@ -161,24 +188,25 @@ const ReservationsTab: React.FC<ReservationsTabProps> = ({
     
     setupRealtime();
     
-    // Polling de secours (réduit à 60 secondes) au cas où Realtime échoue
+    // Polling de secours plus fréquent au cas où Realtime échoue
     const fallbackInterval = setInterval(async () => {
       try {
         const nouvelles = await getReservationsByStatus('nouvelle');
         const currentCount = reservations.nouvelles.length;
         
         if (nouvelles.length > currentCount) {
-          console.log('📊 Nouvelles réservations détectées via polling de secours');
+          console.log('📊 NOUVELLES RÉSERVATIONS DÉTECTÉES via polling de secours');
           onNewReservation?.();
           fetchAllReservations();
         }
       } catch (error) {
         console.error("❌ Erreur polling de secours:", error);
       }
-    }, 60000); // Réduit à 60 secondes
+    }, 15000); // Polling toutes les 15 secondes pour plus de réactivité
 
     return () => {
       if (realtimeSubscription) {
+        console.log('🔌 Déconnexion Realtime...');
         realtimeSubscription.unsubscribe();
       }
       clearInterval(fallbackInterval);
@@ -742,9 +770,9 @@ const ReservationsTab: React.FC<ReservationsTabProps> = ({
                       confirmReservation(notification.reservation!);
                       setNotifications(prev => prev.filter(n => n.id !== notification.id));
                     }}
-                    className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-xs transition-colors"
+                    className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-xs transition-colors font-semibold"
                   >
-                    Confirmer
+                    ✅ Confirmer
                   </button>
                   <button
                     onClick={() => {
@@ -752,9 +780,9 @@ const ReservationsTab: React.FC<ReservationsTabProps> = ({
                       setShowCancelModal(true);
                       setNotifications(prev => prev.filter(n => n.id !== notification.id));
                     }}
-                    className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs transition-colors"
+                    className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs transition-colors font-semibold"
                   >
-                    Annuler
+                    ❌ Refuser
                   </button>
                 </div>
               )}
