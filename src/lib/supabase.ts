@@ -10,7 +10,19 @@ const isSupabaseConfigured = supabaseUrl && supabaseAnonKey &&
   supabaseAnonKey.length > 50
 
 // Clients Supabase (null si non configuré)
-export const supabase = isSupabaseConfigured ? createClient(supabaseUrl, supabaseAnonKey) : null
+export const supabase = isSupabaseConfigured ? createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: false
+  },
+  realtime: {
+    params: {
+      eventsPerSecond: 10
+    }
+  }
+}) : null
+
 export const supabaseAnon = isSupabaseConfigured ? createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
     persistSession: false,
@@ -21,6 +33,11 @@ export const supabaseAnon = isSupabaseConfigured ? createClient(supabaseUrl, sup
       getItem: () => null,
       setItem: () => {},
       removeItem: () => {}
+    }
+  },
+  realtime: {
+    params: {
+      eventsPerSecond: 10
     }
   },
   global: {

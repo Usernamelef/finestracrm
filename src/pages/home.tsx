@@ -2,7 +2,27 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronDown, Star, Users, Calendar, Award, ChefHat } from 'lucide-react';
 
+// Preload des images critiques
+const preloadImages = [
+  '/lafinestra-geneve-restaurant-devanture-bois.jpg',
+  '/assets/lafinestra-geneve-logo-blanc.png'
+];
+
+// Fonction pour précharger les images
+const preloadImage = (src: string) => {
+  const link = document.createElement('link');
+  link.rel = 'preload';
+  link.as = 'image';
+  link.href = src;
+  document.head.appendChild(link);
+};
+
 const Home = () => {
+  // Précharger les images critiques au montage du composant
+  React.useEffect(() => {
+    preloadImages.forEach(preloadImage);
+  }, []);
+
   const testimonials = [
     {
       name: "Céline M.",
@@ -101,6 +121,8 @@ const Home = () => {
               src="/assets/lafinestra-geneve-logo-blanc.png"
               alt="La Finestra Genève"
               className="h-24 sm:h-28 md:h-36 lg:h-44 w-auto"
+              loading="eager"
+              decoding="async"
               style={{
                 filter: 'drop-shadow(3px 3px 6px rgba(0, 0, 0, 0.4))'
               }}
@@ -161,6 +183,8 @@ const Home = () => {
                 src="/lafinestra-geneve-restaurant-terrasse-soiree-lanterne copy.jpg"
                 alt="Terrasse du restaurant La Finestra en soirée avec lanternes et ambiance chaleureuse"
                 className="rounded-lg shadow-xl w-full h-96 object-cover"
+                loading="lazy"
+                decoding="async"
               />
             </div>
           </div>

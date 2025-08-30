@@ -9,19 +9,34 @@ export default defineConfig({
     outDir: 'dist',
     assetsDir: 'assets',
     sourcemap: false,
-    minify: 'terser',
+    minify: 'esbuild',
+    target: 'es2015',
+    cssCodeSplit: true,
     rollupOptions: {
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom'],
           router: ['react-router-dom'],
           supabase: ['@supabase/supabase-js'],
-          icons: ['lucide-react']
+          icons: ['lucide-react'],
+          crm: [
+            './src/components/crm/dashboardtab',
+            './src/components/crm/reservationstab',
+            './src/components/crm/salletab',
+            './src/components/crm/clientstab',
+            './src/components/crm/historiquetab'
+          ]
         }
       }
     }
   },
   optimizeDeps: {
-    exclude: ['lucide-react'],
+    include: ['react', 'react-dom', 'react-router-dom'],
+    exclude: ['lucide-react']
   },
+  server: {
+    hmr: {
+      overlay: false
+    }
+  }
 });

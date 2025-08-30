@@ -1,3 +1,55 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Optimisations de performance */
+* {
+  box-sizing: border-box;
+}
+
+/* Optimisation des fonts */
+@layer base {
+  html {
+    font-display: swap;
+  }
+}
+
+/* Optimisation des images */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Optimisation des animations */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Optimisation du scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Optimisation des transitions */
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+}
+
+/* Cache des polices */
+@font-face {
+  font-family: 'Playfair Display';
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-display: swap;
+}

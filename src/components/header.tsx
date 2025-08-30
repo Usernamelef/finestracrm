@@ -41,6 +41,8 @@ const Header = () => {
                 src="/assets/lafinestra-geneve-logo-blanc.png"
                 alt="La Finestra Genève"
                 className="h-14 w-auto"
+                loading="eager"
+                decoding="async"
               />
             </Link>
 
