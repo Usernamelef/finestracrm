@@ -140,8 +140,9 @@ const ReservationsTab: React.FC<ReservationsTabProps> = ({
                   setNotifications(prev => prev.filter(n => n.id !== newNotification.id));
                 }, 8000);
                 
-                // Notifier le parent pour afficher le pop-up
+                // Notifier le parent pour afficher le pop-up ET incrémenter le compteur
                 onNewReservationDetected(payload.new);
+                onNewReservation?.();
                 
                 // Rafraîchir les réservations
                 fetchAllReservations();
