@@ -107,12 +107,15 @@ const ReservationsTab: React.FC<ReservationsTabProps> = ({
     
     const setupRealtime = async () => {
       try {
-        const { supabase } = await import('../../lib/supabase');
+        const { supabase, supabaseAnon } = await import('../../lib/supabase');
         
-        if (supabase) {
+        // Utiliser le client anonyme pour les subscriptions Realtime
+        const clientToUse = supabaseAnon || supabase;
+        
+        if (clientToUse) {
           console.log('🔄 Configuration Supabase Realtime pour notifications automatiques...');
           
-          realtimeSubscription = supabase
+          realtimeSubscription = clientToUse
             .channel('reservations-changes')
             .on('postgres_changes', 
               { 
@@ -173,7 +176,8 @@ const ReservationsTab: React.FC<ReservationsTabProps> = ({
               if (status === 'SUBSCRIBED') {
                 console.log('✅ Realtime connecté - Notifications automatiques activées !');
               } else if (status === 'CHANNEL_ERROR') {
-                console.error('❌ Erreur Realtime - Basculement sur polling');
+                console.warn('⚠️ Erreur Realtime - Permissions insuffisantes, basculement sur polling');
+                // Ne pas afficher d'erreur à l'utilisateur, juste utiliser le polling
               } else {
                 console.log('📡 Statut Realtime:', status);
               }
@@ -182,7 +186,8 @@ const ReservationsTab: React.FC<ReservationsTabProps> = ({
           console.warn('⚠️ Supabase non configuré - Realtime désactivé');
         }
       } catch (error) {
-        console.error('❌ Erreur configuration Realtime:', error);
+        console.warn('⚠️ Erreur configuration Realtime, utilisation du polling uniquement:', error);
+        // Ne pas faire échouer l'application, juste utiliser le polling
       }
     };
     
