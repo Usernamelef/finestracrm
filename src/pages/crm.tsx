@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Calendar, Users, MapPin, Clock, Plus, X, Edit, Trash2, Phone, Mail, User, Search, Filter, Download, ChevronDown, Check, Ban, History, MessageSquare, Menu, Bell, CheckCircle } from 'lucide-react';
 import { createClient } from '@supabase/supabase-js';
-import DashboardTab from '../components/CRM/DashboardTab';
-import ReservationsTab from '../components/CRM/ReservationsTab';
-import SalleTab from '../components/CRM/SalleTab';
-import ClientsTab from '../components/CRM/ClientsTab';
-import HistoriqueTab from '../components/CRM/HistoriqueTab';
+import DashboardTab from '../components/crm/dashboardtab';
+import ReservationsTab from '../components/crm/reservationstab';
+import SalleTab from '../components/crm/salletab';
+import ClientsTab from '../components/crm/clientstab';
+import HistoriqueTab from '../components/crm/historiquetab';
 import { createReservation } from '../lib/supabase';
 
 interface Table {

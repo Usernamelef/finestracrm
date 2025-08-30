@@ -1,5 +1,5 @@
 import React from 'react';
-import SMSForm from '../components/SMSForm';
+import SMSForm from '../components/smsform';
 
 const TestSMS: React.FC = () => {
   return (

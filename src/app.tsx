@@ -1,17 +1,17 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useLocation, Navigate } from 'react-router-dom';
-import ScrollToTop from './components/ScrollToTop';
-import Header from './components/Header';
-import Footer from './components/Footer';
-import Home from './pages/Home';
-import About from './pages/About';
-import Menu from './pages/Menu';
-import Events from './pages/Events';
-import Reservations from './pages/Reservations';
-import Contact from './pages/Contact';
-import CRM from './pages/CRM';
-import TestSMS from './pages/TestSMS';
+import ScrollToTop from './components/scrolltotop';
+import Header from './components/header';
+import Footer from './components/footer';
+import Home from './pages/home';
+import About from './pages/about';
+import Menu from './pages/menu';
+import Events from './pages/events';
+import Reservations from './pages/reservations';
+import Contact from './pages/contact';
+import CRM from './pages/crm';
+import TestSMS from './pages/testsms';
 
 const AppContent = () => {
   const location = useLocation();
