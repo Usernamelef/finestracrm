@@ -177,6 +177,40 @@ const Reservations = () => {
     if (!formData.date) return baseTimeSlots;
 
     const selectedDate = new Date(formData.date);
+    const dayOfWeek = selectedDate.getDay(); // 0 = dimanche, 6 = samedi
+    
+    // Bloquer samedi midi (jour 6)
+    if (dayOfWeek === 6) {
+      // Samedi : seulement les créneaux du soir
+      const eveningSlots = baseTimeSlots.filter(slot => {
+        const hour = parseInt(slot.split(':')[0]);
+        return hour >= 19; // Seulement à partir de 19h
+      });
+      
+      const today = new Date();
+      const selectedDateString = selectedDate.toDateString();
+      const todayString = today.toDateString();
+      
+      if (selectedDateString === todayString) {
+        const currentHour = today.getHours();
+        const currentMinutes = today.getMinutes();
+        const currentTimeInMinutes = currentHour * 60 + currentMinutes;
+        
+        return eveningSlots.filter(timeSlot => {
+          const [hours, minutes] = timeSlot.split(':').map(Number);
+          const slotTimeInMinutes = hours * 60 + minutes;
+          return slotTimeInMinutes > currentTimeInMinutes;
+        });
+      }
+      
+      return eveningSlots;
+    }
+    
+    // Bloquer dimanche (jour 0)
+    if (dayOfWeek === 0) {
+      return []; // Aucun créneau le dimanche
+    }
+
     const today = new Date();
     
     // Normaliser les dates pour comparer seulement jour/mois/année
@@ -216,8 +250,27 @@ const Reservations = () => {
     return selectedDate < today;
   }, [formData.date]);
 
+  // Vérifier si c'est samedi midi ou dimanche
+  const isRestaurantClosed = useMemo(() => {
+    if (!formData.date) return false;
+    
+    const selectedDate = new Date(formData.date);
+    const dayOfWeek = selectedDate.getDay();
+    
+    // Dimanche fermé
+    if (dayOfWeek === 0) return true;
+    
+    // Samedi midi fermé (si des créneaux midi sont sélectionnés)
+    if (dayOfWeek === 6 && formData.time) {
+      const hour = parseInt(formData.time.split(':')[0]);
+      return hour < 19; // Fermé avant 19h le samedi
+    }
+    
+    return false;
+  }, [formData.date, formData.time]);
+
   // Vérifier si le formulaire peut être soumis
-  const canSubmit = !isDateInPast && !isSubmitting && formData.date && formData.time && formData.guests && formData.name && formData.email && formData.phone;
+  const canSubmit = !isDateInPast && !isRestaurantClosed && !isSubmitting && formData.date && formData.time && formData.guests && formData.name && formData.email && formData.phone;
 
   if (isSubmitted) {
     return (
@@ -346,6 +399,11 @@ const Reservations = () => {
                       Veuillez sélectionner une date future.
                     </p>
                   )}
+                  {!isDateInPast && formData.date && new Date(formData.date).getDay() === 0 && (
+                    <p className="text-red-500 text-sm mt-1">
+                      ❌ Restaurant fermé le dimanche
+                    </p>
+                  )}
                 </div>
                 
                 <div>
@@ -367,8 +425,19 @@ const Reservations = () => {
                     ))}
                   </select>
                   {formData.date && availableTimeSlots.length === 0 && (
-                    <p className="text-orange-600 text-sm mt-1">
-                      Aucun créneau disponible pour aujourd'hui. Veuillez choisir une date future.
+                    <p className="text-red-500 text-sm mt-1">
+                      {(() => {
+                        const selectedDate = new Date(formData.date);
+                        const dayOfWeek = selectedDate.getDay();
+                        
+                        if (dayOfWeek === 0) {
+                          return "❌ Restaurant fermé le dimanche";
+                        } else if (dayOfWeek === 6) {
+                          return "❌ Restaurant fermé samedi midi - Ouvert seulement le soir (19h-22h30)";
+                        } else {
+                          return "Aucun créneau disponible pour aujourd'hui. Veuillez choisir une date future.";
+                        }
+                      })()}
                     </p>
                   )}
                 </div>
@@ -480,6 +549,11 @@ const Reservations = () => {
                 {!canSubmit && formData.date && formData.time && !isSubmitting && (
                   <p className="text-gray-500 text-sm mt-2">
                     Veuillez remplir tous les champs obligatoires
+                  </p>
+                )}
+                {isRestaurantClosed && (
+                  <p className="text-red-500 text-sm mt-2">
+                    ❌ Restaurant fermé à cette date/heure
                   </p>
                 )}
                 {isSubmitting && (

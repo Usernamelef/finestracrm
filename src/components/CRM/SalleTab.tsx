@@ -152,6 +152,22 @@ const SalleTab: React.FC<SalleTabProps> = ({
         setSelectedTables([...selectedTables, table.number]);
       }
     } else if (table.status === 'available') {
+      // Vérifier si le restaurant est ouvert pour ce service/date
+      const selectedDate = new Date(selectedDate);
+      const dayOfWeek = selectedDate.getDay();
+      
+      // Bloquer samedi midi
+      if (dayOfWeek === 6 && currentService === 'midi') {
+        alert('❌ Restaurant fermé samedi midi\n\nLe restaurant est ouvert :\n• Lundi-Vendredi : 12h-14h30 et 19h-22h30\n• Samedi : 19h-22h30 seulement\n• Dimanche : Fermé');
+        return;
+      }
+      
+      // Bloquer dimanche
+      if (dayOfWeek === 0) {
+        alert('❌ Restaurant fermé le dimanche\n\nLe restaurant est ouvert :\n• Lundi-Vendredi : 12h-14h30 et 19h-22h30\n• Samedi : 19h-22h30 seulement');
+        return;
+      }
+      
       // Table vide - créer une réservation directement
       setSelectedTableForReservation(table.number);
       setNewReservation({

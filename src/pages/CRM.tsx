@@ -405,6 +405,25 @@ const CRM = () => {
 
   const handleAddReservation = async () => {
     if (newReservation.name && newReservation.phone && newReservation.date && newReservation.time && newReservation.guests) {
+      // Vérifier les horaires d'ouverture
+      const reservationDate = new Date(newReservation.date);
+      const dayOfWeek = reservationDate.getDay();
+      
+      // Bloquer samedi midi
+      if (dayOfWeek === 6) {
+        const hour = parseInt(newReservation.time.split(':')[0]);
+        if (hour < 19) {
+          alert('❌ Restaurant fermé samedi midi\n\nLe restaurant est ouvert :\n• Lundi-Vendredi : 12h-14h30 et 19h-22h30\n• Samedi : 19h-22h30 seulement\n• Dimanche : Fermé');
+          return;
+        }
+      }
+      
+      // Bloquer dimanche
+      if (dayOfWeek === 0) {
+        alert('❌ Restaurant fermé le dimanche\n\nLe restaurant est ouvert :\n• Lundi-Vendredi : 12h-14h30 et 19h-22h30\n• Samedi : 19h-22h30 seulement');
+        return;
+      }
+      
       // Déterminer le service basé sur l'heure
       const hour = parseInt(newReservation.time.split(':')[0]);
       const minute = parseInt(newReservation.time.split(':')[1]);
