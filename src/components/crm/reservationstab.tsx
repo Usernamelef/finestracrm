@@ -467,16 +467,10 @@ const ReservationsTab: React.FC<ReservationsTabProps> = ({
           <div className="space-y-4">
             {reservations.en_attente
               .sort((a, b) => {
-                // Tri par date puis par heure
-                const dateA = new Date(a.date_reservation);
-                const dateB = new Date(b.date_reservation);
-                if (dateA.getTime() !== dateB.getTime()) {
-                  return dateA.getTime() - dateB.getTime();
-                }
-                // Si même date, trier par heure
-                const [hourA, minA] = a.heure_reservation.split(':').map(Number);
-                const [hourB, minB] = b.heure_reservation.split(':').map(Number);
-                return (hourA * 60 + minA) - (hourB * 60 + minB);
+                // Tri par date de création (plus récent en haut)
+                const createdA = new Date(a.date_creation);
+                const createdB = new Date(b.date_creation);
+                return createdB.getTime() - createdA.getTime();
               })
               .map((reservation) => (
                 <div key={reservation.id} className="border border-pink-200 rounded-lg p-3 sm:p-4 bg-pink-50">
