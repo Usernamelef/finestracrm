@@ -319,40 +319,57 @@ export const formatPhoneNumber = (phone: string) => {
   console.log('=== FORMATAGE NUMÉRO ===')
   console.log('Numéro original:', phone)
   
+  // Vérifier si le numéro est vide ou invalide
+  if (!phone || phone.trim() === '' || phone === 'N/A') {
+    console.log('Numéro vide ou invalide, retour chaîne vide')
+    return ''
+  }
+  
   // Supprimer tous les espaces, tirets, parenthèses
   let cleaned = phone.replace(/[\s\-\(\)]/g, '')
   console.log('Après nettoyage:', cleaned)
+  
+  // Vérifier si le numéro nettoyé est vide
+  if (!cleaned) {
+    console.log('Numéro vide après nettoyage, retour chaîne vide')
+    return ''
+  }
   
   // Si le numéro commence par +41, supprimer le +
   if (cleaned.startsWith('+41')) {
     const result = cleaned.substring(1)
     console.log('Format +41 détecté, résultat:', result)
-    return result
+    // Vérifier que le résultat a au moins 11 chiffres (41 + 9 chiffres)
+    return result.length >= 11 && /^41\d{9}$/.test(result) ? result : ''
   }
   
   // Si le numéro commence par 0041, le garder
   if (cleaned.startsWith('0041')) {
     const result = '41' + cleaned.substring(4) // Supprimer 0041 et ajouter 41
     console.log('Format 0041 détecté, résultat:', result)
-    return result
+    // Vérifier que le résultat a exactement 11 chiffres
+    return result.length === 11 && /^41\d{9}$/.test(result) ? result : ''
   }
   
   // Si le numéro commence par 0, remplacer par 41
   if (cleaned.startsWith('0')) {
     const result = '41' + cleaned.substring(1)
     console.log('Format 0 détecté, résultat:', result)
-    return result
+    // Vérifier que le résultat a exactement 11 chiffres
+    return result.length === 11 && /^41\d{9}$/.test(result) ? result : ''
   }
   
   // Si le numéro ne commence pas par 41, l'ajouter
   if (!cleaned.startsWith('41')) {
     const result = '41' + cleaned
     console.log('Ajout du préfixe 41, résultat:', result)
-    return result
+    // Vérifier que le résultat a exactement 11 chiffres
+    return result.length === 11 && /^41\d{9}$/.test(result) ? result : ''
   }
   
   console.log('Numéro déjà au bon format:', cleaned)
-  return cleaned
+  // Vérifier que le numéro a exactement 11 chiffres
+  return cleaned.length === 11 && /^41\d{9}$/.test(cleaned) ? cleaned : ''
 }
 export const getCancellationEmailTemplate = (nom: string, date: string, heure: string) => {
   return `

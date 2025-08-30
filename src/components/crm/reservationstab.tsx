@@ -249,8 +249,12 @@ const ReservationsTab: React.FC<ReservationsTabProps> = ({
             reservation.nombre_personnes
           );
           const formattedPhone = formatPhoneNumber(reservation.telephone_client);
-          await sendSMS(formattedPhone, smsMessage);
-          console.log('SMS de confirmation envoyé avec succès');
+          if (formattedPhone) {
+            await sendSMS(formattedPhone, smsMessage);
+            console.log('SMS de confirmation envoyé avec succès');
+          } else {
+            console.log('Numéro de téléphone invalide, SMS non envoyé');
+          }
         } catch (smsError) {
           console.error('Erreur lors de l\'envoi du SMS:', smsError);
           // SMS désactivé temporairement - ne pas faire échouer la confirmation
@@ -288,8 +292,12 @@ const ReservationsTab: React.FC<ReservationsTabProps> = ({
             reservation.heure_reservation
           );
           const formattedPhone = formatPhoneNumber(reservation.telephone_client);
-          await sendSMS(formattedPhone, smsMessage);
-          console.log('SMS d\'annulation envoyé avec succès');
+          if (formattedPhone) {
+            await sendSMS(formattedPhone, smsMessage);
+            console.log('SMS d\'annulation envoyé avec succès');
+          } else {
+            console.log('Numéro de téléphone invalide, SMS non envoyé');
+          }
         } catch (smsError) {
           console.warn('Erreur lors de l\'envoi du SMS:', smsError);
           // SMS désactivé temporairement - ne pas faire échouer l'annulation
