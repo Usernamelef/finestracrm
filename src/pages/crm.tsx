@@ -50,6 +50,7 @@ const CRM = () => {
   const [showNewReservationPopup, setShowNewReservationPopup] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
   const [newReservationPopupDetails, setNewReservationPopupDetails] = useState<any>(null);
+  const notificationAudioRef = useRef<HTMLAudioElement>(null);
   const refreshReservationsRef = useRef<(() => void) | null>(null);
   
   // Mock data avec exemples fictifs variés
@@ -345,9 +346,10 @@ const CRM = () => {
     setNewReservationPopupDetails(reservation);
 
     // Jouer le son de notification
-    if (audioRef.current) {
-      audioRef.current.volume = 0.5; // Volume à 50%
-      audioRef.current.play().catch(error => {
+    if (notificationAudioRef.current) {
+      notificationAudioRef.current.volume = 0.7; // Volume à 70%
+      notificationAudioRef.current.currentTime = 0; // Redémarrer depuis le début
+      notificationAudioRef.current.play().catch(error => {
         console.warn('Erreur lors de la lecture du son de notification:', error);
       });
     }
@@ -1243,7 +1245,12 @@ const CRM = () => {
       )}
 
       {/* Modal détail table */}
-      <audio ref={audioRef} src="/notification_chime.mp3" preload="auto" />
+      <audio 
+        ref={notificationAudioRef} 
+        src="/notification_chime.mp3" 
+        preload="auto"
+        style={{ display: 'none' }}
+      />
     </div>
   );
 };

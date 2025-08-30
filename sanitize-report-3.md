@@ -8,8 +8,8 @@
 ## Détail des changements
 
 ### 📄 Fichier
-- **Ancien**: `SANITIZE-REPORT.md`
-- **Nouveau**: `sanitize-report-3.md`
+- **Ancien**: `="sanitize-report-3.md"
+- **Nouveau**: `sanitize-report-2.md`
 - **Raison**: Caractères non-ASCII ou non supportés
 
 
@@ -23,4 +23,4 @@
 6. Caractères autorisés: [a-z0-9._-]
 
 ---
-*Rapport généré le 30/08/2025 16:51:18*
+*Rapport généré le 30/08/2025 16:29:19*

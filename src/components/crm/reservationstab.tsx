@@ -130,6 +130,13 @@ const ReservationsTab: React.FC<ReservationsTabProps> = ({
                 console.log('👤 Client:', payload.new.nom_client);
                 console.log('📞 Téléphone:', payload.new.telephone_client);
                 
+                // Jouer le son de notification immédiatement
+                const audio = new Audio('/notification_chime.mp3');
+                audio.volume = 0.6;
+                audio.play().catch(error => {
+                  console.warn('Erreur lecture son notification:', error);
+                });
+                
                 // Ajouter une notification
                 const newNotification = {
                   id: Date.now().toString(),
