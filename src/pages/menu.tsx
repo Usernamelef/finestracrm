@@ -7,10 +7,12 @@ const Menu = () => {
 
   const menuCategories = [
     { id: 'antipasti', name: 'Antipasti' },
+    { id: 'potage', name: 'Potage' },
     { id: 'primi', name: 'Primi Piatti' },
     { id: 'carni', name: 'Le Carni' },
     { id: 'pesci', name: 'I Pesci' },
     { id: 'dolci', name: 'I Dolci' },
+    { id: 'speciale', name: "Spéciale D'automne" },
     { id: 'menu-soir', name: 'Menu du Soir' },
     { id: 'boissons', name: 'Boissons & Vins' }
   ];
@@ -20,49 +22,57 @@ const Menu = () => {
       {
         name: 'Vitello Tonnato',
         price: '46.-',
-        descriptionFr: 'À la Génoise',
+        descriptionFr: 'À la Génovese',
         descriptionEn: 'Veal slices with sauce at Genovese style'
       },
       {
         name: 'Carpaccio de Thon',
         price: '38.-',
-        descriptionFr: 'Aux fenouils marinés à l\'huile, pecorino piquant et tomate Datterino',
-        descriptionEn: 'Tuna carpaccio with spicy pecorino (cheese), Datterino tomatoes and olive oil marinated fennel'
+        descriptionFr: 'Aux Fenouil mariné al huile, pecorino piquant et tomate Datterino',
+        descriptionEn: 'Tuna carpaccio with spicy pecorino(cheese), Datterino tomatoes and olive oil marinated fennel'
       },
       {
         name: 'Carpaccio de Bœuf',
         price: '44.-',
-        descriptionFr: 'Avec mousseline d\'aubergine et lamelles de vieux parmesan',
-        descriptionEn: 'Beef carpaccio with eggplant mousseline, salade seasonal and strip aged parmesan'
+        descriptionFr: 'Avec une mousseline et lamelles de truffe noire d\'automne',
+        descriptionEn: 'Beef carpaccio with muslin and slices of truffle'
       },
       {
-        name: 'Burrata aux saveurs de l\'été',
+        name: 'Burrata',
         price: '34.-',
-        descriptionFr: 'Avec légumes grillés et tomates grappe fraîches, aceto balsamique caramélisé',
+        descriptionFr: 'Avec légumes grillés et tomates grappe fraîches et aceto balsamique caramélisé',
         descriptionEn: 'Burrata with grilled vegetables and vine tomatoes with caramelized balsamic vinegar'
       },
       {
         name: 'Salade Roquette',
         price: '26.-',
-        descriptionFr: 'Aux artichauts à la romaine, tomates rondes et lamelles de parmesan',
+        descriptionFr: 'Aux Artichauts à la romaine, tomates rondes et lamelles de parmesan',
         descriptionEn: 'Rocket salad with romaine artichokes, round tomatoes and parmesan slices'
       },
       {
         name: 'Poêlée d\'Artichauts',
         price: '48.-',
-        descriptionFr: 'Accompagnée du scampi, noix de St Jacques, avec son jus de langoustines',
+        descriptionFr: 'Accompagnée du Scampi, Noix de St Jacques avec son jus de langoustines',
         descriptionEn: 'Pan-fried artichokes with lobster juice, with scampi and St. Jacques scallops'
       },
       {
         name: 'Jambon San Daniele',
         price: '42.-',
-        descriptionFr: 'Avec bufala di Campana – Un mariage de saveurs',
-        descriptionEn: 'San Daniele ham with bufala di campana, eggplant, tomato and basil salad'
+        descriptionFr: 'Avec la Bufala Mozzarella – Un mariage de saveur',
+        descriptionEn: 'San Daniele Ham with bufala mozzarella'
       },
       {
-        name: 'Salade de Saison',
+        name: 'Bufala alla Sicilienne',
+        price: '30.-',
+        descriptionFr: 'Mozzarella di bufffala, aubergine, oignon, tomate et basilic',
+        descriptionEn: 'Mozzarella di buffala with eggplant, onion, tomatoes and basil'
+      }
+    ],
+    potage: [
+      {
+        name: 'Potage à la courge',
         price: '28.-',
-        descriptionFr: 'Accompagnée de Bresaola della Valtellina',
+        descriptionFr: '',
         descriptionEn: ''
       }
     ],
@@ -98,10 +108,10 @@ const Menu = () => {
         descriptionEn: 'Tagliolini of the house in lobster juice, scampis, Datterino tomatoes and capers of Salina'
       },
       {
-        name: 'Risotto aux fruits de mer',
-        price: '54.-',
-        descriptionFr: 'Servi avec noix de St Jacques et scampi',
-        descriptionEn: 'With scallops and langoustin'
+        name: 'Risotto aux Champignons',
+        price: '42.-',
+        descriptionFr: 'Avec Chanterelles',
+        descriptionEn: ''
       }
     ],
     carni: [
@@ -120,35 +130,34 @@ const Menu = () => {
         origin: '(Origin Irlande)'
       },
       {
-        name: 'Foie de Veau à la Vénitienne',
-        price: '54.-',
-        descriptionFr: 'Accompagné d\'un risotto au prosecco et parmesan',
-        descriptionEn: 'Veal liver at the Venetian, accompanied by parmesan and prosecco risotto',
-        origin: '(Origin Suisse)'
+        name: 'Osso bucco à la Milanaise',
+        price: '48.-',
+        descriptionFr: 'Avec risotto safran',
+        descriptionEn: 'Ossobucco alla milanese with saffron risotto',
+        origin: '(origin Suisse)'
       }
     ],
     pesci: [
       {
         name: 'Filet de Thon Poêlé',
         price: '56.-',
-        descriptionFr: 'Avec épinards, tomates Datterino et pommes de terre rôties',
-        descriptionEn: 'With spinach, Datterino tomato and roasted potatoes',
-        origin: '(Origin Sri Lanka)'
+        descriptionFr: 'À la Sicilienne et légumes du marche',
+        descriptionEn: 'Tuna fillet served with a sicilienne and day vegetables'
       },
       {
         name: 'La Mer et la Terre',
         price: '52.-',
-        descriptionFr: 'Filet de loup grillé et chanterelles, servi avec tagliarini (pâte maison), tomates Datterino et ciboulettes',
-        descriptionEn: 'Grilled sea bass fillet, and chanterelles, served with tagliolini (homemade pasta)',
+        descriptionFr: 'Filet de Loup, dans son jus servie avec risotto au prosecco',
+        descriptionEn: 'Sea bass fillet in its own juice served with prosseco risotto',
         origin: '(Origin France)'
       }
     ],
     dolci: [
       {
-        name: 'Panna Cotta',
+        name: 'Panna cotta',
         price: '16.-',
-        descriptionFr: 'Aux fruits rouges – Douceur et fraîcheur',
-        descriptionEn: 'Red fruit panna cotta'
+        descriptionFr: 'Alla Amarenatta – Douceur et fraicheur',
+        descriptionEn: 'Amarenatta fruit and panna cotta'
       },
       {
         name: 'Tiramisu classique au cacao',
@@ -157,22 +166,16 @@ const Menu = () => {
         descriptionEn: 'Traditional Tiramisu with amaretto and cocoa'
       },
       {
-        name: 'Rouge Passion',
-        price: '16.-',
-        descriptionFr: 'Tiramisu aux fruits de bois',
-        descriptionEn: 'Red fruits tiramisu'
-      },
-      {
-        name: 'Mousse blanche au chocolat',
+        name: 'Mousse au chocolat blanc',
         price: '16.-',
         descriptionFr: 'Avec orange nature, zeste doré et coulis d\'orange',
         descriptionEn: 'White chocolate mousse with natural orange, golden zest, and orange coulis'
       },
       {
-        name: 'Cassata Napolitaine',
+        name: 'Tarte fine aux pommes caramélisée',
         price: '16.-',
-        descriptionFr: 'Ricotta, fruits confits, chocolat, vanille et fraises – Un trio divin',
-        descriptionEn: 'Napolitaine cassata with ricotta, candied fruit, chocolate, vanilla and strawberries — a divine trio'
+        descriptionFr: 'Avec glace à la vanille',
+        descriptionEn: 'Caramelized apple pie with vanilla ice cream'
       }
     ],
     'menu-soir': [
@@ -195,11 +198,20 @@ const Menu = () => {
           },
           {
             course: 'Dessert',
-            name: 'Tiramisu Rouge',
-            descriptionFr: 'Aux fruits de bois',
-            descriptionEn: 'Red fruits tiramisu'
+            name: 'Tiramisu classique',
+            descriptionFr: 'Au cacao',
+            descriptionEn: ''
           }
         ]
+      }
+    ],
+    speciale: [
+      {
+        name: 'Filet mignon de Cerf',
+        price: '58.-',
+        descriptionFr: 'Accompagné d\'une sauce vin rouge, ravioli à la courge, poire, Choux rouge et confiture de coing',
+        descriptionEn: '',
+        special: 'La Chasse'
       }
     ]
   };
