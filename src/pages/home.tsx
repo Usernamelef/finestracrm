@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronDown, Star, Users, Calendar, Award, ChefHat } from 'lucide-react';
+import AutumnMenuPopup from '../components/autumnmenupopup';
 
 // Preload des images critiques
 const preloadImages = [
@@ -18,10 +19,25 @@ const preloadImage = (src: string) => {
 };
 
 const Home = () => {
+  const [showPopup, setShowPopup] = useState(false);
+
   // Précharger les images critiques au montage du composant
-  React.useEffect(() => {
+  useEffect(() => {
     preloadImages.forEach(preloadImage);
+
+    const hasSeenPopup = sessionStorage.getItem('autumnMenuPopupSeen');
+    if (!hasSeenPopup) {
+      const timer = setTimeout(() => {
+        setShowPopup(true);
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
   }, []);
+
+  const handleClosePopup = () => {
+    setShowPopup(false);
+    sessionStorage.setItem('autumnMenuPopupSeen', 'true');
+  };
 
   const testimonials = [
     {
@@ -106,6 +122,8 @@ const Home = () => {
 
   return (
     <div className="animate-fade-in">
+      {showPopup && <AutumnMenuPopup onClose={handleClosePopup} />}
+
       {/* Hero Section */}
       <section className="relative h-screen flex items-center justify-center overflow-hidden">
         <div 
