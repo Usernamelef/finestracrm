@@ -43,10 +43,6 @@ const Events = () => {
 
   const gallery = [
     {
-      src: '/lafinestra-geneve-truffes-noires-blanches-assiette.jpg',
-      alt: 'Présentation de truffes noires et blanches sur assiette au restaurant La Finestra'
-    },
-    {
       src: '/lafinestra-geneve-salle-restaurant-table-orange.jpg',
       alt: 'Salle du restaurant La Finestra avec tables et banquettes orange'
     },
@@ -67,11 +63,11 @@ const Events = () => {
       alt: 'Table élégamment dressée avec verres à vin et décoration florale au restaurant La Finestra'
     },
     {
-      src: '/lafinestra-geneve-interieur-chaleureux-boiserie copy.jpg',
+      src: '/lafinestra-geneve-interieur-chaleureux-boiserie.jpg',
       alt: 'Intérieur chaleureux avec boiseries et ambiance feutrée du restaurant La Finestra'
     },
     {
-      src: '/lafinestra-geneve-ambiance-authentique copy.jpg',
+      src: '/lafinestra-geneve-ambiance-authentique.jpg',
       alt: 'Ambiance authentique et raffinée de la salle événementielle La Finestra'
     }
   ];
