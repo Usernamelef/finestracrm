@@ -21,8 +21,8 @@ const AutumnMenuPopup: React.FC<AutumnMenuPopupProps> = ({ onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in">
-      <div className="bg-white rounded-lg shadow-2xl max-w-2xl w-full relative overflow-hidden animate-fade-in-up">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex justify-center p-4 pt-8 overflow-y-auto animate-fade-in">
+      <div className="bg-white rounded-lg shadow-2xl max-w-2xl w-full relative overflow-hidden animate-fade-in-up my-auto">
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 transition-colors z-10"

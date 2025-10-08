@@ -1,25 +1,15 @@
 # Rapport d'assainissement des chemins de fichiers
 
 ## Résumé
-- **Fichiers renommés**: 3
+- **Fichiers renommés**: 1
 - **Dossiers renommés**: 0
-- **Total des changements**: 3
+- **Total des changements**: 1
 
 ## Détail des changements
 
 ### 📄 Fichier
-- **Ancien**: `public/assets/Speciale D'automne 2025.pdf`
-- **Nouveau**: `public/assets/speciale-d-automne-2025.pdf`
-- **Raison**: Caractères non-ASCII ou non supportés
-
-### 📄 Fichier
-- **Ancien**: `public/assets/menu Finestra automne 2025.pdf`
-- **Nouveau**: `public/assets/menu-finestra-automne-2025.pdf`
-- **Raison**: Caractères non-ASCII ou non supportés
-
-### 📄 Fichier
 - **Ancien**: `SANITIZE-REPORT.md`
-- **Nouveau**: `sanitize-report-4.md`
+- **Nouveau**: `sanitize-report-6.md`
 - **Raison**: Caractères non-ASCII ou non supportés
 
 
@@ -33,4 +23,4 @@
 6. Caractères autorisés: [a-z0-9._-]
 
 ---
-*Rapport généré le 07/10/2025 16:13:14*
+*Rapport généré le 08/10/2025 07:26:05*
