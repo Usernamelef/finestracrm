@@ -52,6 +52,7 @@ const CRM = () => {
   const [newReservationPopupDetails, setNewReservationPopupDetails] = useState<any>(null);
   const notificationAudioRef = useRef<HTMLAudioElement>(null);
   const refreshReservationsRef = useRef<(() => void) | null>(null);
+  const [popupTopPosition, setPopupTopPosition] = useState(16);
   
   // Mock data avec exemples fictifs variés
   const [reservationsData, setReservationsData] = useState<any[]>([
@@ -341,7 +342,20 @@ const CRM = () => {
   // Fonction pour gérer les nouvelles réservations détectées via Realtime
   const handleNewReservationDetected = (reservation: any) => {
     console.log('🔔 Nouvelle réservation détectée:', reservation);
-    
+
+    // Calculer la position du pop-up basée sur le scroll actuel
+    const scrollY = window.scrollY || window.pageYOffset;
+    const viewportHeight = window.innerHeight;
+    const documentHeight = document.documentElement.scrollHeight;
+
+    // Positionner le pop-up à 20px du haut de la zone visible
+    // Mais s'assurer qu'il ne dépasse pas le bas de la page
+    const calculatedTop = scrollY + 20;
+    const maxTop = documentHeight - 400; // 400px est la hauteur approximative du pop-up
+    const finalTop = Math.min(calculatedTop, maxTop);
+
+    setPopupTopPosition(finalTop);
+
     // Afficher le pop-up de notification
     setNewReservationPopupDetails(reservation);
 
@@ -1181,7 +1195,10 @@ const CRM = () => {
 
       {/* Pop-up de notification pour nouvelle réservation */}
       {showNewReservationPopup && newReservationPopupDetails && (
-        <div className="fixed top-4 right-4 z-[60] animate-slide-in-right">
+        <div
+          className="absolute right-4 z-[60] animate-slide-in-right"
+          style={{ top: `${popupTopPosition}px` }}
+        >
           <div className="bg-white border-l-4 border-green-500 rounded-lg shadow-xl p-4 max-w-sm">
             <div className="flex items-start">
               <div className="flex-shrink-0">
