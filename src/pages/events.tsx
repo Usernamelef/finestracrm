@@ -51,16 +51,36 @@ const Events = () => {
       alt: 'Décoration florale raffinée sur table du restaurant La Finestra'
     },
     {
+      src: '/evenement.webp',
+      alt: 'Table élégamment dressée avec bougies et décoration florale pour événement à La Finestra'
+    },
+    {
+      src: '/evenements.webp',
+      alt: 'Tables préparées pour événement avec verres à vin et décoration soignée à La Finestra'
+    },
+    {
       src: '/lafinestra-geneve-salle-intime-table-romantique.jpg',
       alt: 'Salle intime avec table romantique du restaurant La Finestra'
+    },
+    {
+      src: '/evenementss.webp',
+      alt: 'Salle événementielle élégante avec tables dressées et ambiance raffinée à La Finestra'
     },
     {
       src: '/lafinestra-geneve-table-preparee-verres-vins.jpg',
       alt: 'Table préparée avec verres à vin au restaurant La Finestra'
     },
     {
+      src: '/cocktails.webp',
+      alt: 'Table de cocktail élégamment dressée avec bougies dorées à La Finestra'
+    },
+    {
       src: '/lafinestra-geneve-table-preparee-verres-vins2.jpg',
       alt: 'Table élégamment dressée avec verres à vin et décoration florale au restaurant La Finestra'
+    },
+    {
+      src: '/cocktailss.webp',
+      alt: 'Chandelier doré avec bougies et ambiance chaleureuse à La Finestra'
     },
     {
       src: '/lafinestra-geneve-interieur-chaleureux-boiserie.jpg',
