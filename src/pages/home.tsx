@@ -293,9 +293,6 @@ const Home = () => {
 
             <div className="animate-fade-in-up order-1 lg:order-2" style={{animationDelay: '0.2s'}}>
               <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-lg shadow-xl p-8 border-t-4 border-yellow-600">
-                <div className="inline-block bg-white rounded-full p-3 mb-4 shadow-lg">
-                  <span className="text-4xl">🍄</span>
-                </div>
                 <h2 className="text-4xl font-serif font-bold text-gray-900 mb-4">
                   Truffe Blanche d'Alba
                 </h2>

@@ -630,9 +630,6 @@ const Menu = () => {
                               />
                             </div>
                             <div className="flex flex-col justify-center order-1 md:order-2">
-                              <div className="inline-block bg-white rounded-full p-3 mb-3 shadow-md w-fit">
-                                <span className="text-3xl">🍄</span>
-                              </div>
                               <h3 className="text-2xl font-serif font-bold text-gray-900 mb-2">
                                 Truffe Blanche d'Alba
                               </h3>
