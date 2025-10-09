@@ -8,22 +8,22 @@
 ## Détail des changements
 
 ### 📄 Fichier
-- **Ancien**: `="public/cocktails.webp"
+- **Ancien**: `public/Cocktails.webp`
 - **Nouveau**: `public/cocktails.webp`
 - **Raison**: Caractères non-ASCII ou non supportés
 
 ### 📄 Fichier
-- **Ancien**: `="public/cocktailss.webp"
+- **Ancien**: `public/Cocktailss.webp`
 - **Nouveau**: `public/cocktailss.webp`
 - **Raison**: Caractères non-ASCII ou non supportés
 
 ### 📄 Fichier
-- **Ancien**: `="public/evenement.webp"
+- **Ancien**: `public/Evenement.webp`
 - **Nouveau**: `public/evenement.webp`
 - **Raison**: Caractères non-ASCII ou non supportés
 
 ### 📄 Fichier
-- **Ancien**: `="public/evenements.webp"
+- **Ancien**: `public/Evenements.webp`
 - **Nouveau**: `public/evenements.webp`
 - **Raison**: Caractères non-ASCII ou non supportés
 
