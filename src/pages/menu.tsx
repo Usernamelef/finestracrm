@@ -852,48 +852,7 @@ const Menu = () => {
               <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </div>
 
-            <div className="relative overflow-hidden rounded-lg shadow-lg group animate-fade-in-up" style={{animationDelay: '0.9s'}}>
-              <img
-                src="/evenement.webp"
-                alt="Événement privé au restaurant La Finestra"
-                className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110"
-              />
-              <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            </div>
-
-            <div className="relative overflow-hidden rounded-lg shadow-lg group animate-fade-in-up" style={{animationDelay: '1.0s'}}>
-              <img
-                src="/evenements.webp"
-                alt="Événements au restaurant La Finestra"
-                className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110"
-              />
-              <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            </div>
-
-            <div className="relative overflow-hidden rounded-lg shadow-lg group animate-fade-in-up" style={{animationDelay: '1.1s'}}>
-              <img
-                src="/evenementss.webp"
-                alt="Organisation d'événements au restaurant La Finestra"
-                className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110"
-              />
-              <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            </div>
-
-            <div className="relative overflow-hidden rounded-lg shadow-lg group animate-fade-in-up" style={{animationDelay: '1.2s'}}>
-              <img
-                src="/cocktails.webp"
-                alt="Cocktails du restaurant La Finestra"
-                className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110"
-              />
-              <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            </div>
-
-            <div className="relative overflow-hidden rounded-lg shadow-lg group animate-fade-in-up" style={{animationDelay: '1.3s'}}>
-              <img
-                src="/cocktailss.webp"
-                alt="Bar à cocktails du restaurant La Finestra"
-                className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110"
-              />
+           
               <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </div>
           </div>
