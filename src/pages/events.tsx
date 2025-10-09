@@ -69,6 +69,26 @@ const Events = () => {
     {
       src: '/lafinestra-geneve-ambiance-authentique.jpg',
       alt: 'Ambiance authentique et raffinée de la salle événementielle La Finestra'
+    },
+    {
+      src: '/evenement.webp',
+      alt: 'Événement privé au restaurant La Finestra'
+    },
+    {
+      src: '/evenements.webp',
+      alt: 'Organisation d\'événements au restaurant La Finestra'
+    },
+    {
+      src: '/evenementss.webp',
+      alt: 'Événements corporatifs au restaurant La Finestra'
+    },
+    {
+      src: '/cocktails.webp',
+      alt: 'Cocktails signatures du bar La Finestra'
+    },
+    {
+      src: '/cocktailss.webp',
+      alt: 'Cocktails artisanaux du restaurant La Finestra'
     }
   ];
 

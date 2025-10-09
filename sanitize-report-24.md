@@ -8,33 +8,33 @@
 ## Détail des changements
 
 ### 📄 Fichier
-- **Ancien**: `="public/cocktails.webp"
+- **Ancien**: `public/Cocktails.webp`
 - **Nouveau**: `public/cocktails.webp`
 - **Raison**: Caractères non-ASCII ou non supportés
 
 ### 📄 Fichier
-- **Ancien**: `="public/cocktailss.webp"
+- **Ancien**: `public/Cocktailss.webp`
 - **Nouveau**: `public/cocktailss.webp`
 - **Raison**: Caractères non-ASCII ou non supportés
 
 ### 📄 Fichier
-- **Ancien**: `="public/evenement.webp"
+- **Ancien**: `public/Cocktailsss.webp`
+- **Nouveau**: `public/cocktailsss.webp`
+- **Raison**: Caractères non-ASCII ou non supportés
+
+### 📄 Fichier
+- **Ancien**: `public/Evenement.webp`
 - **Nouveau**: `public/evenement.webp`
 - **Raison**: Caractères non-ASCII ou non supportés
 
 ### 📄 Fichier
-- **Ancien**: `="public/evenements.webp"
+- **Ancien**: `public/Evenements.webp`
 - **Nouveau**: `public/evenements.webp`
 - **Raison**: Caractères non-ASCII ou non supportés
 
 ### 📄 Fichier
-- **Ancien**: `public/Evenementss.webp`
-- **Nouveau**: `public/evenementss.webp`
-- **Raison**: Caractères non-ASCII ou non supportés
-
-### 📄 Fichier
-- **Ancien**: `="sanitize-report-12.md"
-- **Nouveau**: `sanitize-report-11.md`
+- **Ancien**: `="sanitize-report-24.md"
+- **Nouveau**: `sanitize-report-23.md`
 - **Raison**: Caractères non-ASCII ou non supportés
 
 
@@ -48,4 +48,4 @@
 6. Caractères autorisés: [a-z0-9._-]
 
 ---
-*Rapport généré le 08/10/2025 09:35:30*
+*Rapport généré le 09/10/2025 08:13:23*
