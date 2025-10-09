@@ -773,8 +773,8 @@ const Menu = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div className="relative overflow-hidden rounded-lg shadow-lg group animate-fade-in-up" style={{animationDelay: '0s'}}>
               <img
-                src="/assets/truffe-alba.jpeg"
-                alt="Truffes blanches d'Alba du restaurant La Finestra"
+                src="/assets/lafinestra-geneve-restaurant-glace-truffes-blanches.jpg"
+                alt="Glace aux truffes blanches du restaurant La Finestra"
                 className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110"
               />
               <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -782,7 +782,7 @@ const Menu = () => {
             
             <div className="relative overflow-hidden rounded-lg shadow-lg group animate-fade-in-up" style={{animationDelay: '0.1s'}}>
               <img
-                src="/lafinestra-geneve-restaurant-artichauts-scampi-saint-jacques.jpg"
+                src="/assets/lafinestra-geneve-restaurant-scampi-saint-jacques-artichauts.jpg"
                 alt="Scampi et Saint-Jacques aux artichauts du restaurant La Finestra"
                 className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110"
               />
@@ -791,7 +791,7 @@ const Menu = () => {
             
             <div className="relative overflow-hidden rounded-lg shadow-lg group animate-fade-in-up" style={{animationDelay: '0.2s'}}>
               <img
-                src="/lafinestra-geneve-restaurant-carre-agneau-polenta.jpg"
+                src="/assets/lafinestra-geneve-restaurant-carre-agneau-polenta-legumes.jpg"
                 alt="Carré d'agneau avec polenta et légumes du restaurant La Finestra"
                 className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110"
               />
@@ -800,7 +800,7 @@ const Menu = () => {
             
             <div className="relative overflow-hidden rounded-lg shadow-lg group animate-fade-in-up" style={{animationDelay: '0.3s'}}>
               <img
-                src="/lafinestra-geneve-restaurant-foie-de-veau-venitienne.jpg"
+                src="/assets/lafinestra-geneve-restaurant-foie-de-veau-venitienne-risotto.jpg"
                 alt="Foie de veau à la vénitienne avec risotto du restaurant La Finestra"
                 className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110"
               />
@@ -809,7 +809,7 @@ const Menu = () => {
             
             <div className="relative overflow-hidden rounded-lg shadow-lg group animate-fade-in-up" style={{animationDelay: '0.4s'}}>
               <img
-                src="/lafinestra-geneve-restaurant-tiramisu-classique-cacao-2.jpg"
+                src="/assets/lafinestra-geneve-restaurant-tiramisu-chocolat-cafe.jpg"
                 alt="Tiramisu au chocolat et café du restaurant La Finestra"
                 className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110"
               />
