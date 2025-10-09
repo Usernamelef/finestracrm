@@ -71,7 +71,7 @@ const Events = () => {
       alt: 'Ambiance authentique et raffinée de la salle événementielle La Finestra'
     },   
     {
-      src: '/Evenement.webp',
+      src: '/evenement.webp',
       alt: 'Ambiance authentique et raffinée de la salle événementielle La Finestra 2'
     },
     {
