@@ -595,6 +595,56 @@ const Menu = () => {
                 ) : (
                   // Food Menu
                   <div className="space-y-6">
+                    {activeCategory === 'speciale' && (
+                      <div className="mb-8 space-y-6">
+                        <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-lg shadow-lg overflow-hidden border-l-4 border-amber-600">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-6">
+                            <div className="flex flex-col justify-center">
+                              <div className="inline-block bg-white rounded-full p-3 mb-3 shadow-md w-fit">
+                                <ChefHat className="text-amber-600" size={32} />
+                              </div>
+                              <h3 className="text-2xl font-serif font-bold text-gray-900 mb-2">
+                                Menu d'automne - La Chasse
+                              </h3>
+                              <p className="text-gray-700 leading-relaxed">
+                                Découvrez notre menu de saison mettant à l'honneur les saveurs authentiques de l'automne
+                              </p>
+                            </div>
+                            <div className="relative h-48 md:h-full rounded-lg overflow-hidden">
+                              <img
+                                src="/lafinestra-geneve-restaurant-carre-agneau-polenta.jpg"
+                                alt="Menu de chasse"
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-lg shadow-lg overflow-hidden border-l-4 border-yellow-600">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-6">
+                            <div className="relative h-48 md:h-full rounded-lg overflow-hidden order-2 md:order-1">
+                              <img
+                                src="/assets/truffe-alba.jpeg"
+                                alt="Truffe blanche d'Alba"
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                            <div className="flex flex-col justify-center order-1 md:order-2">
+                              <div className="inline-block bg-white rounded-full p-3 mb-3 shadow-md w-fit">
+                                <span className="text-3xl">🍄</span>
+                              </div>
+                              <h3 className="text-2xl font-serif font-bold text-gray-900 mb-2">
+                                Truffe Blanche d'Alba
+                              </h3>
+                              <p className="text-gray-700 leading-relaxed">
+                                Le diamant blanc de la gastronomie italienne. Disponible en saison.
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
                     {menuItems[activeCategory as keyof typeof menuItems].map((item: any, index: number) => (
                       <div 
                         key={index}

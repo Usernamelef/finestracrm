@@ -262,6 +262,77 @@ const Home = () => {
         </div>
       </section>
 
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div className="animate-fade-in-up order-2 lg:order-1">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="col-span-2 relative overflow-hidden rounded-lg shadow-xl">
+                  <img
+                    src="/assets/truffe-blanche.jpeg"
+                    alt="Truffes blanches et noires d'Alba"
+                    className="w-full h-64 object-cover"
+                  />
+                </div>
+                <div className="relative overflow-hidden rounded-lg shadow-lg">
+                  <img
+                    src="/assets/truffe-blanche-alba.jpeg"
+                    alt="Truffe blanche d'Alba"
+                    className="w-full h-48 object-cover"
+                  />
+                </div>
+                <div className="relative overflow-hidden rounded-lg shadow-lg">
+                  <img
+                    src="/assets/truffe-alba-blanche.jpeg"
+                    alt="Truffes d'Alba blanches"
+                    className="w-full h-48 object-cover"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="animate-fade-in-up order-1 lg:order-2" style={{animationDelay: '0.2s'}}>
+              <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-lg shadow-xl p-8 border-t-4 border-yellow-600">
+                <div className="inline-block bg-white rounded-full p-3 mb-4 shadow-lg">
+                  <span className="text-4xl">🍄</span>
+                </div>
+                <h2 className="text-4xl font-serif font-bold text-gray-900 mb-4">
+                  Truffe Blanche d'Alba
+                </h2>
+                <p className="text-lg text-gray-700 leading-relaxed mb-6">
+                  La Finestra célèbre l'excellence avec la truffe blanche d'Alba,
+                  le diamant blanc de la gastronomie italienne. Récoltée dans les collines
+                  du Piémont, cette truffe rare et précieuse sublime nos plats avec son arôme
+                  intense et unique.
+                </p>
+
+                <div className="bg-white rounded-lg p-6 mb-6 border-l-4 border-yellow-600">
+                  <p className="text-gray-800 italic">
+                    Disponible en saison, nos plats à la truffe sont préparés avec passion
+                    pour vous offrir une expérience gastronomique inoubliable.
+                  </p>
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <Link
+                    to="/menu"
+                    className="bg-yellow-600 hover:bg-yellow-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg text-center"
+                  >
+                    Découvrir nos plats à la truffe
+                  </Link>
+                  <Link
+                    to="/reservations"
+                    className="bg-primary hover:bg-primary/90 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg text-center"
+                  >
+                    Réserver
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section className="py-20 bg-secondary">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
