@@ -600,9 +600,6 @@ const Menu = () => {
                         <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-lg shadow-lg overflow-hidden border-l-4 border-amber-600">
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-6">
                             <div className="flex flex-col justify-center">
-                              <div className="inline-block bg-white rounded-full p-3 mb-3 shadow-md w-fit">
-                                <ChefHat className="text-amber-600" size={32} />
-                              </div>
                               <h3 className="text-2xl font-serif font-bold text-gray-900 mb-2">
                                 Menu d'automne - La Chasse
                               </h3>

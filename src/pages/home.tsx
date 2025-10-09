@@ -189,9 +189,6 @@ const Home = () => {
       <section className="py-20 bg-gradient-to-br from-amber-50 to-orange-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <div className="inline-block bg-white rounded-full p-4 mb-4 shadow-lg">
-              <ChefHat className="text-amber-600" size={48} />
-            </div>
             <h2 className="text-4xl font-serif font-bold text-gray-900 mb-3 animate-fade-in-up">
               Spéciale d'automne - La Chasse
             </h2>
