@@ -38,7 +38,7 @@ const Header = () => {
           <div className="flex justify-between items-center py-4">
             <Link to="/" className="flex items-center hover:opacity-80 transition-opacity">
               <img
-                src="/assets/lafinestra-geneve-logo-blanc.png"
+                src="/lafinestra-geneve-favicon.png"
                 alt="La Finestra Genève"
                 className="h-14 w-auto"
                 loading="eager"
