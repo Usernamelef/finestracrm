@@ -69,6 +69,30 @@ const Events = () => {
     {
       src: '/lafinestra-geneve-ambiance-authentique.jpg',
       alt: 'Ambiance authentique et raffinée de la salle événementielle La Finestra'
+    },   
+    {
+      src: '/Evenement.webp',
+      alt: 'Ambiance authentique et raffinée de la salle événementielle La Finestra 2'
+    },
+    {
+      src: '/Evenements.webp',
+      alt: 'Ambiance authentique et raffinée de la salle événementielle La Finestra 3'
+    }, 
+    {
+      src: '/Evenementss.webp',
+      alt: 'Ambiance authentique et raffinée de la salle événementielle La Finestra 4'
+    },
+    {
+      src: '/Cocktails.webp',
+      alt: 'Cocktails'
+    },
+    {
+      src: '/Cocktailss.webp',
+      alt: 'Cocktails 2'
+    },
+    {
+      src: '/Cocktailsss.webp',
+      alt: 'Cocktails 3'
     }
   ];
 
