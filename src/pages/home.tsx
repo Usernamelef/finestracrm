@@ -1,15 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronDown, Star, Users, Calendar, Award, ChefHat } from 'lucide-react';
-import AutumnMenuPopup from '../components/autumnmenupopup';
+import { ChevronDown, Star, Calendar, Award, ChefHat } from 'lucide-react';
 
-// Preload des images critiques
 const preloadImages = [
   '/lafinestra-geneve-restaurant-devanture-bois.jpg',
   '/assets/lafinestra-geneve-logo-blanc.png'
 ];
 
-// Fonction pour précharger les images
 const preloadImage = (src: string) => {
   const link = document.createElement('link');
   link.rel = 'preload';
@@ -19,25 +16,9 @@ const preloadImage = (src: string) => {
 };
 
 const Home = () => {
-  const [showPopup, setShowPopup] = useState(false);
-
-  // Précharger les images critiques au montage du composant
   useEffect(() => {
     preloadImages.forEach(preloadImage);
-
-    const hasSeenPopup = sessionStorage.getItem('autumnMenuPopupSeen');
-    if (!hasSeenPopup) {
-      const timer = setTimeout(() => {
-        setShowPopup(true);
-      }, 1500);
-      return () => clearTimeout(timer);
-    }
   }, []);
-
-  const handleClosePopup = () => {
-    setShowPopup(false);
-    sessionStorage.setItem('autumnMenuPopupSeen', 'true');
-  };
 
   const testimonials = [
     {
@@ -122,17 +103,14 @@ const Home = () => {
 
   return (
     <div className="animate-fade-in">
-      {showPopup && <AutumnMenuPopup onClose={handleClosePopup} />}
-
-      {/* Hero Section */}
       <section className="relative h-screen flex items-center justify-center overflow-hidden">
-        <div 
+        <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
             backgroundImage: `linear-gradient(rgba(68, 15, 30, 0.35), rgba(68, 15, 30, 0.35)), url('/lafinestra-geneve-restaurant-devanture-bois.jpg')`
           }}
         />
-        
+
         <div className="relative z-10 text-center text-white px-4 max-w-4xl mx-auto">
           <div className="flex justify-center mb-8 animate-fade-in-up">
             <img
@@ -149,7 +127,7 @@ const Home = () => {
           <p className="text-xl md:text-2xl mb-8 font-light animate-fade-in-up" style={{animationDelay: '0.2s'}}>
             <span className="hidden sm:inline">Une fenêtre sur l'Italie - </span>Cuisine italienne traditionnelle à Genève depuis 2006
           </p>
-          
+
           <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up" style={{animationDelay: '0.4s'}}>
             <Link
               to="/reservations"
@@ -171,7 +149,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* About Preview Section */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -180,12 +157,12 @@ const Home = () => {
                 L'amour de l'Italie dans chaque assiette
               </h2>
               <p className="text-lg text-gray-700 mb-6 leading-relaxed">
-                Depuis 2006, La Finestra vous invite à découvrir l'authenticité de la cuisine italienne 
-                dans un cadre <strong>chaleureux et romantique</strong>, au cœur de Genève. Ce restaurant gastronomique met à l'honneur les 
+                Depuis 2006, La Finestra vous invite à découvrir l'authenticité de la cuisine italienne
+                dans un cadre <strong>chaleureux et romantique</strong>, au cœur de Genève. Ce restaurant gastronomique met à l'honneur les
                 <strong> plats à base de truffe</strong>, élaborés avec passion par notre chef.
               </p>
               <p className="text-lg text-gray-700 mb-8 leading-relaxed">
-                Chaque plat est préparé avec des ingrédients frais importés d'Italie, 
+                Chaque plat est préparé avec des ingrédients frais importés d'Italie,
                 dans le respect des recettes traditionnelles transmises de génération en génération.
               </p>
               <Link
@@ -195,7 +172,7 @@ const Home = () => {
                 En savoir plus
               </Link>
             </div>
-            
+
             <div className="animate-fade-in-up" style={{animationDelay: '0.2s'}}>
               <img
                 src="/lafinestra-geneve-restaurant-terrasse-soiree-lanterne.jpg"
@@ -209,7 +186,82 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Specialties Section */}
+      <section className="py-20 bg-gradient-to-br from-amber-50 to-orange-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <div className="inline-block bg-white rounded-full p-4 mb-4 shadow-lg">
+              <ChefHat className="text-amber-600" size={48} />
+            </div>
+            <h2 className="text-4xl font-serif font-bold text-gray-900 mb-3 animate-fade-in-up">
+              Spéciale d'automne - La Chasse
+            </h2>
+            <p className="text-xl text-gray-700 max-w-3xl mx-auto animate-fade-in-up" style={{animationDelay: '0.2s'}}>
+              Découvrez notre menu de saison mettant à l'honneur les saveurs authentiques de l'automne
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+            <div className="grid grid-cols-2 gap-4 animate-fade-in-up" style={{animationDelay: '0.3s'}}>
+              <div className="col-span-2 relative overflow-hidden rounded-lg shadow-xl">
+                <img
+                  src="/lafinestra-geneve-restaurant-carre-agneau-polenta.jpg"
+                  alt="Plat de viande de chasse avec accompagnements"
+                  className="w-full h-64 object-cover"
+                />
+              </div>
+              <div className="relative overflow-hidden rounded-lg shadow-lg">
+                <img
+                  src="/lafinestra-geneve-interieur-chaleureux-boiserie.jpg"
+                  alt="Ambiance chaleureuse du restaurant"
+                  className="w-full h-48 object-cover"
+                />
+              </div>
+              <div className="relative overflow-hidden rounded-lg shadow-lg">
+                <img
+                  src="/lafinestra-geneve-restaurant-table-romantique-coeur.jpg"
+                  alt="Table élégamment dressée"
+                  className="w-full h-48 object-cover"
+                />
+              </div>
+            </div>
+
+            <div className="animate-fade-in-up" style={{animationDelay: '0.5s'}}>
+              <div className="bg-white rounded-lg shadow-xl p-8 border-t-4 border-amber-600">
+                <h3 className="text-3xl font-serif font-bold text-gray-900 mb-4">
+                  Filet mignon de Cerf
+                </h3>
+                <p className="text-lg text-gray-700 leading-relaxed mb-6">
+                  Accompagné d'une sauce vin rouge, ravioli à la courge, poire,
+                  choux rouge et confiture de coing
+                </p>
+
+                <div className="bg-amber-50 rounded-lg p-6 mb-6 border-l-4 border-amber-600">
+                  <p className="text-gray-800 italic">
+                    Une création culinaire qui célèbre les traditions de la chasse italienne
+                    avec des ingrédients soigneusement sélectionnés et des saveurs équilibrées.
+                  </p>
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <Link
+                    to="/menu"
+                    className="bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg text-center"
+                  >
+                    Voir le menu complet
+                  </Link>
+                  <Link
+                    to="/reservations"
+                    className="bg-primary hover:bg-primary/90 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg text-center"
+                  >
+                    Réserver une table
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section className="py-20 bg-secondary">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -220,14 +272,14 @@ const Home = () => {
               </h2>
             </div>
             <p className="text-xl text-gray-700 max-w-3xl mx-auto animate-fade-in-up" style={{animationDelay: '0.2s'}}>
-              Découvrez nos plats signature, préparés avec passion 
+              Découvrez nos plats signature, préparés avec passion
               et des ingrédients d'exception importés directement d'Italie.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
             {specialties.map((dish, index) => (
-              <div 
+              <div
                 key={index}
                 className="bg-white rounded-lg shadow-lg overflow-hidden group animate-fade-in-up"
                 style={{animationDelay: `${index * 0.2}s`}}
@@ -269,7 +321,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Restaurant Gallery Section */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -277,15 +328,14 @@ const Home = () => {
               Découvrez notre restaurant
             </h2>
             <p className="text-xl text-gray-700 max-w-3xl mx-auto animate-fade-in-up" style={{animationDelay: '0.2s'}}>
-              Entre tradition et élégance, La Finestra vous accueille dans un cadre authentique 
+              Entre tradition et élégance, La Finestra vous accueille dans un cadre authentique
               avec sa terrasse charmante et son intérieur chaleureux.
             </p>
           </div>
 
-          {/* Gallery Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
             {restaurantGallery.map((image, index) => (
-              <div 
+              <div
                 key={index}
                 className="relative overflow-hidden rounded-lg shadow-lg group animate-fade-in-up"
                 style={{animationDelay: `${index * 0.1}s`}}
@@ -298,8 +348,8 @@ const Home = () => {
                 <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                   <span className="text-white font-semibold text-lg capitalize">
                     {image.category === 'facade' ? 'Façade' :
-                     image.category === 'terrasse' ? 'Terrasse' : 
-                     image.category === 'interieur' ? 'Intérieur' : 
+                     image.category === 'terrasse' ? 'Terrasse' :
+                     image.category === 'interieur' ? 'Intérieur' :
                      image.category === 'exterieur' ? 'Extérieur' : 'Intérieur'}
                   </span>
                 </div>
@@ -307,7 +357,6 @@ const Home = () => {
             ))}
           </div>
 
-          {/* Gallery Features */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
             <div className="text-center animate-fade-in-up" style={{animationDelay: '0.6s'}}>
               <div className="bg-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 shadow-lg">
@@ -315,29 +364,29 @@ const Home = () => {
               </div>
               <h3 className="text-xl font-bold text-primary mb-2">Terrasse charmante</h3>
               <p className="text-gray-700">
-                Profitez de notre terrasse dans une rue pavée typiquement genevoise, 
+                Profitez de notre terrasse dans une rue pavée typiquement genevoise,
                 parfaite pour les beaux jours.
               </p>
             </div>
-            
+
             <div className="text-center animate-fade-in-up" style={{animationDelay: '0.8s'}}>
               <div className="bg-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 shadow-lg">
                 <span className="text-2xl">🕯️</span>
               </div>
               <h3 className="text-xl font-bold text-primary mb-2">Ambiance intimiste</h3>
               <p className="text-gray-700">
-                Un intérieur chaleureux avec un éclairage tamisé et une décoration 
+                Un intérieur chaleureux avec un éclairage tamisé et une décoration
                 soignée pour des moments inoubliables.
               </p>
             </div>
-            
+
             <div className="text-center animate-fade-in-up" style={{animationDelay: '1s'}}>
               <div className="bg-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 shadow-lg">
                 <span className="text-2xl">🍷</span>
               </div>
               <h3 className="text-xl font-bold text-primary mb-2">Art de la table</h3>
               <p className="text-gray-700">
-                Chaque table est dressée avec soin, alliant tradition italienne 
+                Chaque table est dressée avec soin, alliant tradition italienne
                 et raffinement contemporain.
               </p>
             </div>
@@ -345,7 +394,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Stats Section */}
       <section className="py-16 bg-primary text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
@@ -356,7 +404,7 @@ const Home = () => {
               <h3 className="text-4xl font-bold text-secondary mb-2">2006</h3>
               <p className="text-xl">Depuis plus de 19 ans</p>
             </div>
-            
+
             <div className="animate-fade-in-up" style={{animationDelay: '0.2s'}}>
               <div className="flex justify-center mb-4">
                 <Award className="text-secondary" size={48} />
@@ -364,7 +412,7 @@ const Home = () => {
               <h3 className="text-4xl font-bold text-secondary mb-2">100%</h3>
               <p className="text-xl">Traditionnel</p>
             </div>
-            
+
             <div className="animate-fade-in-up" style={{animationDelay: '0.4s'}}>
               <div className="flex justify-center mb-4">
                 <Star className="text-secondary" size={48} />
@@ -376,16 +424,15 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Testimonials Section */}
       <section className="py-20 bg-secondary">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-4xl font-serif font-bold text-center text-primary mb-12">
             Ce que disent nos clients
           </h2>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {testimonials.map((testimonial, index) => (
-              <div 
+              <div
                 key={index}
                 className="bg-white p-6 rounded-lg shadow-lg animate-fade-in-up"
                 style={{animationDelay: `${index * 0.2}s`}}
@@ -406,14 +453,13 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Call to Action Section */}
       <section className="py-16 bg-white">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
           <h2 className="text-4xl font-serif font-bold text-primary mb-6 animate-fade-in-up">
             Réservez votre table
           </h2>
           <p className="text-xl text-gray-700 mb-8 animate-fade-in-up" style={{animationDelay: '0.2s'}}>
-            Venez découvrir l'authenticité de la cuisine italienne dans notre cadre chaleureux. 
+            Venez découvrir l'authenticité de la cuisine italienne dans notre cadre chaleureux.
             Que ce soit en terrasse ou dans notre salle, nous vous promettons une expérience mémorable.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up" style={{animationDelay: '0.4s'}}>
