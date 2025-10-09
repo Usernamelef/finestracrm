@@ -114,7 +114,7 @@ const Home = () => {
         <div className="relative z-10 text-center text-white px-4 max-w-4xl mx-auto">
           <div className="flex justify-center mb-8 animate-fade-in-up">
             <img
-              src="/lafinestra-geneve-favicon.png"
+              src="/assets/lafinestra-geneve-logo-blanc.png"
               alt="La Finestra Genève"
               className="h-24 sm:h-28 md:h-36 lg:h-44 w-auto"
               loading="eager"
