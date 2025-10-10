@@ -71,15 +71,15 @@ const Events = () => {
       alt: 'Ambiance authentique et raffinée de la salle événementielle La Finestra'
     },   
     {
-      src: '/evenement.jpg',
+      src: '/lafinestra-geneve-ambiance-authentique.jpg',
       alt: 'Ambiance authentique et raffinée de la salle événementielle La Finestra 2'
     },
     {
-      src: '/Evenements.jpg',
+      src: '/lafinestra-geneve-ambiance-authentique.jpg',
       alt: 'Ambiance authentique et raffinée de la salle événementielle La Finestra 3'
     }, 
     {
-      src: '/Evenementss.jpg',
+      src: '/lafinestra-geneve-ambiance-authentique.jpg',
       alt: 'Ambiance authentique et raffinée de la salle événementielle La Finestra 4'
     },
     {
