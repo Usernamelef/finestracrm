@@ -215,7 +215,7 @@ const Home = () => {
               </div>
               <div className="chasse.jpeg">
                 <img
-                  src="/chasse1.jpeg"
+                  src="/chasse.jpeg"
                   alt="Table élégamment dressée"
                   className="w-full h-48 object-cover"
                 />
