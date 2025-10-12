@@ -91,7 +91,7 @@ const Events = () => {
       alt: 'Cocktails 2'
     },
     {
-      src: '/Cocktailsss.jpg',
+      src: '/finestra-event1.jpeg',
       alt: 'Cocktails 3'
     }
   ];
