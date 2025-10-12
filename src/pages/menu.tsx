@@ -836,7 +836,7 @@ const Menu = () => {
             
             <div className="relative overflow-hidden rounded-lg shadow-lg group animate-fade-in-up" style={{animationDelay: '0.7s'}}>
               <img
-                src="/lafinestra-geneve-restaurant-artichauts-scampi-saint-jacques.jpg"
+                src="/plat-finestra.jpeg"
                 alt="plat-finestra"
                 className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110"
               />
