@@ -621,7 +621,7 @@ const Menu = () => {
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-6">
                             <div className="relative h-48 md:h-full rounded-lg overflow-hidden order-2 md:order-1">
                               <img
-                                src="/assets/truffe-alba.jpeg"
+                                src="/assets/truffe-alba-blanche.jpeg"
                                 alt="Truffe blanche d'Alba"
                                 className="w-full h-full object-cover"
                               />
