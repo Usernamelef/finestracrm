@@ -71,16 +71,16 @@ const Events = () => {
       alt: 'Ambiance authentique et raffinée de la salle événementielle La Finestra'
     },   
     {
-      src: '/finestra-event1.jpeg',
-      alt: 'Ambiance authentique et raffinée de la salle événementielle La Finestra 2'
+      src: '/chasse2.jpeg',
+      alt: 'Côtes d\'agneau grillées avec légumes au restaurant La Finestra'
     },
     {
-      src: '/finestra-event2.jpeg',
-      alt: 'Ambiance authentique et raffinée de la salle événementielle La Finestra 3'
-    }, 
+      src: '/chasse2.jpeg',
+      alt: 'Plat gastronomique de viande avec légumes colorés au restaurant La Finestra'
+    },
     {
-      src: '/finestra-event3.jpeg',
-      alt: 'Ambiance authentique et raffinée de la salle événementielle La Finestra 4'
+      src: '/chasse2.jpeg',
+      alt: 'Cuisine raffinée et présentation élégante au restaurant La Finestra'
     },
     {
       src: '/finestra-event4.jpeg',
