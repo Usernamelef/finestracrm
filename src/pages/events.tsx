@@ -71,27 +71,27 @@ const Events = () => {
       alt: 'Ambiance authentique et raffinée de la salle événementielle La Finestra'
     },   
     {
-      src: '/evenement.jpg',
+      src: '/finestra-event1.jpeg',
       alt: 'Ambiance authentique et raffinée de la salle événementielle La Finestra 2'
     },
     {
-      src: '/Evenements.jpg',
+      src: '/finestra-event2.jpeg',
       alt: 'Ambiance authentique et raffinée de la salle événementielle La Finestra 3'
     }, 
     {
-      src: '/Evenementss.jpg',
+      src: '/finestra-event3.jpeg',
       alt: 'Ambiance authentique et raffinée de la salle événementielle La Finestra 4'
     },
     {
-      src: '/Cocktails.jpg',
+      src: '/finestra-event4.jpeg',
       alt: 'Cocktails'
     },
     {
-      src: '/Cocktailss.jpg',
+      src: '/finestra-event5.jpeg',
       alt: 'Cocktails 2'
     },
     {
-      src: '/Cocktailsss.jpg',
+      src: '/finestra-event6.jpeg',
       alt: 'Cocktails 3'
     }
   ];
