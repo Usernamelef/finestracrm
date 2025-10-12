@@ -215,7 +215,7 @@ const Home = () => {
               </div>
               <div className="chasse1.jpeg">
                 <img
-                  src="/lafinestra-geneve-restaurant-table-romantique-coeur.jpg"
+                  src="/chasse1.jpeg"
                   alt="Table élégamment dressée"
                   className="w-full h-48 object-cover"
                 />
