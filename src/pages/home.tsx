@@ -201,7 +201,7 @@ const Home = () => {
             <div className="grid grid-cols-2 gap-4 animate-fade-in-up" style={{animationDelay: '0.3s'}}>
               <div className="col-span-2 relative overflow-hidden rounded-lg shadow-xl">
                 <img
-                  src="/chasse.jpeg"
+                  src="/chasse1.jpeg"
                   alt="Plat de viande de chasse avec accompagnements"
                   className="w-full h-64 object-cover"
                 />
@@ -213,7 +213,7 @@ const Home = () => {
                   className="w-full h-48 object-cover"
                 />
               </div>
-              <div className="chasse1.jpeg">
+              <div className="chasse.jpeg">
                 <img
                   src="/chasse1.jpeg"
                   alt="Table élégamment dressée"
