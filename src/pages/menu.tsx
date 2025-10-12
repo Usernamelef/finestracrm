@@ -609,7 +609,7 @@ const Menu = () => {
                             </div>
                             <div className="relative h-48 md:h-full rounded-lg overflow-hidden">
                               <img
-                                src="/lafinestra-geneve-restaurant-carre-agneau-polenta.jpg"
+                                src="/chasse2.jpeg"
                                 alt="Menu de chasse"
                                 className="w-full h-full object-cover"
                               />
