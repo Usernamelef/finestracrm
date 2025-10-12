@@ -201,19 +201,19 @@ const Home = () => {
             <div className="grid grid-cols-2 gap-4 animate-fade-in-up" style={{animationDelay: '0.3s'}}>
               <div className="col-span-2 relative overflow-hidden rounded-lg shadow-xl">
                 <img
-                  src="/chasse1.jpeg"
+                  src="/chasse.jpeg"
                   alt="Plat de viande de chasse avec accompagnements"
                   className="w-full h-64 object-cover"
                 />
               </div>
               <div className="relative overflow-hidden rounded-lg shadow-lg">
                 <img
-                  src="/lafinestra-geneve-interieur-chaleureux-boiserie.jpg"
+                  src="/chasse2.jpeg"
                   alt="Ambiance chaleureuse du restaurant"
                   className="w-full h-48 object-cover"
                 />
               </div>
-              <div className="relative overflow-hidden rounded-lg shadow-lg">
+              <div className="chasse1.jpeg">
                 <img
                   src="/lafinestra-geneve-restaurant-table-romantique-coeur.jpg"
                   alt="Table élégamment dressée"
