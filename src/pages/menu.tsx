@@ -12,7 +12,6 @@ const Menu = () => {
     { id: 'carni', name: 'Le Carni' },
     { id: 'pesci', name: 'I Pesci' },
     { id: 'dolci', name: 'I Dolci' },
-    { id: 'speciale', name: "Spéciale D'automne" },
     { id: 'menu-soir', name: 'Menu du Soir' },
     { id: 'boissons', name: 'Boissons & Vins' }
   ];
@@ -203,15 +202,6 @@ const Menu = () => {
             descriptionEn: ''
           }
         ]
-      }
-    ],
-    speciale: [
-      {
-        name: 'Filet mignon de Cerf',
-        price: '58.-',
-        descriptionFr: 'Accompagné d\'une sauce vin rouge, ravioli à la courge, poire, Choux rouge et confiture de coing',
-        descriptionEn: '',
-        special: 'La Chasse'
       }
     ]
   };
@@ -595,30 +585,6 @@ const Menu = () => {
                 ) : (
                   // Food Menu
                   <div className="space-y-6">
-                    {activeCategory === 'speciale' && (
-                      <div className="mb-8 space-y-6">
-                        <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-lg shadow-lg overflow-hidden border-l-4 border-yellow-600">
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-6">
-                            <div className="relative h-48 md:h-full rounded-lg overflow-hidden order-2 md:order-1">
-                              <img
-                                src="/assets/truffe-alba-blanche.jpeg"
-                                alt="Truffe blanche d'Alba"
-                                className="w-full h-full object-cover"
-                              />
-                            </div>
-                            <div className="flex flex-col justify-center order-1 md:order-2">
-                              <h3 className="text-2xl font-serif font-bold text-gray-900 mb-2">
-                                Truffe Blanche d'Alba
-                              </h3>
-                              <p className="text-gray-700 leading-relaxed">
-                                Le diamant blanc de la gastronomie italienne. Disponible en saison.
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
                     {menuItems[activeCategory as keyof typeof menuItems].map((item: any, index: number) => (
                       <div 
                         key={index}
